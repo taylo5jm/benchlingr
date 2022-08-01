@@ -18,3 +18,9 @@ LazyData: true
 URL: https://github.com/hemoshear/benchlingr
 BugReports: https://github.com/hemoshear/benchlingr
 RoxygenNote: 7.2.1
+Suggests: 
+    knitr,
+    rmarkdown,
+    testthat (>= 3.0.0)
+Config/testthat/edition: 3
+VignetteBuilder: knitr

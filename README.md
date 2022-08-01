@@ -1,11 +1,11 @@
 # benchlingr
 ### Unofficial R Interface to the "Benchling Cloud R&D" Laboratory Information Management System (LIMS).
 
-Benchling is a laboratory information management system with a developer platform that is comprised of a Postgres database, an application programming interface (API), an "Events" system that is built on top of the AWS EventBridge service, as well as a Python software development kit (SDK). `benchlingr` is a R package that aims to make the developer platform a
+Benchling is a laboratory information management system with a developer platform that is comprised of a Postgres database, an application programming interface (API), an "Events" system that is built on top of the AWS EventBridge service, as well as a Python software development kit (SDK). `benchlingr` is a R package that aims to make the developer platform accessible to data scientists
 
 #### Installation
 
-Install the R package directly from GitHub using the `install_github` function in the remotes package. Use `install.packages('remotes')` to install the `remotes` package if you do not already have it. 
+Install the R package directly from GitHub using the `install_github` function in the remotes package. Use `install.packages('remotes')` to install the `remotes` package if you do not already have it and see the documentation with `?remotes::install_github` for more information.
 
 ```
 remotes::install_github("hemoshear/benchlingr")
