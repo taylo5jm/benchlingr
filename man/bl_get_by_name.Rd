@@ -4,16 +4,18 @@
 \alias{bl_get_by_name}
 \title{Generic method for getting Benchling entities by name.}
 \usage{
-bl_get_by_name(bl_class, name = NULL, source = "api")
+bl_get_by_name(bl_class, name = NULL, connector = NULL)
 }
 \arguments{
 \item{bl_class}{Benchling "class".}
 
 \item{name}{Name of the Benchling entity to be retrieved.}
 
-\item{source}{Component of the Benchling developer platform where
-the entity should be retrieved from. Entities can be retrieved from
-the API (`api`) or data warehouse (`db`).}
+\item{connector}{Benchling API client object or data warehouse
+connection. See `bl_api_auth` and `bl_warehouse_connect`.
+If a API client is passed, then the function will attempt to 
+retrieve the data from the API. If database connection is passed,
+then the function will attempt to retrieve the data from the warehouse.}
 }
 \description{
 The naming convention of a Benchling entity depend on the naming options 

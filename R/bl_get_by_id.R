@@ -11,11 +11,17 @@
 #' 
 #' @param bl_class Benchling "class". 
 #' @param id Benchling identifier for the object. 
-#' @param source Component of the Benchling developer platform where
-#' the entity should be retrieved from. Entities can be retrieved from
-#' the API (`api`) or data warehouse (`db`). 
+#' @param connector Benchling API client object or data warehouse
+#' connection. See `bl_api_auth` and `bl_warehouse_connect`.
+#' If a API client is passed, then the function will attempt to 
+#' retrieve the data from the API. If database connection is passed,
+#' then the function will attempt to retrieve the data from the warehouse. 
 #' @export
 
-bl_get_by_id <- function(bl_class, id=NULL, source="api") {
+bl_get_by_id <- function(bl_class, id=NULL, connector=NULL) {
+  if (is.null(connector)) {
+    stop("API client or database connection must be passed to
+           the `connector` argument.")
+  }
   UseMethod("bl_get_by_id")
 }
