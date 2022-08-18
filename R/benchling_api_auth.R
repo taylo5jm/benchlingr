@@ -21,6 +21,6 @@ benchling_api_auth <- function(
          usethis::edit_r_environ()")
   }
   reticulate::source_python(
-    system.file("python", "download_entry.py", package = "benchling"))
+    system.file("python", "benchling_api_client.py", package = "benchlingr"))
   return(benchling_api_client(tenant, api_key))
 }
