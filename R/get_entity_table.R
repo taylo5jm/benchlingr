@@ -1,9 +1,9 @@
 # get_entity_table.R
 
-#' Get additional information about entities in a warehouse table.
+#' Get additional information about entities in a warehouse table (single entity column.)
 #' 
 #' Given a data frame retrieved from the Benchling warehouse, extract the
-#' additional tables in the warehouse that correspond to the entities in the 
+#' additional table in the warehouse that correspond to the entities in the 
 #' data frame. 
 #' 
 #' @include vec2sql_tuple.R
@@ -14,10 +14,9 @@
 #' @param column Name of the entity column. 
 #' @param return_cols Character vector of warehouse column names to include
 #'  in results. If `return_cols` is missing, then every column will be returned. 
-#' @return ddata frame with rows from warehouse table that correspond to 
+#' @return data frame with rows from warehouse table that correspond to 
 #' entities found in the input data frame (`df`). 
-#' @export
-get_entity_table <- function(conn, df, column, return_cols=c('id', 'name$')) {
+.get_entity_table <- function(conn, df, column, return_cols=c('id', 'name$')) {
   # Raise exception if the specified column isn't in the data frame. 
   assertthat::assert_that(
     column %in% colnames(df),
@@ -59,4 +58,46 @@ get_entity_table <- function(conn, df, column, return_cols=c('id', 'name$')) {
   mapping <- DBI::dbGetQuery(
     conn, query)
   return(mapping)
+}
+
+
+#' Get additional information about entities in a warehouse table
+#' 
+#' Given a data frame retrieved from the Benchling warehouse, extract the
+#' additional tables in the warehouse that correspond to the entities in the 
+#' data frame. 
+#' 
+#' @include list_entity_columns.R
+#' @param conn Database connection opened with `warehouse_connect`
+#' @param df Data frame with one or more entity columns. The data frame
+#' must also have a column called `schema`, which indicates the schema
+#' name of the warehouse table. 
+#' @param columns Character vector of column names to expand. If NULL, then all entity columns
+#' will be expanded. To see which columns in the data frame correspond to
+#' entity fields, use the `list_entity_columns` tables. 
+#' @param return_cols Character vector of warehouse columns to return for the entity.
+#' The default value (`*`) will return every column. When specifying a different 
+#' set of columns to return, it is recommended that one 
+#' includes the `id` and `name$` columns. If they are not explicitly included,
+#' the function will add them implicitly. 
+#' @export
+get_entity_table <- function(conn, df, columns=NULL, return_cols='*') {
+  # Expand all entity columns if the user doesn't specify any.
+  if (is.null(columns)) {
+    columns <- names(list_entity_columns(conn, df))
+  } else {
+    # Check for columns with all NA values
+    na_cols <- apply(df, 2, function(x) (all(is.na(x))))
+    if (any(na_cols)) { # Don't expand columns where all values are NA
+      columns <- setdiff(columns, names(na_cols)[which(na_cols)])
+    }
+    # Make sure that `id` and `name$` are included in the set of columns
+    # to be returned. 
+    return_cols <- union(c('id', 'name$'), return_cols)
+    # Get all the rows from the relevant warehouse tables. 
+    res <- purrr::map(columns, 
+      ~ .get_entity_table(conn, df, ., return_cols = return_cols))
+    names(res) <- columns
+    return(res)
+  }
 }

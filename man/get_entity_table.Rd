@@ -2,25 +2,26 @@
 % Please edit documentation in R/get_entity_table.R
 \name{get_entity_table}
 \alias{get_entity_table}
-\title{Get additional information about entities in a warehouse table.}
+\title{Get additional information about entities in a warehouse table}
 \usage{
-get_entity_table(conn, df, column, return_cols = c("id", "name$"))
+get_entity_table(conn, df, columns = NULL, return_cols = "*")
 }
 \arguments{
-\item{conn}{Database connection opened by `warehouse_connect`}
+\item{conn}{Database connection opened with `warehouse_connect`}
 
 \item{df}{Data frame with one or more entity columns. The data frame
 must also have a column called `schema`, which indicates the schema
 name of the warehouse table.}
 
-\item{column}{Name of the entity column.}
+\item{columns}{Character vector of column names to expand. If NULL, then all entity columns
+will be expanded. To see which columns in the data frame correspond to
+entity fields, use the `list_entity_columns` tables.}
 
-\item{return_cols}{Character vector of warehouse column names to include
-in results. If `return_cols` is missing, then every column will be returned.}
-}
-\value{
-ddata frame with rows from warehouse table that correspond to 
-entities found in the input data frame (`df`).
+\item{return_cols}{Character vector of warehouse columns to return for the entity.
+The default value (`*`) will return every column. When specifying a different 
+set of columns to return, it is recommended that one 
+includes the `id` and `name$` columns. If they are not explicitly included,
+the function will add them implicitly.}
 }
 \description{
 Given a data frame retrieved from the Benchling warehouse, extract the
