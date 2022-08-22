@@ -26,6 +26,24 @@ Config/testthat/edition: 3
 VignetteBuilder: knitr
 Imports: 
     DBI,
+    dplyr,
+    glue,
+    magrittr,
     qpdf,
     reticulate,
     RPostgres
+Collate: 
+    'benchling_api_auth.R'
+    'bl_archive.R'
+    'bl_create.R'
+    'bl_get_by_id.R'
+    'bl_get_by_name.R'
+    'bl_list.R'
+    'bl_unarchive.R'
+    'bl_update.R'
+    'config_sdk_env.R'
+    'entry.R'
+    'vec2sql_tuple.R'
+    'map_entity_field_names_to_warehouse_tables.R'
+    'util.R'
+    'warehouse_connect.R'
