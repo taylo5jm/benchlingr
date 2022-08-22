@@ -29,8 +29,10 @@ Imports:
     dplyr,
     glue,
     magrittr,
+    purrr,
     qpdf,
     reticulate,
+    RJSONIO,
     RPostgres
 Collate: 
     'benchling_api_auth.R'
@@ -44,6 +46,8 @@ Collate:
     'config_sdk_env.R'
     'entry.R'
     'vec2sql_tuple.R'
+    'get_entity_table.R'
+    'list_entity_columns.R'
     'map_entity_field_names_to_warehouse_tables.R'
     'util.R'
     'warehouse_connect.R'
