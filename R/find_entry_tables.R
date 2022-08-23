@@ -2,7 +2,13 @@
 
 #' Find unstructured tables (not registry or results) in a notebook entry.
 #' 
-#' @param json JSON response from GET /entry/{entry_id}
+#' This function returns the locations of unstructured tables in a notebook entry.
+#' It does not show the user where any registration or results tables might be 
+#' located in a notebook entry, as information in those tables must be retrieved
+#' from other API endpoints / data warehouse tables. 
+#' 
+#' @param json JSON response from GET /entry/{entry_id}. *** Link the appropriate
+#' Benchling API endpoint here. 
 #' @param min_rows Keep tables with this number of rows or more.
 #' @return List where names are days and elements are indices in the `notes` attribute that
 #'    correspond to tables in the entry.
