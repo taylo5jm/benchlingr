@@ -29,4 +29,5 @@ table_indices <- find_entry_tables(entry)
 # entry.
 a_table <- read_table(entry, day=1, table_index=table_indices[[1]][1])
 }
+
 }

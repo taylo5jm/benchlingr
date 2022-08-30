@@ -22,6 +22,8 @@ returning a list of data frames.
 }
 \examples{
 \dontrun{
+client <- benchling_api_auth(tenant="https://hemoshear.benchling.com")
+client$entries$get_entry_by_id
 entry <- get_entry(id = "etr")
 tables <- read_tables(entry)
 }

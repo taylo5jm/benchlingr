@@ -41,6 +41,7 @@ Imports:
     reticulate,
     RJSONIO,
     RPostgres,
+    snakecase,
     tidyr
 Collate: 
     'benchling_api_auth.R'
@@ -53,7 +54,6 @@ Collate:
     'bl_update.R'
     'config_sdk_env.R'
     'download_files.R'
-    'entry.R'
     'util.R'
     'expand_multiselect_column.R'
     'find_entry_tables.R'
