@@ -7,7 +7,8 @@
 benchling_api_auth(
   tenant,
   api_key = Sys.getenv("BENCHLING_API_KEY"),
-  condaenv = "benchling-reticulate"
+  env_name = "benchling-reticulate",
+  env_type = "virtualenv"
 )
 }
 \arguments{
