@@ -15,8 +15,8 @@ list_multiselect_columns <- function(conn, df) {
   is_schema_in_dataframe(df)
   schema_id <- DBI::dbGetQuery(
     conn, glue::glue(
-      "SELECT id FROM schema WHERE system_name = {shQuote(unique(df$schema))}")) 
-  %>% as.character()
+      "SELECT id FROM schema WHERE system_name = {shQuote(unique(df$schema))}")) %>% 
+    as.character()
   res <- DBI::dbGetQuery(conn, 
     glue::glue("SELECT * FROM schema_field WHERE schema_id = {shQuote(schema_id)}")) %>%
     dplyr::filter(!is.na(target_schema_id), is_multi)
