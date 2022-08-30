@@ -59,6 +59,7 @@ Collate:
     'vec2sql_tuple.R'
     'get_entity_table.R'
     'map_entity_field_names_to_warehouse_tables.R'
+    'onLoad.R'
     'read_entry_tables.R'
     'read_plate_diagrams.R'
     'replace_entity_id_with_name.R'
