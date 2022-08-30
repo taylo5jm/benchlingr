@@ -4,7 +4,11 @@
 \alias{benchling_api_auth}
 \title{Create a Benchling API client that can be used to access the API via R.}
 \usage{
-benchling_api_auth(tenant, api_key = Sys.getenv("BENCHLING_API_KEY"))
+benchling_api_auth(
+  tenant,
+  api_key = Sys.getenv("BENCHLING_API_KEY"),
+  condaenv = "benchling-reticulate"
+)
 }
 \arguments{
 \item{tenant}{URL for the Benchling tenant (character).}
@@ -22,6 +26,6 @@ Create a Benchling API client that can be used to access the API via R.
 }
 \examples{
 \dontrun{
-client <- benchling_api_auth(tenant="my-company-tenant-name")
+client <- benchling_api_auth(tenant="https://my-company-tenant-name.benchling.com")
 }
 }

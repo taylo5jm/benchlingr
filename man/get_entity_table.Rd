@@ -19,9 +19,14 @@ entity fields, use the `list_entity_columns` tables.}
 
 \item{return_cols}{Character vector of warehouse columns to return for the entity.
 The default value (`*`) will return every column. When specifying a different 
-set of columns to return, it is recommended that one 
-includes the `id` and `name$` columns. If they are not explicitly included,
-the function will add them implicitly.}
+set of columns to return, it is recommended that one includes the `id` 
+and `name$` columns. If they are not explicitly included, the function 
+will add them implicitly.}
+}
+\value{
+List of data frames with rows from warehouse table that correspond to 
+entities found in the input data frame (`df`). Each element in the list 
+corresponds to an entity column in the input data frame.
 }
 \description{
 Given a data frame retrieved from the Benchling warehouse, extract the

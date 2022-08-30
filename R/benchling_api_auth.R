@@ -9,18 +9,21 @@
 #' API via R. 
 #' @export
 #' @examples \dontrun{
-#' client <- benchling_api_auth(tenant="my-company-tenant-name")
+#' client <- benchling_api_auth(tenant="https://my-company-tenant-name.benchling.com")
 #' }
 
 benchling_api_auth <- function(
-  tenant, api_key=Sys.getenv("BENCHLING_API_KEY")) {
+  tenant, api_key=Sys.getenv("BENCHLING_API_KEY"),
+  condaenv="benchling-reticulate") {
   if (api_key == "") {
     stop("'api_key' cannot be an empty string. Set the 'BENCHLING_API_KEY' 
          environment variable in your .Renviron file. Edit the .Renviron file
          in R using the following command:
          usethis::edit_r_environ()")
   }
+  reticulate::use_condaenv(condaenv = condaenv)
   reticulate::source_python(
     system.file("python", "benchling_api_client.py", package = "benchlingr"))
   return(benchling_api_client(tenant, api_key))
 }
+

@@ -2,7 +2,7 @@
 % Please edit documentation in R/replace_entity_id_with_name.R
 \name{replace_entity_id_with_name}
 \alias{replace_entity_id_with_name}
-\title{Replace identifiers in entity columns with names of the entities}
+\title{Replace identifiers in entity columns with the entity names.}
 \usage{
 replace_entity_id_with_name(conn, df)
 }
@@ -10,6 +10,10 @@ replace_entity_id_with_name(conn, df)
 \item{conn}{Database connection opened by `warehouse_connect`.}
 
 \item{df}{Data frame with entity columns.}
+}
+\value{
+data.frame with the Benchling entity identifiers replaced by the 
+names of the entities.
 }
 \description{
 Values in an entity column will appear as Benchling identifiers when
