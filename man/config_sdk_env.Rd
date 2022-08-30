@@ -4,15 +4,13 @@
 \alias{config_sdk_env}
 \title{Configure environment for accessing API}
 \usage{
-config_sdk_env(env_name = "benchling-reticulate")
+config_sdk_env(env_name = "benchling-reticulate", env_type = "virtualenv")
 }
 \arguments{
 \item{env_name}{Name for the new environment to be created. The default name
-is 'benchling-reticulate'. It is highly recommended that the user keep
-the default name, as many functions in the package assume the environment 
-name is 'benchling-reticulate'. If you choose a different environment
-name, then you will need to set the "BENCHLINGR_RETICULATE_ENV" option in
-any scripts that invoke the API. 
+is 'benchling-reticulate'.}
+
+\item{env_type}{'virtualenv' or 'conda'.
 (ex. 'options(BENCHLINGR_RETICULATE_ENV = "my_env_name")')}
 }
 \description{

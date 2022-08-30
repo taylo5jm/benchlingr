@@ -10,13 +10,13 @@
 #' @return Data frame representing the unstructured table in the notebook
 #' entry.
 #' @export
-#' @examples 
+#' @examples \dontrun{
 #' entry <- get_entry(id = "etr")
 #' table_indices <- find_entry_tables(entry)
 #' # This code will read the first table found in the first day of the notebook
 #' # entry.
 #' a_table <- read_table(entry, day=1, table_index=table_indices[[1]][1])
-#' 
+#' }
 read_entry_table <- function(entry, day, table_index) {
   a_table <- entry$days[[day]]$notes[[table_index]]
   a_table$table$rows %>%
@@ -34,11 +34,14 @@ read_entry_table <- function(entry, day, table_index) {
 #' 
 #' @include find_entry_tables.R
 #' @param entry Notebook entry in JSON format. See `get_entry`.
+#' @param verbose If verbose, then the function will alert the user
+#' if no tables can be found for some days in the notebook. 
 #' @return List of data frames representing the unstructured tables in
 #' the notebook entry.
-#' @examples 
+#' @examples \dontrun{
 #' entry <- get_entry(id = "etr")
 #' tables <- read_tables(entry)
+#' }
 #' @export
 
 read_entry_tables <- function(entry, verbose=FALSE) {

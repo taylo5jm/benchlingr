@@ -54,7 +54,7 @@ list_multiselect_columns <- function(conn, df) {
 #' 
 expand_multiselect_column <- function(conn, df, column, shape="long",
                                       column_prefix=NULL) {
-  assertthat::assert(
+  assertthat::assert_that(
     shape %in% c('long', 'wide'),
     msg = "'shape' argument must be 'long' to unpack values 
     into new rows or 'wide' to unpack values into new columns")
@@ -62,7 +62,7 @@ expand_multiselect_column <- function(conn, df, column, shape="long",
     warning("'shape' argument is 'long' and a column prefix was specified.
             Ignoring the 'column_prefix' argument")
   }
-  assertthat::assert(
+  assertthat::assert_that(
     column %in% colnames(df),
     msg = glue::glue('{`column`} is not a column in the data frame.'))
   if (shape == 'long') {

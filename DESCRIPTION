@@ -31,6 +31,7 @@ Config/reticulate:
   )
 VignetteBuilder: knitr
 Imports: 
+    assertthat,
     DBI,
     dplyr,
     glue,
@@ -39,7 +40,8 @@ Imports:
     qpdf,
     reticulate,
     RJSONIO,
-    RPostgres
+    RPostgres,
+    tidyr
 Collate: 
     'benchling_api_auth.R'
     'bl_archive.R'

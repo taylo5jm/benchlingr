@@ -49,6 +49,7 @@ read_plate_diagrams <- function(json, min_rows=NULL,
 
 #' Parse well layout JSON from a notebook entry
 #' @importFrom magrittr %>%
+#' @importFrom stats setNames
 #' @param json Well layout JSON. 
 #' @return Long form table with the following columns: `row`, `column`, `content`, and `plate`. 
 .parse_plate_diagram <- function(json) {

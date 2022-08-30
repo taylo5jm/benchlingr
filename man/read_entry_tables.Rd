@@ -8,6 +8,9 @@ read_entry_tables(entry, verbose = FALSE)
 }
 \arguments{
 \item{entry}{Notebook entry in JSON format. See `get_entry`.}
+
+\item{verbose}{If verbose, then the function will alert the user
+if no tables can be found for some days in the notebook.}
 }
 \value{
 List of data frames representing the unstructured tables in
@@ -18,6 +21,8 @@ This function will read all unstructured tables in a notebook entry,
 returning a list of data frames.
 }
 \examples{
+\dontrun{
 entry <- get_entry(id = "etr")
 tables <- read_tables(entry)
+}
 }

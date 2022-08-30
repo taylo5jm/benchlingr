@@ -12,11 +12,12 @@
 #' @param min_rows Keep tables with this number of rows or more.
 #' @return List where names are days and elements are indices in the `notes` attribute that
 #'    correspond to tables in the entry.
-#' @examples
+#' @examples \dontrun{
 #' conn <- warehouse_connect("hemoshear")
 #' entry <- get_entry(id="xxxxxx", download=FALSE)
 #' find_tables(entry)
 #' DBI::dbDisconnect(conn)
+#' }
 #' @export
 find_entry_tables <- function(json, min_rows=NULL) {
   .find_tables <- function(json, min_rows=NULL) {

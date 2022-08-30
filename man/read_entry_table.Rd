@@ -22,10 +22,11 @@ entry.
 Read unstructured table in a notebook entry
 }
 \examples{
+\dontrun{
 entry <- get_entry(id = "etr")
 table_indices <- find_entry_tables(entry)
 # This code will read the first table found in the first day of the notebook
 # entry.
 a_table <- read_table(entry, day=1, table_index=table_indices[[1]][1])
-
+}
 }

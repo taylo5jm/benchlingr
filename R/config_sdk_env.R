@@ -6,18 +6,23 @@
 #' the Benchling Python SDK (`benchling-sdk`) on pip. This Anaconda environment
 #' is used by the reticulate package in R.
 #' @param env_name Name for the new environment to be created. The default name
-#' is 'benchling-reticulate'. It is highly recommended that the user keep
-#' the default name, as many functions in the package assume the environment 
-#' name is 'benchling-reticulate'. If you choose a different environment
-#' name, then you will need to set the "BENCHLINGR_RETICULATE_ENV" option in
-#' any scripts that invoke the API. 
+#' is 'benchling-reticulate'.
+#' @param env_type 'virtualenv' or 'conda'.
 #' (ex. 'options(BENCHLINGR_RETICULATE_ENV = "my_env_name")')
 #' @examples \dontrun{
 #' config_sdk_env()
 #' }
 #' @export
 #' 
-config_sdk_env <- function(env_name='benchling-reticulate') {
-  reticulate::conda_create(env_name)
-  reticulate::conda_install(env_name, 'benchling-sdk')
+config_sdk_env <- function(env_name='benchling-reticulate',
+                           env_type='virtualenv') {
+  if (env_type == 'conda') {
+    reticulate::conda_create(env_name)
+    reticulate::conda_install(env_name, 'benchling-sdk')
+  } else {
+    reticulate::virtualenv_create(env_name)
+    reticulate::virtualenv_install(env_name, packages='benchling-sdk')
+  }
+  
+  
 }

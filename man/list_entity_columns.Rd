@@ -22,7 +22,7 @@ to a warehouse table.
 }
 \examples{
 conn <- warehouse_connect('hemoshear')
-res <- DBI::dbGetQuery(conn, "SELECT * FROM plate")
+res <- DBI::dbGetQuery(conn, "SELECT * FROM cdd_vault_compound_concentration")
 list_entity_columns(conn, res)
 DBI::dbDisconnect(conn)
 }

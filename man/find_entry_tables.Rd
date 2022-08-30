@@ -23,8 +23,10 @@ located in a notebook entry, as information in those tables must be retrieved
 from other API endpoints / data warehouse tables.
 }
 \examples{
+\dontrun{
 conn <- warehouse_connect("hemoshear")
 entry <- get_entry(id="xxxxxx", download=FALSE)
 find_tables(entry)
 DBI::dbDisconnect(conn)
+}
 }
