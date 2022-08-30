@@ -23,6 +23,12 @@ Suggests:
     rmarkdown,
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
+Config/reticulate:
+  list(
+    packages = list(
+      list(package = "benchling-sdk")
+    )
+  )
 VignetteBuilder: knitr
 Imports: 
     DBI,
