@@ -28,7 +28,9 @@ Download file attachments from Benchling
 }
 \examples{
 \dontrun{
-res <- DBI::dbGetQuery(conn, "SELECT * FROM non_barcode_plate_file_results$raw WHERE study_codes::text LIKE '\%bfi_jUgN7fPL\%'")
+res <- DBI::dbGetQuery(conn, "SELECT * FROM 
+non_barcode_plate_file_results$raw WHERE study_codes::text LIKE 
+'\%bfi_jUgN7fPL\%'")
 file_col <- purrr::map(as.character(res$excel_file),
                       ~ RJSONIO::fromJSON(.) \%>\% .[[1]])
 file_map <- purrr::map_chr(file_col, ~ .['name'])

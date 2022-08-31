@@ -4,23 +4,18 @@
 \alias{read_plate_diagrams}
 \title{Find and parse plate diagrams in a notebook entry}
 \usage{
-read_plate_diagrams(json, min_rows = NULL, flatten = TRUE, verbose = TRUE)
+read_plate_diagrams(entry)
 }
 \arguments{
 \item{json}{response from GET /entry/{entry_id}}
 
-\item{min_rows}{Minimum number of rows on each plate.}
-
-\item{flatten}{If flatten is TRUE, then the results are collapsed into a 
-single data frame, in which the `entry_index` column shows which day the 
-plate was read from. If flatten is FALSE, then a nested list is returned, 
-where each element corresponds to a single day.}
-
-\item{verbose}{If verbose, then the table names are printed to the console.}
+\item{df}{Data frame with a plate diagram}
 }
 \value{
 List of data frames representing the plate diagrams present
 in the notebook entry.
+
+TRUE if the data frame is a plate diagram.
 }
 \description{
 Benchling users can add special unstructured tables to notebook entrys

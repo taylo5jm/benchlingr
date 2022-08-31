@@ -7,6 +7,10 @@
 #' @param day Integer for the day in the notebook entry. See `find_entry_tables`.
 #' @param table_index Integer for the position of the table in the notebook entry list. 
 #' See `find_entry_tables`.
+#' @param table_name bool Determines how
+#' the name of the table in the notebook entry is included in the output.
+#' If `TRUE` is selected, the table name will be added as a new column
+#' to the data frame. If `FALSE`, then the table name will be ignored. 
 #' @return Data frame representing the unstructured table in the notebook
 #' entry.
 #' @export
@@ -19,7 +23,8 @@
 #' }
 #' 
 
-read_entry_table <- function(entry, day, table_index) {
+read_entry_table <- function(entry, day, table_index,
+                             table_name=TRUE) {
   a_table <- entry$days[[day]]$notes[[table_index]]
 
   direct_from_api <- FALSE
@@ -57,7 +62,11 @@ read_entry_table <- function(entry, day, table_index) {
     as.data.frame()
   if (!all(is.na(columns))) {
     colnames(res) <- columns
-  } 
+  }
+  # Add the table name as a column
+  if (table_name) {
+    res$table_name <- a_table$table$name
+  }
   res
 }
 
@@ -69,6 +78,8 @@ read_entry_table <- function(entry, day, table_index) {
 #' 
 #' @include find_entry_tables.R
 #' @param entry Notebook entry in JSON format. See `get_entry`.
+#' @param table_name If table_name is TRUE, then the names of the tables
+#' in the notebook entry will be returned as names in the output list. 
 #' @param verbose If verbose, then the function will alert the user
 #' if no tables can be found for some days in the notebook. 
 #' @return List of data frames representing the unstructured tables in
@@ -81,15 +92,25 @@ read_entry_table <- function(entry, day, table_index) {
 #' }
 #' @export
 
-read_entry_tables <- function(entry, verbose=FALSE) {
+read_entry_tables <- function(entry, table_name=TRUE, verbose=FALSE) {
   table_indices <- find_entry_tables(entry)
   res <- list(); k <- 1;
   for (i in 1:length(table_indices)) {
     if (length(table_indices[[i]]) > 0) {
       for (j in 1:length(table_indices[[i]])) {
         res[[k]] <- read_entry_table(entry, day=i, 
-                               table_index=table_indices[[i]][j])
+                               table_index=table_indices[[i]][j],
+                               table_name=table_name)
         k <- k + 1
+      }
+      # If table_name is TRUE, then make the table names the names of the list
+      # itself and remove them from the original data frames. 
+      if (table_name) {
+        names(res) <- purrr::map(res, ~ unique(.$table_name)) %>%
+          unlist
+        for (i in 1:length(res)) {
+          res[[i]]$table_name <- NULL
+        }
       }
       
     } else {

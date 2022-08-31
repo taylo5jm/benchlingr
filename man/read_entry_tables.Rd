@@ -4,10 +4,13 @@
 \alias{read_entry_tables}
 \title{Read all unstructured tables in a notebook entry.}
 \usage{
-read_entry_tables(entry, verbose = FALSE)
+read_entry_tables(entry, table_name = TRUE, verbose = FALSE)
 }
 \arguments{
 \item{entry}{Notebook entry in JSON format. See `get_entry`.}
+
+\item{table_name}{If table_name is TRUE, then the names of the tables
+in the notebook entry will be returned as names in the output list.}
 
 \item{verbose}{If verbose, then the function will alert the user
 if no tables can be found for some days in the notebook.}

@@ -4,7 +4,7 @@
 \alias{read_entry_table}
 \title{Read unstructured table in a notebook entry}
 \usage{
-read_entry_table(entry, day, table_index)
+read_entry_table(entry, day, table_index, table_name = TRUE)
 }
 \arguments{
 \item{entry}{Notebook entry in JSON format.}
@@ -13,6 +13,11 @@ read_entry_table(entry, day, table_index)
 
 \item{table_index}{Integer for the position of the table in the notebook entry list. 
 See `find_entry_tables`.}
+
+\item{table_name}{bool Determines how
+the name of the table in the notebook entry is included in the output.
+If `TRUE` is selected, the table name will be added as a new column
+to the data frame. If `FALSE`, then the table name will be ignored.}
 }
 \value{
 Data frame representing the unstructured table in the notebook
