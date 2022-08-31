@@ -2,8 +2,6 @@
 
 export(.vec2sql_tuple)
 export(benchling_api_auth)
-export(bl_get_by_id)
-export(bl_get_by_name)
 export(config_sdk_env)
 export(download_files)
 export(expand_multiselect_column)

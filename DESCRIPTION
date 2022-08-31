@@ -45,13 +45,6 @@ Imports:
     tidyr
 Collate: 
     'benchling_api_auth.R'
-    'bl_archive.R'
-    'bl_create.R'
-    'bl_get_by_id.R'
-    'bl_get_by_name.R'
-    'bl_list.R'
-    'bl_unarchive.R'
-    'bl_update.R'
     'config_sdk_env.R'
     'download_files.R'
     'util.R'
