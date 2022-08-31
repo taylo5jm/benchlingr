@@ -7,16 +7,11 @@
 #' of physical plates. The `read_plate_layouts` function will extract these 
 #' plate diagrams into data frames for further processing in R.
 #' 
-#' @param json response from GET /entry/{entry_id}
+#' @param entry response from GET /entry/{entry_id}
 #' @return List of data frames representing the plate diagrams present
 #' in the notebook entry.
 #' @export
-#' 
 read_plate_diagrams <- function(entry) {
-  #' Check to see if a data frame is a plate diagram
-  #' 
-  #' @param df Data frame with a plate diagram
-  #' @return TRUE if the data frame is a plate diagram.
   is_plate_diagram <- function(df) {
     if (all(rownames(df) %in% 1:32) &
         all(colnames(df) %in% 1:48)) {

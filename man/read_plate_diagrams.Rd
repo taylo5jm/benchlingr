@@ -7,15 +7,11 @@
 read_plate_diagrams(entry)
 }
 \arguments{
-\item{json}{response from GET /entry/{entry_id}}
-
-\item{df}{Data frame with a plate diagram}
+\item{entry}{response from GET /entry/{entry_id}}
 }
 \value{
 List of data frames representing the plate diagrams present
 in the notebook entry.
-
-TRUE if the data frame is a plate diagram.
 }
 \description{
 Benchling users can add special unstructured tables to notebook entrys
