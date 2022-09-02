@@ -23,6 +23,16 @@ library(magrittr)
 Benchling R&D Cloud is a laboratory information management system with a [developer platform](https://docs.benchling.com/docs) consisting of a Postgres database, an application programming interface (API), an "Events" system that is built on top of the AWS EventBridge service, as well as a Python software development kit (SDK). `benchlingr` is an unofficial R package that aims to make the Benchling developer platform accessible to data scientists using R. 
 
 
+# Installation
+
+Install the `benchlingr` package from GitHub using the `remotes` package. 
+
+```{r, eval=FALSE}
+remotes::install_github("hemoshear/benchlingr")
+```
+
+The `benchlingr` package also requires Python. We recommend using the [Anaconda distribution](https://www.anaconda.com/products/distribution)
+
 # Configuration
 
 The `benchlingr` package primarily utilizes the RESTFUL API service and Postgres database components of the Benchling developer platform. In order to use these components of the Benchling platform, one must acquire API keys and database credentials through the Benchling interface. This section will focus on how to make these credentials available to the `benchlingr` package. 
@@ -40,7 +50,7 @@ BENCHLING_API_KEY=xxxxxxxxxxx
 
 ## Data warehouse
 
-[Follow the instructions in the official documentation](https://docs.benchling.com/docs/getting-started#obtaining-credentials) to obtain a username and password for the data warehouse for your Benchling tenant. After obtaining a username and password, it is recommended that one define a variable in `.Renviron` called `BENCHLING_API_KEY` and `BENCHLING_API_PASSWORD` to make the credentials available to `benchlingr` with the default function arguments. 
+[Follow the instructions in the official documentation](https://docs.benchling.com/docs/getting-started#obtaining-credentials) to obtain a username and password for the data warehouse for your Benchling tenant. After obtaining a username and password, it is recommended that one define a variable in `.Renviron` called `BENCHLING_WAREHOUSE_KEY` and `BENCHLING_WAREHOUSE_PASSWORD` to make the credentials available to `benchlingr` with the default function arguments. 
 
 ```
 # ~/.Renviron

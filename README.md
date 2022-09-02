@@ -28,7 +28,7 @@ BENCHLING_API_KEY=xxxxxxxxxxx
 
 #### Data warehouse
 
-[Follow the instructions in the official documentation](linkhere) to obtain a username and password for the data warehouse for your Benchling tenant. After obtaining a username and password, it is recommended that one define a variable in `.Renviron` called `BENCHLING_API_KEY` and `BENCHLING_API_PASSWORD` to make the credentials available to `benchlingr` with the default function arguments. 
+[Follow the instructions in the official documentation](linkhere) to obtain a username and password for the data warehouse for your Benchling tenant. After obtaining a username and password, it is recommended that one define a variable in `.Renviron` called `BENCHLING_WAREHOUSE_KEY` and `BENCHLING_WAREHOUSE_PASSWORD` to make the credentials available to `benchlingr` with the default settings. 
 
 ```
 # ~/.Renviron
