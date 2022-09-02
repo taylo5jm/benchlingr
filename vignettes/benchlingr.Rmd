@@ -253,7 +253,7 @@ diagrams
 ```
 
 
-```{r}
+```{r, eval=FALSE, echo=FALSE}
 library(ggplot2)
 ggplot(diagrams$Plate1, aes(x=column, y=row, label=content)) +
   geom_tile() +
