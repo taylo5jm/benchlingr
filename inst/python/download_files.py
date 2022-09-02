@@ -7,7 +7,7 @@ from pathlib import Path
 from typing import Dict
 
 
-def download_files(client, file_map: Dict[str, str]): -> None
+def download_files(client, file_map: Dict[str, str]) -> None:
     """
       Download file attachments from Benchling
       

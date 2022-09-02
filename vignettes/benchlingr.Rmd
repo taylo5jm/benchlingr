@@ -20,16 +20,16 @@ library(magrittr)
 ```
 
 
-Benchling R&D Cloud is a laboratory information management system with a developer platform consisting of a Postgres database, an application programming interface (API), an "Events" system that is built on top of the AWS EventBridge service, as well as a Python software development kit (SDK). `benchlingr` is an unofficial R package that aims to make the developer platform accessible to data scientists using R. 
+Benchling R&D Cloud is a laboratory information management system with a [developer platform](https://docs.benchling.com/docs) consisting of a Postgres database, an application programming interface (API), an "Events" system that is built on top of the AWS EventBridge service, as well as a Python software development kit (SDK). `benchlingr` is an unofficial R package that aims to make the Benchling developer platform accessible to data scientists using R. 
 
 
 # Configuration
 
-The `benchlingr` package primarily utilizes the RESTFUL API service and Postgres database services of the Benchling developer platform. In order to use these components of the Benchling platform, one must acquire API keys and database credentials through the Benchling interface. This section will focus on how to make these credentials available to the `benchlingr` package. 
+The `benchlingr` package primarily utilizes the RESTFUL API service and Postgres database components of the Benchling developer platform. In order to use these components of the Benchling platform, one must acquire API keys and database credentials through the Benchling interface. This section will focus on how to make these credentials available to the `benchlingr` package. 
 
 ## API
 
-In order to access the Benchling API service on one's Benchling tenant, one must obtain an API key through the Benchling interface. [Follow the instructions in the official documentation](linkhere) to obtain an API key. After obtaining an API key, it is recommended that you define a variable in `.Renviron` called `BENCHLING_API_KEY` to make this key accessible to the `benchlingr` package with the default function arguments. 
+In order to access the Benchling API service on one's Benchling tenant, one must obtain an API key through the Benchling interface. [Follow the instructions in the official documentation](https://help.benchling.com/en/articles/2353570-access-the-benchling-developer-platform-enterprise) to obtain an API key. After obtaining an API key, it is recommended that you define a variable in `.Renviron` called `BENCHLING_API_KEY` to make this key accessible to the `benchlingr` package with the default function arguments. 
 
 ```
 # ~/.Renviron
@@ -40,7 +40,7 @@ BENCHLING_API_KEY=xxxxxxxxxxx
 
 ## Data warehouse
 
-[Follow the instructions in the official documentation](linkhere) to obtain a username and password for the data warehouse for your Benchling tenant. After obtaining a username and password, it is recommended that one define a variable in `.Renviron` called `BENCHLING_API_KEY` and `BENCHLING_API_PASSWORD` to make the credentials available to `benchlingr` with the default function arguments. 
+[Follow the instructions in the official documentation](https://docs.benchling.com/docs/getting-started#obtaining-credentials) to obtain a username and password for the data warehouse for your Benchling tenant. After obtaining a username and password, it is recommended that one define a variable in `.Renviron` called `BENCHLING_API_KEY` and `BENCHLING_API_PASSWORD` to make the credentials available to `benchlingr` with the default function arguments. 
 
 ```
 # ~/.Renviron
@@ -56,7 +56,7 @@ BENCHLING_WAREHOUSE_PASSWORD=xxxxxxxxxxx
 
 The `benchlingr` R package uses the official Benchling Python SDK to access the Benchling API service. The Python dependencies will be installed automatically into a `miniconda` environment. One can also create new `conda` or `virtualenv` environments with the `config_sdk_env` helper function, which simply creates an environment and installs the `benchling-sdk` package in it. 
 
-```{r, eval=TRUE}
+```{r, eval=FALSE}
 config_sdk_env()
 ```
 
@@ -79,6 +79,8 @@ The `warehouse_connect` function will return a Postgres SQL database connection 
 DBI::dbIsValid(conn)
 ```
 
+## "Raw" tables and Postgres views  
+
 One can use the `DBI::dbListTables` function to see all the tables in the database. You'll notice that every "table" in the database is actually comprised of two tables: an unedited version of the data, referred to as the "raw" table, and a cleaned up Postgres view of the data. For example, the `_20c_freezer` table is the Postgres view for an inventory schema we defined, and the `_20c_freezer$raw` table is unedited table. 
 
 ```{r, eval=TRUE}
@@ -87,27 +89,35 @@ DBI::dbListTables(conn)[3:4]
 
 In general, the Postgres views are more convenient to work with, since the raw tables contain many Benchling identifiers intended for internal use. In our experience, however, there are some use cases where the raw tables should be accessed instead of the Postgres views. For example, when one needs to extract assay results submitted in notebook entries that have not been approved, one will need to use the "raw" tables to do so, since the Postgres views will not contain assay results from unreviewed notebooks. Refer to the [official Benchling documentation](https://docs.benchling.com/docs/warehouse-columns-rows-descriptions#the-benchling-warehouse-columns-descriptions) for more information about the differences between the raw tables and the Postgres views.  
 
+
+## Retrieving data from the warehouse  
+
 To retrieve data from a table in the data warehouse, one can use the `DBI::dbGetQuery` function. For example, here is the code one would use to retrieve all the "plate" entities from the data warehouse. Take a moment to look at the results of this query, as well as the [descriptions of the columns in the official Benchling documentation](https://docs.benchling.com/docs/warehouse-columns-rows-descriptions).
 
 ```{r, eval=TRUE}
-DBI::dbGetQuery(conn, "SELECT * FROM plate") %>%
+DBI::dbGetQuery(conn, "SELECT id,schema_id,barcode FROM plate") %>%
   tail()
 ```
 
+
+### Custom entities
+
 The data warehouse for your tenant will come pre-loaded with tables relevant to any entity schemas that are universal to the Benchling system. For example, the `plate` inventory schema is available on every Benchling installation. When a custom entity or result schema is defined, Benchling creates a new set of tables in the database: one for the Postgres view and one for the raw data. For example, we defined a custom entity schema for representing analytes. 
 
-![Custom "Analyte" entity](img/analyte-screenshot.png)
+![Custom "Analyte" entity](img/analyte-screenshot.png){width=85%}
+---
+
 When we defined the "Analyte" custom entity schema, Benchling created a table in the data warehouse called `analyte`. All the analyte entities we created can be retrieved with `DBI::dbGetQuery`. 
 
 ```{r, eval=TRUE}
-DBI::dbGetQuery(conn, "SELECT * FROM analyte") %>%
+DBI::dbGetQuery(conn, "SELECT id,schema,precursor_ion_m_z,product_ion_m_z,assay FROM analyte") %>%
   head()
 ```
 
 Benchling also created a "raw" table for our custom analyte schema.
 
 ```{r, eval=TRUE}
-DBI::dbGetQuery(conn, "SELECT * FROM analyte$raw") %>%
+DBI::dbGetQuery(conn, "SELECT id,schema,precursor_ion_m_z,product_ion_m_z,assay FROM analyte$raw") %>%
   head()
 ```
 
@@ -119,9 +129,9 @@ res$assay
 RJSONIO::fromJSON(res$assay)
 ```
 
-Custom entities can have fields that are other entity types. For example, we defined a custom entity schema for cell cultures, which are connected to a "study" entity, which contains the metadata pertaining to an experiment, including a human-readable identifier, who performed the experiment, the objectives of the experiment, etc. 
+Custom entities can have fields that are other custom entity types. For example, we defined a custom entity schema for cell cultures, which are connected to a "study" entity that contains the metadata pertaining to an experiment, including a human-readable identifier, who performed the experiment, the objectives of the experiment, etc. 
 
-![Custom "cell culture" entity schema](img/cell_culture_screenshot.png)
+![Custom "cell culture" entity schema](img/cell_culture_screenshot.png){width=85%}
 The `study` field in the `cell_culture` schema is a multi-select, entity field, since we decided that a cell culture can be linked to multiple study entities. 
 
 ```{r, eval=TRUE}
@@ -142,39 +152,26 @@ Now that we have the identifier for the study cleaned up, we can use this identi
 ```{r, error=TRUE, eval=TRUE}
 DBI::dbGetQuery(conn, "SELECT * FROM study WHERE id = 'bfi_ZAZ84eD3'")
 ```
-The code above did not work, because the warehouse table for "study" is not actually called `study`. This might occur when a custom schema is defined and later renamed, since the warehouse table names do not automatically get renamed (for good reason). It may also occur if the name of the field in one entity is not the same as the actual entity name. In this case, the field in the "cell culture" table is called "study", but the corresponding entity schema is actually called "study code". 
+The code above did not work, because the warehouse table for "study" is not actually called `study`. In this case, the field in the "cell culture" table is called "study", but the corresponding entity schema is actually called "study code". 
 
-![study code entity](img/study_code_screenshot.png)
+![study code entity](img/study_code_screenshot.png){width=85%}
 
+The `.map_entity_field_names_to_warehouse_tables` function will take a warehouse data frame as input and return a character vector where the names are the entity column names in the data frame and the values are the warehouse table names. In this example, the `study` column in the `cc` data frame is connected to the `study_code` warehouse table. 
 
-
-At this point, you might be wondering how one can find the warehouse table name for a particular entity, if the entity name can be out of sync with the warehouse table name. One way to find the warehouse table name of a custom entity is to simply look in the Benchling GUI itself. 
-
-
-
-
-The identifier for any custom entity will start with the `bfi_`. To find more information about a custom entity 
-
-
-```{r, eval=TRUE}
-DBI::dbGetQuery(conn, "SELECT * FROM study_code WHERE id = 'bfi_ZAZ84eD3'")
+```{r}
+.map_entity_field_names_to_warehouse_tables(conn, cc)
 ```
 
 
-
-
-At HemoShear Therapeutics, we started using the developer platform long before we implemented a process for notebook entry approvals, so it was necessary to use the "raw" tables in some cases. Even now, some notebook entries are never approved, because they function as data-dumping sites for staff members that operate a specific instrument. For example, our LC-MS team generates data for several scientific programs, so it made more sense for us to set them up with their own notebook entries for submitting data, instead of having them upload data to the notebook entry for each experiment. 
-
-
-After verifying the database connection is valid, one can retrieve data using the `DBI::dbGetQuery` function.
+The identifier for any custom entity will start with `bfi_`. To find more information about a custom entity, one can search the data warehouse by ID:
 
 ```{r, eval=TRUE}
-DBI::dbGetQuery(conn, "SELECT * FROM plate") %>% head
+DBI::dbGetQuery(conn, "SELECT id,name$ FROM study_code WHERE id = 'bfi_ZAZ84eD3'")
 ```
+
 
 
 # Accessing the Benchling API via the Python SDK in R. 
-
 
 To create an interface to the Benchling API, use the `benchling_api_auth` function after you have set the `BENCHLING_API_KEY` environment variable as described in the Python SDK configuration section. 
 
@@ -201,14 +198,14 @@ Notebook entries can be found in the `entry` table in the data warehouse. Note, 
 
 ```{r}
 conn <- warehouse_connect("hemoshear")
-DBI::dbGetQuery(conn, "SELECT * FROM entry") %>%
+DBI::dbGetQuery(conn, "SELECT id,display_id,schema_id,entry_template_id,review_status FROM entry") %>%
   head()
 ```
 
 If the notebook entry uses a custom metadata schema, that metadata can also be found in the data warehouse. For example, we have a "Study Plan Entry" notebook schema for a certain type of notebook entry. The warehouse table for this schema is `study_plan_entry`.
 
 ```{r}
-DBI::dbGetQuery(conn, "SELECT * FROM study_plan_entry") %>%
+DBI::dbGetQuery(conn, "SELECT id,study_code FROM study_plan_entry") %>%
   head()
 ```
 
@@ -216,7 +213,7 @@ DBI::dbGetQuery(conn, "SELECT * FROM study_plan_entry") %>%
 The content of the notebook entries (aside from results and entities), must be retrieved from the API. To retrieve a notebook entry, use the `entries$get_entry_by_id` method.
 
 ```{r}
-entry <- client$entries$get_entry_by_id("etr_FbZuzgv6")
+entry <- client$entries$get_entry_by_id("etr_LP5vVGBO")
 ```
 
 ```{r}
@@ -224,14 +221,46 @@ class(entry)
 ```
 
 
-## Reading unstructured tables in notebook entries. 
+## Reading unstructured tables.  
 
 The `read_entry_tables` function extracts all unstructured tables in a notebook entry, and returns them as a list of data frames for further processing in R. 
 
+![Example of an unstructured table in a Benchling notebook entry](img/treatments_screenshot.png){width=60%}
+
+
 ```{r}
 tables <- read_entry_tables(entry)
+tables[[1]]
+```
+In addition to unstructured tables, Benchling users can create "plate diagrams" to describe the contents of physical plates. The plate diagram tables can only be certain sizes (2x3, 3x4, 4x6, 6x8, 8x12, 16x24, and 32x48), the column names must be integers, and the row names must be letters. 
+
+![Example of a plate diagram in a Benchling notebook entry.](img/plate_diagram.png){width=60%}
+
+
+To read these tables in R, one can also use `read_entry_tables`.
+```{r}
+tables[[2]]
 ```
 
+## Reading plate diagrams.  
+
+It is useful to convert these tables into long form for further processing in R. To do so, one can start with the `read_plate_diagrams` function instead of the `read_entry_tables` function. The `read_plate_diagrams` will extract the plate diagrams from the notebook entry and convert the output data frames into long form tables with three columns: row, column, and content. 
+
+```{r}
+entry <- client$entries$get_entry_by_id("etr_LP5vVGBO")
+diagrams <- read_plate_diagrams(entry)
+diagrams
+```
+
+
+```{r}
+library(ggplot2)
+ggplot(diagrams$Plate1, aes(x=column, y=row, label=content)) +
+  geom_tile() +
+  geom_text() +
+  theme(axis.text.x = element_text(position='top'))
+ggplot2::text
+```
 
 
 

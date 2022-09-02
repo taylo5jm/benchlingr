@@ -13,6 +13,7 @@
 #' @return A vector where the names are the warehouse names for the fields 
 #' in the schema and the values are the warehouse names for the entities in the 
 #' schema 
+#' @export
 .map_entity_field_names_to_warehouse_tables <- function(conn, df) {
   if (!('schema' %in% colnames(df))) {
     stop("'schema' column is missing from the input data.frame.

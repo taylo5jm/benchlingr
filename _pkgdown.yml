@@ -1,0 +1,37 @@
+url: https://upgraded-succotash-8df2b926.pages.github.io/
+template:
+  bootstrap: 5
+  
+reference:
+- title: Data warehouse
+  desc: The Benchling data warehouse is a read-only, Postgres database
+- contents:
+  - warehouse_connect
+  - expand_multiselect_column
+  - get_entity_table
+  - list_entity_columns
+  - list_multiselect_columns
+  - replace_entity_id_with_name
+  - is_schema_in_dataframe
+  - .get_entity_table
+  - .map_entity_field_names_to_warehouse_tables
+  - .unpack_long
+  - .unpack_wide
+  - .vec2sql_tuple
+- title: Python SDK
+  desc: Python SDK and API
+  contents:
+  - config_sdk_env
+  - benchling_api_auth
+- title: Blobs
+  desc: Files attached to Benchling results and entities. 
+  contents:
+  - download_blobs
+  - download_blobs_in_warehouse_table
+- title: Notebook entries
+  desc: Notebook entries
+  contents:
+  - find_entry_tables
+  - read_entry_table
+  - read_entry_tables
+  - read_plate_diagrams

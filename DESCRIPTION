@@ -15,7 +15,8 @@ Description: Unofficial interface for accessing the 'Benchling' developer platfo
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
-URL: https://github.com/hemoshear/benchlingr
+URL: https://github.com/hemoshear/benchlingr,
+    https://upgraded-succotash-8df2b926.pages.github.io/
 BugReports: https://github.com/hemoshear/benchlingr
 RoxygenNote: 7.2.1
 Suggests: 
@@ -46,8 +47,8 @@ Imports:
 Collate: 
     'benchling_api_auth.R'
     'config_sdk_env.R'
-    'download_files.R'
     'util.R'
+    'download_files.R'
     'expand_multiselect_column.R'
     'find_entry_tables.R'
     'list_entity_columns.R'
