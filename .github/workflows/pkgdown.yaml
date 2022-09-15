@@ -31,6 +31,10 @@ jobs:
         with:
           use-public-rspm: true
           
+      - name: Install devtools
+        run: |
+          sudo Rscript -e "install.packages('devtools')"
+          
       - name: Install benchlingr
         run: |
           sudo Rscript -e "devtools::install()"
