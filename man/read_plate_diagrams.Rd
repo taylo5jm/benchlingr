@@ -19,3 +19,9 @@ called "plate diagrams" for conveying information about the contents
 of physical plates. The `read_plate_layouts` function will extract these 
 plate diagrams into data frames for further processing in R.
 }
+\examples{
+client <- benchling_api_auth(tenant="https://hemoshear-dev.benchling.com",
+                            api_key=Sys.getenv("BENCHLING_DEV_API_KEY"))
+entry <- client$entries$get_entry_by_id("etr_f1bpDIes")
+plate_diagrams <- read_plate_diagrams(entry)
+}
