@@ -1,3 +1,5 @@
+# test-read_entry_table.R 
+
 library(benchlingr)
 client <- benchling_api_auth(tenant="https://hemoshear-dev.benchling.com",
                              api_key=Sys.getenv("BENCHLING_DEV_API_KEY"))
