@@ -27,12 +27,11 @@ entry.
 Read unstructured table in a notebook entry
 }
 \examples{
-\dontrun{
-entry <- get_entry(id = "etr")
-table_indices <- find_entry_tables(entry)
-# This code will read the first table found in the first day of the notebook
-# entry.
-a_table <- read_table(entry, day=1, table_index=table_indices[[1]][1])
-}
+client <- benchling_api_auth(tenant="https://hemoshear-dev.benchling.com",
+                             api_key=Sys.getenv("BENCHLING_DEV_API_KEY"))
+entry <- client$entries$get_entry_by_id("etr_T3WZTyAe")
+table_indices <- benchling:::find_entry_tables(entry)
+print(table_indices)
+a_table <- read_entry_table(entry, day=1, table_index=2)
 
 }

@@ -1,0 +1,12 @@
+# test-find_entry_tables.R
+client <- benchling_api_auth(tenant="https://hemoshear-dev.benchling.com",
+                             api_key=Sys.getenv("BENCHLING_DEV_API_KEY"))
+entry <- client$entries$get_entry_by_id("etr_T3WZTyAe")
+tables <- benchlingr:::find_entry_tables(entry)
+
+
+test_that("find_entry_tables works", {
+  expect_equal(length(tables), 2)
+  expect_equal(tables[[1]][1], 2)
+  expect_equal(length(tables[[2]]), 0) # second day should be empty. 
+})
