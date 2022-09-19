@@ -85,19 +85,15 @@ expand_multiselect_column <- function(conn, df, column, shape="long",
 #' @keywords internal
 #' 
 .unpack_long <- function(df, column) {
-  res <- vector("list", nrow(df))
-  df[[column]] <- purrr::map(as.character(df[[column]]), 
-                             ~RJSONIO::fromJSON(.))
+  res <- vector("list", length=nrow(df))
+  df[[column]] <- purrr::map(as.character(df[[column]]), ~RJSONIO::fromJSON(.))
+  new_rows <- list()
   for (i in 1:nrow(df)) {
-    new_rows <- vector("list", length(df[column][[i]]))
-    for (j in 1:length(new_rows)) {
-      new_rows[[j]] <- purrr::map_df(
-        df[[i,column]], 
-        ~ dplyr::mutate_(df[i,], 'assay_plate' = .))
-    }
-    res[[i]] <- new_rows
+    new_rows[[i]] <- purrr::map_df(
+      df[[i,column]], 
+      ~ dplyr::mutate_(df[i,], 'assay_plate' = .))
   }
-  do.call("rbind", res)
+  do.call("rbind", new_rows)
 }
 
 #' Unpack the values of a JSON column into new columns
