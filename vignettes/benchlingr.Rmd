@@ -186,7 +186,8 @@ DBI::dbGetQuery(conn, "SELECT id,name$ FROM study_code WHERE id = 'bfi_ZAZ84eD3'
 To create an interface to the Benchling API, use the `benchling_api_auth` function after you have set the `BENCHLING_API_KEY` environment variable as described in the Python SDK configuration section. 
 
 ```{r}
-client <- benchling_api_auth(tenant="https://hemoshear.benchling.com")
+client <- benchling_api_auth(tenant="https://hemoshear-dev.benchling.com",
+                             api_key=Sys.getenv("BENCHLING_DEV_API_KEY"))
 ```
 
 The `benchling_api_auth` function returns the [facade object](https://benchling.com/sdk-docs/benchling_sdk.benchling.html) from the Benchling Python SDK that facilitates interaction with the API. Most of the attributes of the facade object are the [services in the Benchling API documentation](https://benchling.com/api/reference). 
@@ -207,23 +208,25 @@ names(client$entries)
 Notebook entries can be found in the `entry` table in the data warehouse. Note, this table contains some of the notebook entry metadata, but not the content of the entry itself.
 
 ```{r}
-conn <- warehouse_connect("hemoshear")
+conn <- warehouse_connect("hemoshear-dev",
+                          username = Sys.getenv("BENCHLING_DEV_WAREHOUSE_USERNAME"),
+                          password = Sys.getenv("BENCHLING_DEV_WAREHOUSE_PASSWORD"))
 DBI::dbGetQuery(conn, "SELECT id,display_id,schema_id,entry_template_id,review_status FROM entry") %>%
   head()
 ```
 
 If the notebook entry uses a custom metadata schema, that metadata can also be found in the data warehouse. For example, we have a "Study Plan Entry" notebook schema for a certain type of notebook entry. The warehouse table for this schema is `study_plan_entry`.
 
-```{r}
+```{r, eval=FALSE}
 DBI::dbGetQuery(conn, "SELECT id,study_code FROM study_plan_entry") %>%
   head()
 ```
 
 
-The content of the notebook entries (aside from results and entities), must be retrieved from the API. To retrieve a notebook entry, use the `entries$get_entry_by_id` method.
+The content of the notebook entries (aside from results and entities), must be retrieved from the API. To retrieve a notebook entry, use the `entries$get_entry_by_id` method. The method takes the ID of an entry as an argument, which starts with `etr_`. 
 
 ```{r}
-entry <- client$entries$get_entry_by_id("etr_LP5vVGBO")
+entry <- client$entries$get_entry_by_id("etr_T3WZTyAe")
 ```
 
 ```{r}
@@ -233,33 +236,30 @@ class(entry)
 
 ## Reading unstructured tables.  
 
+Benchling users can record information in unstructured tables within notebook entries. 
+
+![Example of an unstructured table in a Benchling notebook entry](img/unstructured_entry_tables.png)
 The `read_entry_tables` function extracts all unstructured tables in a notebook entry, and returns them as a list of data frames for further processing in R. 
-
-![Example of an unstructured table in a Benchling notebook entry](img/treatments_screenshot.png){width=60%}
-
 
 ```{r}
 tables <- read_entry_tables(entry)
 tables[[1]]
 ```
-In addition to unstructured tables, Benchling users can create "plate diagrams" to describe the contents of physical plates. The plate diagram tables can only be certain sizes (2x3, 3x4, 4x6, 6x8, 8x12, 16x24, and 32x48), the column names must be integers, and the row names must be letters. 
 
-![Example of a plate diagram in a Benchling notebook entry.](img/plate_diagram.png){width=60%}
-
-
-To read these tables in R, one can also use `read_entry_tables`.
-```{r}
-tables[[2]]
-```
 
 ## Reading plate diagrams.  
 
-It is useful to convert these tables into long form for further processing in R. To do so, one can start with the `read_plate_diagrams` function instead of the `read_entry_tables` function. The `read_plate_diagrams` will extract the plate diagrams from the notebook entry and convert the output data frames into long form tables with three columns: row, column, and content. 
+In addition to unstructured tables, Benchling users can create "plate diagrams" to describe the contents of physical plates. The plate diagram tables can only be certain sizes (2x3, 3x4, 4x6, 6x8, 8x12, 16x24, and 32x48), the column names must be integers, and the row names must be letters. 
+
+![Plate diagrams in a Benchling notebook entry.](img/plate_diagram_entry.png)
+
+It is useful to convert these tables into long form for further processing in R. To do so, one can start with the `read_plate_diagrams` function instead of the `read_entry_tables` function. The `read_plate_diagrams` will extract the plate diagrams from the notebook entry and convert the output data frames into long form tables with three columns: row, column, and content. The names of the list will be the names of the tables in the notebook entry.  
 
 ```{r}
-entry <- client$entries$get_entry_by_id("etr_LP5vVGBO")
+entry <- client$entries$get_entry_by_id("etr_f1bpDIes")
 diagrams <- read_plate_diagrams(entry)
-diagrams
+str(diagrams)
+head(diagrams$Well1)
 ```
 
 
