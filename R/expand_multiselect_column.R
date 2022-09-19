@@ -91,7 +91,7 @@ expand_multiselect_column <- function(conn, df, column, shape="long",
   for (i in 1:nrow(df)) {
     new_rows[[i]] <- purrr::map_df(
       df[[i,column]], 
-      ~ dplyr::mutate_(df[i,], 'assay_plate' = .))
+      ~ dplyr::mutate_(df[i,], column = .))
   }
   do.call("rbind", new_rows)
 }
