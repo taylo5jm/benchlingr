@@ -17,3 +17,4 @@ Data frame with the values in the JSON column unpacked.
 \description{
 Unpack the values of a JSON column into new columns
 }
+\keyword{internal}

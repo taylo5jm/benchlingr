@@ -13,7 +13,9 @@ list_multiselect_columns(conn, df)
 \item{df}{Data frame retrieved from the data warehouse.}
 }
 \value{
-Not sure yet
+Character vector where the names are the names of the multi-select
+columns in the data frame and the values are the positions of the multi-select
+columns in the data frame.
 }
 \description{
 List the multi-select columns in a data frame retrieved from the data 

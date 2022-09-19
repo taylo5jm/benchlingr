@@ -16,3 +16,4 @@ Used for side effect only.
 The `schema` column appears in every data warehouse table. This function
 stops function execution if `schema` is not in the data frame.
 }
+\keyword{internal}

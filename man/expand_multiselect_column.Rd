@@ -44,7 +44,9 @@ one to unpack the values in the column, creating either new rows or new
 columns in the data frame.
 }
 \examples{
-conn <- warehouse_connect("hemoshear")
+conn <- warehouse_connect("hemoshear-dev", 
+    username = Sys.getenv("BENCHLING_DEV_WAREHOUSE_USERNAME"),
+    password = Sys.getenv("BENCHLING_DEV_WAREHOUSE_PASSWORD"))
 DBI::dbDisconnect(conn)
 
 }

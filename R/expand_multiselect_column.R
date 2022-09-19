@@ -7,7 +7,9 @@
 #' @importFrom magrittr %>%
 #' @param conn Database connection opened with `warehouse_connect`.
 #' @param df Data frame retrieved from the data warehouse.
-#' @return Not sure yet
+#' @return Character vector where the names are the names of the multi-select
+#' columns in the data frame and the values are the positions of the multi-select
+#' columns in the data frame. 
 #' @export
 #' 
 
@@ -49,7 +51,9 @@ list_multiselect_columns <- function(conn, df) {
 #' @return Data frame with the values in `column` unpacked. 
 #' @export
 #' @examples 
-#' conn <- warehouse_connect("hemoshear")
+#' conn <- warehouse_connect("hemoshear-dev", 
+#'     username = Sys.getenv("BENCHLING_DEV_WAREHOUSE_USERNAME"),
+#'     password = Sys.getenv("BENCHLING_DEV_WAREHOUSE_PASSWORD"))
 #' DBI::dbDisconnect(conn)
 #' 
 expand_multiselect_column <- function(conn, df, column, shape="long",
@@ -78,11 +82,12 @@ expand_multiselect_column <- function(conn, df, column, shape="long",
 #' @param df Data frame with JSON columns to be unpacked into new rows.
 #' @param column Name of the JSON column to be unpacked.
 #' @return Data frame with the values in the JSON column unpacked. 
+#' @keywords internal
 #' 
 .unpack_long <- function(df, column) {
   res <- vector("list", nrow(df))
   df[column] <- purrr::map(
-    as.character(df[column]),
+    as.character(df[[column]]),
     ~ RJSONIO::fromJSON(.))
   for (i in 1:nrow(df)) {
     new_rows <- vector("list", length(df[column][[i]]))
@@ -102,10 +107,11 @@ expand_multiselect_column <- function(conn, df, column, shape="long",
 #' @param df Data frame with JSON columns to be unpacked into new columns
 #' @param column Name of the JSON column to be unpacked.
 #' @return Data frame with the values in the JSON column unpacked. 
+#' @keywords internal
 #' 
 .unpack_wide <- function(df, column) {
   
-  unpacked <- purrr::map(as.character(d[column]),
+  unpacked <- purrr::map(as.character(d[[column]]),
                            ~ RJSONIO::fromJSON(.))
   
   # Get the maximum number of values that an element in the list can have.

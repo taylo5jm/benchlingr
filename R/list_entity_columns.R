@@ -10,7 +10,9 @@
 #' @return Vector where the names are the names of entity columns in the data frame
 #' and the values are the corresponding indices. 
 #' @examples 
-#' conn <- warehouse_connect('hemoshear')
+#' conn <- warehouse_connect("hemoshear-dev", 
+#'     username = Sys.getenv("BENCHLING_DEV_WAREHOUSE_USERNAME"),
+#'     password = Sys.getenv("BENCHLING_DEV_WAREHOUSE_PASSWORD"))
 #' res <- DBI::dbGetQuery(conn, "SELECT * FROM cdd_vault_compound_concentration")
 #' list_entity_columns(conn, res)
 #' DBI::dbDisconnect(conn)

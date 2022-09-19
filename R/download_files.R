@@ -12,7 +12,9 @@
 #' `benchling-reticulate`.
 #' @export
 #' @examples \dontrun{
-#' conn <- warehouse_connect("hemoshear")
+#' conn <- warehouse_connect("hemoshear-dev", 
+#'     username = Sys.getenv("BENCHLING_DEV_WAREHOUSE_USERNAME"),
+#'     password = Sys.getenv("BENCHLING_DEV_WAREHOUSE_PASSWORD"))
 #' res <- DBI::dbGetQuery(conn, "SELECT * FROM 
 #' non_barcode_plate_file_results$raw WHERE study_codes::text LIKE 
 #' '%bfi_jUgN7fPL%'")
@@ -62,7 +64,9 @@ download_blobs <- function(client, file_map, outdir,
 #' @examples \dontrun{
 #' library(magrittr)
 #' client <- benchling_api_auth("https://hemoshear.benchling.com")
-#' conn <- warehouse_connect("hemoshear")
+#' conn <- warehouse_connect("hemoshear-dev", 
+#'     username = Sys.getenv("BENCHLING_DEV_WAREHOUSE_USERNAME"),
+#'     password = Sys.getenv("BENCHLING_DEV_WAREHOUSE_PASSWORD"))
 #' res <- DBI::dbGetQuery(conn, "SELECT * FROM 
 #'  non_barcode_plate_file_results$raw WHERE study_codes::text LIKE 
 #'  '%bfi_jUgN7fPL%'")

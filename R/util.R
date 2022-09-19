@@ -6,6 +6,7 @@
 #' stops function execution if `schema` is not in the data frame. 
 #' @param df data.frame with table from the data warehouse. 
 #' @return Used for side effect only.
+#' @keywords internal
 #' 
 is_schema_in_dataframe <- function(df) {
   if (!('schema' %in% colnames(df))) {

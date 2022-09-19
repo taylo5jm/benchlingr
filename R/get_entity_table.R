@@ -16,6 +16,7 @@
 #'  in results. If `return_cols` is missing, then every column will be returned. 
 #' @return data frame with rows from warehouse table that correspond to 
 #' entities found in the input data frame (`df`). 
+#' @keywords internal
 .get_entity_table <- function(conn, df, column, return_cols=c('id', 'name$')) {
   # Raise exception if the specified column isn't in the data frame. 
   assertthat::assert_that(

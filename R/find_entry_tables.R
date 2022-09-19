@@ -13,7 +13,9 @@
 #' @return List where names are days and elements are indices in the `notes` attribute that
 #'    correspond to tables in the entry.
 #' @examples \dontrun{
-#' conn <- warehouse_connect("hemoshear")
+#' conn <- warehouse_connect("hemoshear-dev", 
+#'     username = Sys.getenv("BENCHLING_DEV_WAREHOUSE_USERNAME"),
+#'     password = Sys.getenv("BENCHLING_DEV_WAREHOUSE_PASSWORD"))
 #' entry <- get_entry(id="xxxxxx", download=FALSE)
 #' find_tables(entry)
 #' DBI::dbDisconnect(conn)

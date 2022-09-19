@@ -22,7 +22,9 @@ Download "blobs" attached to Benchling entities or results.
 }
 \examples{
 \dontrun{
-conn <- warehouse_connect("hemoshear")
+conn <- warehouse_connect("hemoshear-dev", 
+    username = Sys.getenv("BENCHLING_DEV_WAREHOUSE_USERNAME"),
+    password = Sys.getenv("BENCHLING_DEV_WAREHOUSE_PASSWORD"))
 res <- DBI::dbGetQuery(conn, "SELECT * FROM 
 non_barcode_plate_file_results$raw WHERE study_codes::text LIKE 
 '\%bfi_jUgN7fPL\%'")

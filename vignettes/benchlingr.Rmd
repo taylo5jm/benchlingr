@@ -79,7 +79,9 @@ The Benchling data warehouse is a read-only, Postgres database that can be used 
 To connect to the data warehouse on your tenant with the `benchlingr` package, use the `warehouse_connect` function. By default, the function looks for two environment variables in `.Renviron`: `BENCHLING_WAREHOUSE_USERNAME` and `BENCHLING_WAREHOUSE_PASSWORD`. If this function is not working for you, please see the instructions for configuration in the  [official documentation](https://docs.benchling.com/docs/getting-started#warehouse-configuration). Once you are able to connect to the database using the instructions in the official tutorial, the `warehouse_connect` function should work properly, assuming that the aforementioned environment variables are set. 
 
 ```{r, eval=TRUE}
-conn <- warehouse_connect(tenant = "hemoshear")
+conn <- warehouse_connect(tenant = "hemoshear-dev",
+                          username = Sys.getenv("BENCHLING_DEV_WAREHOUSE_USERNAME"),
+                          password = Sys.getenv("BENCHLING_DEV_WAREHOUSE_PASSWORD"))
 class(conn)
 ```
 
@@ -131,6 +133,9 @@ DBI::dbGetQuery(conn, "SELECT id,schema,precursor_ion_m_z,product_ion_m_z,assay 
   head()
 ```
 
+It is important to keep the `schema` field in tables retrieved from the data warehouse, as many functions in `benchlingr` need it to work properly. 
+
+
 Our custom "analyte" entity can be associated with one or more "assays", which is a multi-select field. Multi-select fields are represented as JSON objects in the Postgres database, thus the user will want to use one of the many R packages available for working with JSON to coerce the values to an appropriate type for further processing. `RJSONIO` is one package that can be used for coercing a JSON object into a R list or character vector. 
 
 ```{r, eval=TRUE}
@@ -178,6 +183,24 @@ The identifier for any custom entity will start with `bfi_`. To find more inform
 ```{r, eval=TRUE}
 DBI::dbGetQuery(conn, "SELECT id,name$ FROM study_code WHERE id = 'bfi_ZAZ84eD3'")
 ```
+
+### Multi-select columns
+
+Fields in entities and results can be configured such that multiple values can be submitted. These "multi-select" columns are represented as JSON objects in the data warehouse. To unpack the values in these columns to create new rows or columns in the data frame, use the `expand_multiselect_column` function. 
+
+To unpack the value such that the original row is copied for each value in the multi-select column, use the `shape="long"` argument. 
+
+```{r, eval=FALSE}
+new_df <- expand_multiselect_column(conn, df, column="analyte", shape="long")
+```
+
+To unpack the value into new columns in the original row, use the `shape="wide"` argument. By default, the new columns are named by appending a number ($(1, 2, ..., n)$, where n is the maximum number of elements that appear in a value within the multi-select field) to the original column name.
+
+```{r, eval=FALSE}
+new_df <- expand_multiselect_column(conn, df, column="analyte", shape="wide")
+```
+
+
 
 
 
@@ -253,7 +276,9 @@ In addition to unstructured tables, Benchling users can create "plate diagrams" 
 
 ![Plate diagrams in a Benchling notebook entry.](img/plate_diagram_entry.png)
 
-It is useful to convert these tables into long form for further processing in R. To do so, one can start with the `read_plate_diagrams` function instead of the `read_entry_tables` function. The `read_plate_diagrams` will extract the plate diagrams from the notebook entry and convert the output data frames into long form tables with three columns: row, column, and content. The names of the list will be the names of the tables in the notebook entry.  
+It is useful to convert these tables into long form for further processing in R. To do so, one can start with the `read_plate_diagrams` function instead of the `read_entry_tables` function. The `read_plate_diagrams` will extract the plate diagrams from the notebook entry and convert the output data frames into long form tables with three columns: row, column, and content. The `row` is a letter for the row on the plate, the `column` is an integer for the column on the plate, and `content` is the text that appears in the cell in the table. 
+
+The names of the list will be the names of the tables in the notebook entry.  
 
 ```{r}
 entry <- client$entries$get_entry_by_id("etr_f1bpDIes")
@@ -261,6 +286,48 @@ diagrams <- read_plate_diagrams(entry)
 str(diagrams)
 head(diagrams$Well1)
 ```
+
+## Schemas within notebook entries  
+
+Both entities and results can be created in tables within notebook entries. A data analyst will need to query a specific API endpoint or warehouse table to find the registered entities or results, so one needs to know the schema associated with the entity or results table. The Benchling user can change the name displayed for the tables in the notebook entry, so it is not always obvious which schemas are present in the notebook entry. Furthermore, if the data will be extracted from the warehouse, we'll need to know the names of the warehouse tables to query, which cannot always be inferred from the schema names alone. 
+
+```{r, eval=FALSE}
+list_schemas_in_entry("etr")
+```
+
+
+# Downloading attached files
+
+Benchling users can attach files to results and entities, which are referred to as blobs in the backend.
+
+*Show screenshot of table in Benchling*
+
+The schema name for this table is `general_assay_file_submission`, so we can query the table to get the identifiers and file names for the blobs to download. 
+
+```{r, eval=FALSE}
+DBI::dbGetQuery(conn, "SELECT * FROM general_assay_file_submission")
+```
+
+`download_blobs` is a low-level wrapper for the Python SDK that downloads a set of blobs from Benchling as specified by their ID and file name. 
+
+```{r, eval=FALSE}
+download_blobs(client, 
+               file_map=c('' = '', '' = ''),
+               outdir='data')
+```
+
+The `download_blobs_in_warehouse_table` function will download all files attached to a particular set of columns in a warehouse table. 
+
+```{r, eval=FALSE}
+download_blobs_in_warehouse_table(conn, df, column='excel', outdir="data")
+```
+
+
+
+
+
+
+
 
 
 ```{r, eval=FALSE, echo=FALSE}

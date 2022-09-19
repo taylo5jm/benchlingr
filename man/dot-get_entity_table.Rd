@@ -27,3 +27,4 @@ Given a data frame retrieved from the Benchling warehouse, extract the
 additional table in the warehouse that correspond to the entities in the 
 data frame.
 }
+\keyword{internal}
