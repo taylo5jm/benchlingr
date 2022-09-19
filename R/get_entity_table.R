@@ -86,15 +86,14 @@
 #' corresponds to an entity column in the input data frame.
 #' @export
 get_entity_table <- function(conn, df, columns=NULL, return_cols='*') {
-  # Expand all entity columns if the user doesn't specify any.
-  if (is.null(columns)) {
-    columns <- names(list_entity_columns(conn, df))
-  } else {
+    # Expand all entity columns if the user doesn't specify any.
+    if (is.null(columns)) {
+      columns <- names(list_entity_columns(conn, df))
+    } 
     # Check for columns with all NA values
     na_cols <- apply(df, 2, function(x) (all(is.na(x))))
     if (any(na_cols)) { # Don't expand columns where all values are NA
       columns <- setdiff(columns, names(na_cols)[which(na_cols)])
-    }
     # Make sure that `id` and `name$` are included in the set of columns
     # to be returned. 
     return_cols <- union(c('id', 'name$'), return_cols)
