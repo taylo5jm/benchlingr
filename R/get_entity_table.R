@@ -94,6 +94,7 @@ get_entity_table <- function(conn, df, columns=NULL, return_cols='*') {
     na_cols <- apply(df, 2, function(x) (all(is.na(x))))
     if (any(na_cols)) { # Don't expand columns where all values are NA
       columns <- setdiff(columns, names(na_cols)[which(na_cols)])
+    }
     # Make sure that `id` and `name$` are included in the set of columns
     # to be returned. 
     return_cols <- union(c('id', 'name$'), return_cols)
@@ -102,5 +103,4 @@ get_entity_table <- function(conn, df, columns=NULL, return_cols='*') {
       ~ .get_entity_table(conn, df, ., return_cols = return_cols))
     names(res) <- columns
     return(res)
-  }
 }
