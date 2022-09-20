@@ -44,5 +44,12 @@ test_that("download_blobs_in_warehouse_table works when file column is
   expect_equal(length(dir('download_blobs_in_warehouse_table_data')), 4)
 })
 
-
+for (i in data_dirs) {
+  for (j in unlist(file_map)) {
+    this_file <- file.path(i, j)
+    if (file.exists(this_file)) {
+      file.remove(this_file)
+    }
+  }
+}
 DBI::dbDisconnect(conn)

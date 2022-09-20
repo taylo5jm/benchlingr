@@ -27,5 +27,4 @@ conn <- warehouse_connect("hemoshear-dev",
     password = Sys.getenv("BENCHLING_DEV_WAREHOUSE_PASSWORD"))
 res <- DBI::dbGetQuery(conn, "SELECT * FROM simple_plate_analyte_mapping$raw")
 list_multiselect_columns(conn, res)
-DBI::dbDisconnect(conn)
 }

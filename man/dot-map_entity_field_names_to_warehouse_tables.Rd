@@ -22,3 +22,12 @@ A schema field name can differ from the schema name itself, so this function
 uses the `schema` and `schema_field` tables in the warehouse to link 
 the field name in one schema to the actual name of the entity.
 }
+\examples{
+conn <- warehouse_connect(
+"hemoshear-dev",
+ username = Sys.getenv("BENCHLING_DEV_WAREHOUSE_USERNAME"),
+ password = Sys.getenv("BENCHLING_DEV_WAREHOUSE_PASSWORD"))
+ 
+ d <- DBI::dbGetQuery(conn, "SELECT * FROM simple_plate_analyte_mapping$raw")
+ .map_entity_field_names_to_warehouse_tables(conn, d)
+}

@@ -4,9 +4,17 @@
 \alias{download_blobs_in_warehouse_table}
 \title{Download blobs contained within a warehouse table.}
 \usage{
-download_blobs_in_warehouse_table(conn, df, columns = NULL, outdir = ".")
+download_blobs_in_warehouse_table(
+  client,
+  conn,
+  df,
+  columns = NULL,
+  outdir = "."
+)
 }
 \arguments{
+\item{client}{A Benchling API client object.}
+
 \item{conn}{A warehouse connection opened with `warehouse_connect`.}
 
 \item{df}{Data frame retrieved from the Benchling data warehouse.
