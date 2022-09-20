@@ -24,7 +24,7 @@ to a warehouse table.
 conn <- warehouse_connect("hemoshear-dev", 
     username = Sys.getenv("BENCHLING_DEV_WAREHOUSE_USERNAME"),
     password = Sys.getenv("BENCHLING_DEV_WAREHOUSE_PASSWORD"))
-res <- DBI::dbGetQuery(conn, "SELECT * FROM cdd_vault_compound_concentration")
+res <- DBI::dbGetQuery(conn, "SELECT * FROM simple_plate_analyte_mapping$raw")
 list_entity_columns(conn, res)
 DBI::dbDisconnect(conn)
 }

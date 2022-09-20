@@ -30,7 +30,7 @@ Read unstructured table in a notebook entry
 client <- benchling_api_auth(tenant="https://hemoshear-dev.benchling.com",
                              api_key=Sys.getenv("BENCHLING_DEV_API_KEY"))
 entry <- client$entries$get_entry_by_id("etr_T3WZTyAe")
-table_indices <- benchling:::find_entry_tables(entry)
+table_indices <- benchlingr:::find_entry_tables(entry)
 print(table_indices)
 a_table <- read_entry_table(entry, day=1, table_index=2)
 

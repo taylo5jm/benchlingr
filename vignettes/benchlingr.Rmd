@@ -78,7 +78,7 @@ The Benchling data warehouse is a read-only, Postgres database that can be used 
 
 To connect to the data warehouse on your tenant with the `benchlingr` package, use the `warehouse_connect` function. By default, the function looks for two environment variables in `.Renviron`: `BENCHLING_WAREHOUSE_USERNAME` and `BENCHLING_WAREHOUSE_PASSWORD`. If this function is not working for you, please see the instructions for configuration in the  [official documentation](https://docs.benchling.com/docs/getting-started#warehouse-configuration). Once you are able to connect to the database using the instructions in the official tutorial, the `warehouse_connect` function should work properly, assuming that the aforementioned environment variables are set. 
 
-```{r, eval=TRUE}
+```{r, eval=FALSE}
 conn <- warehouse_connect(tenant = "hemoshear-dev",
                           username = Sys.getenv("BENCHLING_DEV_WAREHOUSE_USERNAME"),
                           password = Sys.getenv("BENCHLING_DEV_WAREHOUSE_PASSWORD"))
@@ -87,7 +87,7 @@ class(conn)
 
 The `warehouse_connect` function will return a Postgres SQL database connection object (`PqConnection`), which can be used to make queries against the database using the `DBI` package in R. To verify that you are connected to the database for your Benchling tenant, one can use the `dbIsValid` to display information about the connection itself. 
 
-```{r, eval=TRUE}
+```{r, eval=FALSE}
 DBI::dbIsValid(conn)
 ```
 
@@ -95,7 +95,7 @@ DBI::dbIsValid(conn)
 
 One can use the `DBI::dbListTables` function to see all the tables in the database. You'll notice that every "table" in the database is actually comprised of two tables: an unedited version of the data, referred to as the "raw" table, and a cleaned up Postgres view of the data. For example, the `_20c_freezer` table is the Postgres view for an inventory schema we defined, and the `_20c_freezer$raw` table is unedited table. 
 
-```{r, eval=TRUE}
+```{r, eval=FALSE}
 DBI::dbListTables(conn)[3:4]
 ```
 
@@ -106,7 +106,7 @@ In general, the Postgres views are more convenient to work with, since the raw t
 
 To retrieve data from a table in the data warehouse, one can use the `DBI::dbGetQuery` function. For example, here is the code one would use to retrieve all the "plate" entities from the data warehouse. Take a moment to look at the results of this query, as well as the [descriptions of the columns in the official Benchling documentation](https://docs.benchling.com/docs/warehouse-columns-rows-descriptions).
 
-```{r, eval=TRUE}
+```{r, eval=FALSE}
 DBI::dbGetQuery(conn, "SELECT id,schema_id,barcode FROM plate") %>%
   tail()
 ```
@@ -121,14 +121,14 @@ The data warehouse for your tenant will come pre-loaded with tables relevant to 
 
 When we defined the "Analyte" custom entity schema, Benchling created a table in the data warehouse called `analyte`. All the analyte entities we created can be retrieved with `DBI::dbGetQuery`. 
 
-```{r, eval=TRUE}
+```{r, eval=FALSE}
 DBI::dbGetQuery(conn, "SELECT id,schema,precursor_ion_m_z,product_ion_m_z,assay FROM analyte") %>%
   head()
 ```
 
 Benchling also created a "raw" table for our custom analyte schema.
 
-```{r, eval=TRUE}
+```{r, eval=FALSE}
 DBI::dbGetQuery(conn, "SELECT id,schema,precursor_ion_m_z,product_ion_m_z,assay FROM analyte$raw") %>%
   head()
 ```
@@ -138,7 +138,7 @@ It is important to keep the `schema` field in tables retrieved from the data war
 
 Our custom "analyte" entity can be associated with one or more "assays", which is a multi-select field. Multi-select fields are represented as JSON objects in the Postgres database, thus the user will want to use one of the many R packages available for working with JSON to coerce the values to an appropriate type for further processing. `RJSONIO` is one package that can be used for coercing a JSON object into a R list or character vector. 
 
-```{r, eval=TRUE}
+```{r, eval=FALSE}
 res <- DBI::dbGetQuery(conn, "SELECT name$,assay FROM analyte")[1,]
 res$assay
 RJSONIO::fromJSON(res$assay)
@@ -149,7 +149,7 @@ Custom entities can have fields that are other custom entity types. For example,
 ![Custom "cell culture" entity schema](img/cell_culture_screenshot.png){width=85%}
 The `study` field in the `cell_culture` schema is a multi-select, entity field, since we decided that a cell culture can be linked to multiple study entities. 
 
-```{r, eval=TRUE}
+```{r, eval=FALSE}
 cc <- DBI::dbGetQuery(conn, "SELECT schema,id,name$,study FROM cell_culture") %>%
   .[1,]
 cc
@@ -157,14 +157,14 @@ cc
 
 In this example, only one study is linked to this particular cell culture, so we can simply use `RJSONIO::fromJSON` to coerce the `study` column to a more user-friendly character vector. 
 
-```{r, eval=TRUE}
+```{r, eval=FALSE}
 cc$study <- RJSONIO::fromJSON(cc$study)
 cc$study
 ```
 
 Now that we have the identifier for the study cleaned up, we can use this identifier to extract the information in the data warehouse that pertains to the study. 
 
-```{r, error=TRUE, eval=TRUE}
+```{r, error=TRUE, eval=FALSE}
 DBI::dbGetQuery(conn, "SELECT * FROM study WHERE id = 'bfi_ZAZ84eD3'")
 ```
 The code above did not work, because the warehouse table for "study" is not actually called `study`. In this case, the field in the "cell culture" table is called "study", but the corresponding entity schema is actually called "study code". 
@@ -173,14 +173,14 @@ The code above did not work, because the warehouse table for "study" is not actu
 
 The `.map_entity_field_names_to_warehouse_tables` function will take a warehouse data frame as input and return a character vector where the names are the entity column names in the data frame and the values are the warehouse table names. In this example, the `study` column in the `cc` data frame is connected to the `study_code` warehouse table. 
 
-```{r}
+```{r, eval=FALSE}
 .map_entity_field_names_to_warehouse_tables(conn, cc)
 ```
 
 
 The identifier for any custom entity will start with `bfi_`. To find more information about a custom entity, one can search the data warehouse by ID:
 
-```{r, eval=TRUE}
+```{r, eval=FALSE}
 DBI::dbGetQuery(conn, "SELECT id,name$ FROM study_code WHERE id = 'bfi_ZAZ84eD3'")
 ```
 

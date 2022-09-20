@@ -54,6 +54,10 @@ list_multiselect_columns <- function(conn, df) {
 #' conn <- warehouse_connect("hemoshear-dev", 
 #'     username = Sys.getenv("BENCHLING_DEV_WAREHOUSE_USERNAME"),
 #'     password = Sys.getenv("BENCHLING_DEV_WAREHOUSE_PASSWORD"))
+#' d <- DBI::dbGetQuery(conn, "SELECT plate,analytes FROM simple_plate_analyte_mapping$raw 
+#' WHERE entry_id$ = 'etr_MWQ7M7Pz'")
+#' res <- expand_multiselect_column(conn, d, column="analytes", shape="long")
+#' res <- expand_multiselect_column(conn, d, column="analytes", shape="wide")
 #' DBI::dbDisconnect(conn)
 #' 
 expand_multiselect_column <- function(conn, df, column, shape="long",
