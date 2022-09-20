@@ -52,6 +52,7 @@ download_blobs <- function(client, file_map, outdir,
 #' 
 #' @include util.R
 #' @importFrom magrittr %>%
+#' @param client A Benchling API client object. 
 #' @param conn A warehouse connection opened with `warehouse_connect`.
 #' @param df Data frame retrieved from the Benchling data warehouse.
 #' Must have the `schema` column included.
@@ -73,7 +74,7 @@ download_blobs <- function(client, file_map, outdir,
 #' download_blobs_in_warehouse_table(conn, res, outdir='temp_data_dir/')
 #' }
 
-download_blobs_in_warehouse_table <- function(conn, df, columns=NULL, outdir='.') {
+download_blobs_in_warehouse_table <- function(client, conn, df, columns=NULL, outdir='.') {
   is_schema_in_dataframe(df)
   blob_link_columns <- DBI::dbGetQuery(conn, glue::glue(
     "SELECT schema_field.name FROM schema 
@@ -81,7 +82,7 @@ download_blobs_in_warehouse_table <- function(conn, df, columns=NULL, outdir='.'
     WHERE schema.system_name = {shQuote(unique(df$schema))} AND 
     schema_field.type = 'blob_link'")) %>%
   .[,1]
-  assertthat::assert_that(length(blob_link_columns) > 1,
+  assertthat::assert_that(length(blob_link_columns) > 0,
                           msg="There are no blob link fields in this schema.")
   # Download all files in the data frame if columns is missing
   if (is.null(columns)) {
@@ -93,13 +94,23 @@ download_blobs_in_warehouse_table <- function(conn, df, columns=NULL, outdir='.'
                             Only the following columns are blob links in this schema ({unique(df$schema)}):
                             paste0('-', blob_link_columns, '\n')")
 
-  .download_blobs <- function(df, column, outdir) {
-    file_col <- purrr::map(as.character(res[[column]]),
-                           ~ RJSONIO::fromJSON(.) %>% .[[1]])
-    file_map <- purrr::map_chr(file_col, ~ .['name'])
+  .download_blobs <- function(client, df, column, outdir) {
+    reticulate::source_python(
+      system.file("python", "download_files.py", package = "benchlingr"))
+    file_col <- purrr::map(as.character(df[[column]]),
+                           ~ RJSONIO::fromJSON(.))
+    unlisted_file_col <- unlist(file_col, recursive = FALSE)
+    # multi-select
+    if (is.list(unlisted_file_col)) {
+      file_col <- unlisted_file_col
+    }
+    file_map <- file.path(outdir, purrr::map_chr(file_col, ~ .['name']))
     names(file_map) <- purrr::map_chr(file_col, ~ .['id'])
     file_map <- as.list(file_map)
-    download_files(client, file_map, outdir=outdir)
+    download_files(client, file_map)
   }
-  purrr::walk(columns, ~ .download_blobs(df, ., outdir=file.path(outdir, .)))
+  if (!dir.exists(outdir)) {
+    dir.create(outdir)
+  }
+  purrr::walk(columns, ~ .download_blobs(client, df, ., outdir))
 }
