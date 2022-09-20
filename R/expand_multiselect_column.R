@@ -60,6 +60,7 @@ list_multiselect_columns <- function(conn, df) {
 #' res <- expand_multiselect_column(conn, d, column="analytes", shape="wide")
 #' DBI::dbDisconnect(conn)
 #' 
+#' 
 expand_multiselect_column <- function(conn, df, column, shape="long",
                                       column_prefix=NULL) {
   assertthat::assert_that(
