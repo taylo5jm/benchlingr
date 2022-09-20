@@ -106,7 +106,7 @@ expand_multiselect_column <- function(conn, df, column, shape="long",
 #' 
 .unpack_wide <- function(df, column) {
   
-  unpacked <- purrr::map(as.character(d[[column]]),
+  unpacked <- purrr::map(as.character(df[[column]]),
                            ~ RJSONIO::fromJSON(.))
   
   # Get the maximum number of values that an element in the list can have.
@@ -132,8 +132,8 @@ expand_multiselect_column <- function(conn, df, column, shape="long",
     # New columns are labeled "column__x", where x is a number.
     colnames(wide) <- paste0(column, 1:max_n_values)
     # Merge the new data frame into the original data frame  
-    d %<>% dplyr::bind_cols(wide)
-    return(d)
+    df %<>% dplyr::bind_cols(wide)
+    return(df)
   } else {
     warning(glue::glue("All values in {`column`} are empty.
                        Returning the original data frame."))
