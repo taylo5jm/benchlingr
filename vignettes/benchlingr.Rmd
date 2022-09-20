@@ -300,33 +300,33 @@ list_schemas_in_entry("etr")
 
 Benchling users can attach files to results and entities, which are referred to as blobs in the backend.
 
-*Show screenshot of table in Benchling*
+![A results table in a Benchling notebook entry with files attached.](img/blobs_in_table.png)  
 
-The schema name for this table is `general_assay_file_submission`, so we can query the table to get the identifiers and file names for the blobs to download. 
+----
 
-```{r, eval=FALSE}
-DBI::dbGetQuery(conn, "SELECT * FROM general_assay_file_submission")
+The schema name for this example table is `simple_plate_analyte_mapping`, so we can query the table to get the identifiers and file names for the blobs to download. 
+
+```{r, eval=TRUE}
+d <- DBI::dbGetQuery(conn, "SELECT plate,analytes,file FROM simple_plate_analyte_mapping$raw WHERE entry_id$ = 'etr_JYUlMiIs'")
+d
 ```
 
-`download_blobs` is a low-level wrapper for the Python SDK that downloads a set of blobs from Benchling as specified by their ID and file name. 
+Each "blob" consists of an identifier, a URL, and a name. `download_blobs` is a low-level wrapper for the Python SDK that downloads a set of blobs from Benchling as specified by their ID and file name. 
 
 ```{r, eval=FALSE}
-download_blobs(client, 
-               file_map=c('' = '', '' = ''),
-               outdir='data')
+download_blobs(
+  client, 
+  file_map = list(
+    "ff0cca5f-b400-4e42-9df6-9f1badc4b7e2" = "Plate1-Data.csv",
+    "a2ed3ec8-59b9-451a-81eb-c4fb5322858b" = "Plate2-Data.csv"),
+  outdir='data')
 ```
 
-The `download_blobs_in_warehouse_table` function will download all files attached to a particular set of columns in a warehouse table. 
+The `download_blobs_in_warehouse_table` function will download all files attached to a particular set of columns in a warehouse table. By default, it will try to download files from all blob columns unless a specific set is passed to the `column` argument. The files in each column are saved to a subdirectory within `outdir`. 
 
 ```{r, eval=FALSE}
-download_blobs_in_warehouse_table(conn, df, column='excel', outdir="data")
+download_blobs_in_warehouse_table(conn, d, column='file', outdir="data")
 ```
-
-
-
-
-
-
 
 
 
