@@ -10,6 +10,13 @@
 #' @return Character vector where the names are the names of the multi-select
 #' columns in the data frame and the values are the positions of the multi-select
 #' columns in the data frame. 
+#' @examples 
+#' conn <- warehouse_connect("hemoshear-dev", 
+#'     username = Sys.getenv("BENCHLING_DEV_WAREHOUSE_USERNAME"),
+#'     password = Sys.getenv("BENCHLING_DEV_WAREHOUSE_PASSWORD"))
+#' res <- DBI::dbGetQuery(conn, "SELECT * FROM simple_plate_analyte_mapping$raw")
+#' list_multiselect_columns(conn, res)
+#' DBI::dbDisconnect(conn)
 #' @export
 #' 
 
