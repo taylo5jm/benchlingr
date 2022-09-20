@@ -19,7 +19,6 @@
 #' DBI::dbDisconnect(conn)
 #' @export
 #' 
-
 list_multiselect_columns <- function(conn, df) {
   is_schema_in_dataframe(df)
   schema_id <- DBI::dbGetQuery(
