@@ -25,10 +25,10 @@
   # If the field is multi-select, then extract all identifiers
   if (class(df[[column]]) == 'pq_jsonb') {
     id_list <- .vec2sql_tuple(
-      Filter(function(x) (x != list()),
+      Filter(function(x) (length(x) > 0),
              purrr::map(as.character(df[[column]]),
                         ~ RJSONIO::fromJSON(.))) %>%
-        unlist)
+        unlist %>% unique)
     # The code above will return an empty list as a string if 
     # the entity column is completely empty.
     if (id_list == '()') {
@@ -85,6 +85,13 @@
 #' entities found in the input data frame (`df`). Each element in the list 
 #' corresponds to an entity column in the input data frame.
 #' @export
+#' @examples 
+#' conn <- warehouse_connect("hemoshear-dev", 
+#'    username = Sys.getenv("BENCHLING_DEV_WAREHOUSE_USERNAME"),
+#'    password = Sys.getenv("BENCHLING_DEV_WAREHOUSE_PASSWORD"))
+#' df <- DBI::dbGetQuery(conn, "SELECT * FROM simple_plate_analyte_mapping$raw")
+#' get_entity_table(conn,  df)
+#' 
 get_entity_table <- function(conn, df, columns=NULL, return_cols='*') {
     # Expand all entity columns if the user doesn't specify any.
     if (is.null(columns)) {
@@ -97,7 +104,9 @@ get_entity_table <- function(conn, df, columns=NULL, return_cols='*') {
     }
     # Make sure that `id` and `name$` are included in the set of columns
     # to be returned. 
-    return_cols <- union(c('id', 'name$'), return_cols)
+    if (return_cols != '*') {
+      return_cols <- union(c('id', 'name$'), return_cols)
+    }
     # Get all the rows from the relevant warehouse tables. 
     res <- purrr::map(columns, 
       ~ .get_entity_table(conn, df, ., return_cols = return_cols))
