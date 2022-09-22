@@ -104,7 +104,7 @@ get_entity_table <- function(conn, df, columns=NULL, return_cols='*') {
     }
     # Make sure that `id` and `name$` are included in the set of columns
     # to be returned. 
-    if (return_cols != '*') {
+    if (!('*' %in% return_cols)) {
       return_cols <- union(c('id', 'name$'), return_cols)
     }
     # Get all the rows from the relevant warehouse tables. 
