@@ -2,7 +2,7 @@
 # Need help debugging build failures? Start at https://github.com/r-lib/actions#where-to-find-help
 on:
   push:
-    branches: [main, master]
+    branches: [9-working-r-cmd-check-github-workflow]
   pull_request:
     branches: [main, master]
   release:
@@ -27,6 +27,7 @@ jobs:
       
       - name: Install dependencies
         run: |
+          sudo apt-get update
           sudo apt-get install libcurl4-openssl-dev libharfbuzz-dev libfribidi-dev
           
       - uses: r-lib/actions/setup-r@v2
