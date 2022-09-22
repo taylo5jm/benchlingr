@@ -59,11 +59,31 @@ jobs:
           key: ${{ runner.os }}-renv-${{ hashFiles('renv.lock') }}
           restore-keys: |
             ${{ runner.os }}-renv-
+            
       - name: Restore packages
         shell: Rscript {0}
         run: |
           if (!requireNamespace("renv", quietly = TRUE)) install.packages("renv")
           renv::restore()
+          
+      - uses: actions/setup-python@v4
+        with:
+          python-version: "3.8"
+          
+      - name: setup r-reticulate venv
+        shell: Rscript {0}
+        run: |
+          python_packages <- 
+            c("benchling-sdk")
+          
+          library(reticulate)
+          conda_create("benchling-reticulate", Sys.which("python"))
+          conda_install("benchling-reticulate", python_packages)
+          
+          path_to_python <- conda_python("benchling-reticulate")
+          writeLines(sprintf("RETICULATE_PYTHON=%s", path_to_python),
+                     Sys.getenv("GITHUB_ENV"))
+                     
       - uses: r-lib/actions/check-r-package@v1
 
       - name: Show testthat output
