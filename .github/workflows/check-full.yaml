@@ -77,10 +77,10 @@ jobs:
             c("benchling-sdk")
           
           library(reticulate)
-          conda_create("benchling-reticulate", Sys.which("python"))
-          conda_install("benchling-reticulate", python_packages)
+          virtualenv_create("benchling-reticulate", Sys.which("python"))
+          virtualenv_install("benchling-reticulate", python_packages)
           
-          path_to_python <- conda_python("benchling-reticulate")
+          path_to_python <- virtualenv_python("benchling-reticulate")
           writeLines(sprintf("RETICULATE_PYTHON=%s", path_to_python),
                      Sys.getenv("GITHUB_ENV"))
                      
