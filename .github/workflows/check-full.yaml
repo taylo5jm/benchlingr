@@ -20,7 +20,7 @@ jobs:
       matrix:
         config:
           # Use older ubuntu to maximise backward compatibility
-          - {os: ubuntu-18.04,   r: 'devel', http-user-agent: 'release'}
+#          - {os: ubuntu-18.04,   r: 'devel', http-user-agent: 'release'}
           - {os: ubuntu-18.04,   r: 'release'}
 
     env:
@@ -32,7 +32,8 @@ jobs:
       - uses: r-lib/actions/setup-pandoc@v1
       - name: Install dependencies
         run: |
-          sudo apt-get install libcurl4-openssl-dev
+          sudo apt-get update
+          sudo apt-get install libcurl4-openssl-dev libharfbuzz-dev  libfribidi-dev
 
       - uses: r-lib/actions/setup-r@v1
         with:
@@ -42,8 +43,9 @@ jobs:
 
       - name: Set Benchling R package environment variables
         run: |
-          echo "BENCHLING_WAREHOUSE_USERNAME=${{ secrets.BENCHLING_WAREHOUSE_USERNAME}}" >> ~/.Renviron
-          echo "BENCHLING_WAREHOUSE_PASSWORD=${{ secrets.BENCHLING_WAREHOUSE_PASSWORD }}" >> ~/.Renviron
+          echo "BENCHLING_DEV_WAREHOUSE_USERNAME=${{ secrets.BENCHLING_DEV_WAREHOUSE_USERNAME}}" >> ~/.Renviron
+          echo "BENCHLING_DEV_WAREHOUSE_PASSWORD=${{ secrets.BENCHLING_DEV_WAREHOUSE_PASSWORD }}" >> ~/.Renviron
+          echo "BENCHLING_DEV_API_KEY=${{ secrets.BENCHLING_DEV_API_KEY }}" >> ~/.Renviron
       - uses: r-lib/actions/setup-r-dependencies@v1
         with:
           extra-packages: rcmdcheck
@@ -57,11 +59,31 @@ jobs:
           key: ${{ runner.os }}-renv-${{ hashFiles('renv.lock') }}
           restore-keys: |
             ${{ runner.os }}-renv-
+            
       - name: Restore packages
         shell: Rscript {0}
         run: |
           if (!requireNamespace("renv", quietly = TRUE)) install.packages("renv")
           renv::restore()
+          
+      - uses: actions/setup-python@v4
+        with:
+          python-version: "3.8"
+          
+      - name: setup r-reticulate venv
+        shell: Rscript {0}
+        run: |
+          python_packages <- 
+            c("benchling-sdk")
+          
+          library(reticulate)
+          virtualenv_create("benchling-reticulate", Sys.which("python"))
+          virtualenv_install("benchling-reticulate", python_packages)
+          
+          path_to_python <- virtualenv_python("benchling-reticulate")
+          writeLines(sprintf("RETICULATE_PYTHON=%s", path_to_python),
+                     Sys.getenv("GITHUB_ENV"))
+                     
       - uses: r-lib/actions/check-r-package@v1
 
       - name: Show testthat output

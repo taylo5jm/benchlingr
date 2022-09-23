@@ -78,7 +78,7 @@ The Benchling data warehouse is a read-only, Postgres database that can be used 
 
 To connect to the data warehouse on your tenant with the `benchlingr` package, use the `warehouse_connect` function. By default, the function looks for two environment variables in `.Renviron`: `BENCHLING_WAREHOUSE_USERNAME` and `BENCHLING_WAREHOUSE_PASSWORD`. If this function is not working for you, please see the instructions for configuration in the  [official documentation](https://docs.benchling.com/docs/getting-started#warehouse-configuration). Once you are able to connect to the database using the instructions in the official tutorial, the `warehouse_connect` function should work properly, assuming that the aforementioned environment variables are set. 
 
-```{r, eval=FALSE}
+```{r, eval=TRUE}
 conn <- warehouse_connect(tenant = "hemoshear-dev",
                           username = Sys.getenv("BENCHLING_DEV_WAREHOUSE_USERNAME"),
                           password = Sys.getenv("BENCHLING_DEV_WAREHOUSE_PASSWORD"))
@@ -87,16 +87,25 @@ class(conn)
 
 The `warehouse_connect` function will return a Postgres SQL database connection object (`PqConnection`), which can be used to make queries against the database using the `DBI` package in R. To verify that you are connected to the database for your Benchling tenant, one can use the `dbIsValid` to display information about the connection itself. 
 
-```{r, eval=FALSE}
+```{r, eval=TRUE}
 DBI::dbIsValid(conn)
+```
+
+The `DBI::dbDisconnect` function closes the warehouse connection. 
+
+```{r}
+DBI::dbDisconnect(conn)
 ```
 
 ## "Raw" tables and Postgres views  
 
-One can use the `DBI::dbListTables` function to see all the tables in the database. You'll notice that every "table" in the database is actually comprised of two tables: an unedited version of the data, referred to as the "raw" table, and a cleaned up Postgres view of the data. For example, the `_20c_freezer` table is the Postgres view for an inventory schema we defined, and the `_20c_freezer$raw` table is unedited table. 
+One can use the `DBI::dbListTables` function to see all the tables in the database. You'll notice that every "table" in the database is actually comprised of two tables: an unedited version of the data, referred to as the "raw" table, and a cleaned up Postgres view of the data. For example, the `analyte` table is the Postgres view for a custom entity schema we defined, and the `analyte$raw` table is unedited table. 
 
-```{r, eval=FALSE}
-DBI::dbListTables(conn)[3:4]
+```{r, eval=TRUE}
+conn <- warehouse_connect(tenant = "hemoshear-dev",
+                          username = Sys.getenv("BENCHLING_DEV_WAREHOUSE_USERNAME"),
+                          password = Sys.getenv("BENCHLING_DEV_WAREHOUSE_PASSWORD"))
+DBI::dbListTables(conn)[1:6]
 ```
 
 In general, the Postgres views are more convenient to work with, since the raw tables contain many Benchling identifiers intended for internal use. In our experience, however, there are some use cases where the raw tables should be accessed instead of the Postgres views. For example, when one needs to extract assay results submitted in notebook entries that have not been approved, one will need to use the "raw" tables to do so, since the Postgres views will not contain assay results from unreviewed notebooks. Refer to the [official Benchling documentation](https://docs.benchling.com/docs/warehouse-columns-rows-descriptions#the-benchling-warehouse-columns-descriptions) for more information about the differences between the raw tables and the Postgres views.  
@@ -104,25 +113,25 @@ In general, the Postgres views are more convenient to work with, since the raw t
 
 ## Retrieving data from the warehouse  
 
-To retrieve data from a table in the data warehouse, one can use the `DBI::dbGetQuery` function. For example, here is the code one would use to retrieve all the "plate" entities from the data warehouse. Take a moment to look at the results of this query, as well as the [descriptions of the columns in the official Benchling documentation](https://docs.benchling.com/docs/warehouse-columns-rows-descriptions).
+To retrieve data from a table in the data warehouse, one can use the `DBI::dbGetQuery` function. For example, here is the code one would use to retrieve all the notebook entries from the data warehouse. Take a moment to look at the results of this query, as well as the [descriptions of the columns in the official Benchling documentation](https://docs.benchling.com/docs/warehouse-columns-rows-descriptions).
 
-```{r, eval=FALSE}
-DBI::dbGetQuery(conn, "SELECT id,schema_id,barcode FROM plate") %>%
+```{r, eval=TRUE}
+DBI::dbGetQuery(conn, "SELECT * FROM entry") %>%
   tail()
 ```
 
 
 ### Custom entities
 
-The data warehouse for your tenant will come pre-loaded with tables relevant to any entity schemas that are universal to the Benchling system. For example, the `plate` inventory schema is available on every Benchling installation. When a custom entity or result schema is defined, Benchling creates a new set of tables in the database: one for the Postgres view and one for the raw data. For example, we defined a custom entity schema for representing analytes. 
+The data warehouse for your tenant will come pre-loaded with tables relevant to any entity schemas that are universal to the Benchling system. For example, the `entry` schema is available on every Benchling installation with ELN functionality. When a custom entity or result schema is defined, Benchling creates a new set of tables in the database: one for the Postgres view and one for the raw data. For example, we defined a custom entity schema for representing analytes. 
 
 ![Custom "Analyte" entity](img/analyte-screenshot.png){width=85%}
 ---
 
 When we defined the "Analyte" custom entity schema, Benchling created a table in the data warehouse called `analyte`. All the analyte entities we created can be retrieved with `DBI::dbGetQuery`. 
 
-```{r, eval=FALSE}
-DBI::dbGetQuery(conn, "SELECT id,schema,precursor_ion_m_z,product_ion_m_z,assay FROM analyte") %>%
+```{r, eval=TRUE}
+DBI::dbGetQuery(conn, "SELECT schema,id,name$,precursor_ion_mz,product_ion_mz FROM analyte") %>%
   head()
 ```
 
@@ -133,7 +142,12 @@ DBI::dbGetQuery(conn, "SELECT id,schema,precursor_ion_m_z,product_ion_m_z,assay 
   head()
 ```
 
-It is important to keep the `schema` field in tables retrieved from the data warehouse, as many functions in `benchlingr` need it to work properly. 
+
+`schema`, `id`, and `name$` are important fields present in every entity warehouse table. The `schema` field is the name of the warehouse table itself, which is necessary for some of the critical functionality in `benchlingr`. The `id` field is the Benchling identifier for the entity and the `name$` is the human-readable name for the entity. If a warehouse table $A$ for an entity or results schema contains an entity field, the values in that entity field will be the identifiers for the entity. The information related to all entities referenced in table $A$ will be found in table $B$, where $B$ is the
+
+
+
+
 
 
 Our custom "analyte" entity can be associated with one or more "assays", which is a multi-select field. Multi-select fields are represented as JSON objects in the Postgres database, thus the user will want to use one of the many R packages available for working with JSON to coerce the values to an appropriate type for further processing. `RJSONIO` is one package that can be used for coercing a JSON object into a R list or character vector. 
