@@ -21,7 +21,7 @@ for (i in data_dirs) {
 
 test_that("download_blobs works", {
   download_blobs(client, file_map=file_map, outdir='download_blobs_data')
-  expect_equal(length(dir('data')), 2)
+  expect_equal(length(dir('download_blobs_data')), 2)
 })
 
 test_that("download_blobs_in_warehouse_table works when file column is single-select.", {
