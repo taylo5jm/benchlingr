@@ -4,7 +4,7 @@
 \alias{get_entity_table}
 \title{Get additional information about entities in a warehouse table}
 \usage{
-get_entity_table(conn, df, columns = NULL, return_cols = "*")
+get_entity_table(conn, df, columns = NULL, return_cols = "*", key = "id")
 }
 \arguments{
 \item{conn}{Database connection opened with `warehouse_connect`}
@@ -22,6 +22,11 @@ The default value (`*`) will return every column. When specifying a different
 set of columns to return, it is recommended that one includes the `id` 
 and `name$` columns. If they are not explicitly included, the function 
 will add them implicitly.}
+
+\item{key}{The column in the data warehouse table that should be used
+for the primary key, which can be `id` or `name$`. The default option, `id`,
+is the Benchling identifier. The `name$` option should be used if the table 
+has been transformed by `replace_entity_id_with_name`.}
 }
 \value{
 List of data frames with rows from warehouse table that correspond to 

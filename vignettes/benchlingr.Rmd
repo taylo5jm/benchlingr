@@ -113,7 +113,7 @@ In general, the Postgres views are more convenient to work with, since the raw t
 
 ## Retrieving data from the warehouse  
 
-To retrieve data from a table in the data warehouse, one can use the `DBI::dbGetQuery` function. For example, here is the code one would use to retrieve all the notebook entries from the data warehouse. Take a moment to look at the results of this query, as well as the [descriptions of the columns in the official Benchling documentation](https://docs.benchling.com/docs/warehouse-columns-rows-descriptions).
+To retrieve data from a table in the data warehouse, one can use the `DBI::dbGetQuery` function. For example, here is the code one would use to retrieve all the notebook entries from the data warehouse. Take a moment to look at the results of this query, as well as the [descriptions of the columns in the official Benchling documentation.](https://docs.benchling.com/docs/warehouse-columns-rows-descriptions).
 
 ```{r, eval=TRUE}
 DBI::dbGetQuery(conn, "SELECT * FROM entry") %>%
@@ -143,59 +143,39 @@ DBI::dbGetQuery(conn, "SELECT id,schema,precursor_ion_m_z,product_ion_m_z,assay 
 ```
 
 
-`schema`, `id`, and `name$` are important fields present in every entity warehouse table. The `schema` field is the name of the warehouse table itself, which is necessary for some of the critical functionality in `benchlingr`. The `id` field is the Benchling identifier for the entity and the `name$` is the human-readable name for the entity. If a warehouse table $A$ for an entity or results schema contains an entity field, the values in that entity field will be the identifiers for the entity. The information related to all entities referenced in table $A$ will be found in table $B$, where $B$ is the
+`schema`, `id`, and `name$` are important fields present in every entity warehouse table. The `schema` field is the system name of the schema, which is necessary for some of the critical functionality in `benchlingr`. The `id` field is the Benchling identifier for the entity. The identifier for a custom entity will always start with `bfi_`, but other built-in Benchling entities will have specific prefixes in their identifiers. For example, `container` is a built-in Benchling entity schema and the identifiers for containers start with `con_`. Finally, `name$` is the name for the entity. Typically the name is human-friendly, but there are several ways an entity can be named depending on how the schema is configured. 
+
+In addition to `schema`, `id`, and `name$`, there are many other columns present in every entity table. Read more about the other columns in the [Benchling documentation](https://docs.benchling.com/docs/warehouse-columns-rows-descriptions#example-entity-table). 
+
+Finally, the warehouse table for a custom entity will contain a column for every user-defined field in the entity. In our "analyte" example, each analyte entity can have a precursor ion m/z and a product ion m/z, which are representing as floats or "decimals" using the Benchling terminology. 
 
 
+### Results
 
+Similar to entities, every results schema in Benchling is represented as a table in the data warehouse. There are several differences between representations of results and entities worth mentioning. 
 
+First, results do not have names, but entities do. Second, both results and entities have identifiers, but entity identifiers tend to be more useful, since many operations involve finding results through entities linked to them, and not necessarily finding results directly via the identifier. 
 
+Third, when entities are registered, they become available in the Postgres view in the data warehouse shortly after (Benchling always has a short delay for data to be exported to the warehouse). When results are submitted, they are *not* available in the Postgres view in the data warehouse, but they are available in the "raw" table. Results only become available in the Postgres view after the notebook entry is reviewed. For that reason, the "raw" tables for results typically need to be accessed more frequently than the "raw" tables for entities, especially if notebook entries are not always being reviewed before the data contained within must be accessed. 
 
-Our custom "analyte" entity can be associated with one or more "assays", which is a multi-select field. Multi-select fields are represented as JSON objects in the Postgres database, thus the user will want to use one of the many R packages available for working with JSON to coerce the values to an appropriate type for further processing. `RJSONIO` is one package that can be used for coercing a JSON object into a R list or character vector. 
+Finally, results are linked to particular notebook entries in the data warehouse, but entities are not. 
 
-```{r, eval=FALSE}
-res <- DBI::dbGetQuery(conn, "SELECT name$,assay FROM analyte")[1,]
-res$assay
-RJSONIO::fromJSON(res$assay)
-```
+Shown below is a screenshot of a results table in a notebook entry with a schema called "Simple Plate Analyte Mapping". This result schema with two fields: "Plate" and "Analytes". The "Plate" field is an integer type that serves as a loose identifier for an assay plate, and the "Analytes" field is a custom entity type "Analyte" that we discussed in the previous section. The "Analytes" field can also take on multiple values. 
 
-Custom entities can have fields that are other custom entity types. For example, we defined a custom entity schema for cell cultures, which are connected to a "study" entity that contains the metadata pertaining to an experiment, including a human-readable identifier, who performed the experiment, the objectives of the experiment, etc. 
+![Example of a results table in a notebook with two fields: "Plate" and "Analytes". The "Plate" field is an integer type and the "Analytes" field is a custom entity type called "Analyte" and multiple values are enabled. plate 1 corresponds to the Methylmalonic Acid isotopes and plate 2 corresponds to the Uric Acid isotopes.](img/simple_plate_analyte_mapping_results_example.png)
 
-![Custom "cell culture" entity schema](img/cell_culture_screenshot.png){width=85%}
-The `study` field in the `cell_culture` schema is a multi-select, entity field, since we decided that a cell culture can be linked to multiple study entities. 
+To extract this data from the warehouse, use the `DBI::dbGetQuery` function. In this case, I use the identifier for the notebook entry to extract all results of the `simple_plate_analyte_mapping` schema. I'm looking in the "raw" table because the notebook entry with this table has not been reviewed yet. 
 
-```{r, eval=FALSE}
-cc <- DBI::dbGetQuery(conn, "SELECT schema,id,name$,study FROM cell_culture") %>%
-  .[1,]
-cc
-```
-
-In this example, only one study is linked to this particular cell culture, so we can simply use `RJSONIO::fromJSON` to coerce the `study` column to a more user-friendly character vector. 
-
-```{r, eval=FALSE}
-cc$study <- RJSONIO::fromJSON(cc$study)
-cc$study
-```
-
-Now that we have the identifier for the study cleaned up, we can use this identifier to extract the information in the data warehouse that pertains to the study. 
-
-```{r, error=TRUE, eval=FALSE}
-DBI::dbGetQuery(conn, "SELECT * FROM study WHERE id = 'bfi_ZAZ84eD3'")
-```
-The code above did not work, because the warehouse table for "study" is not actually called `study`. In this case, the field in the "cell culture" table is called "study", but the corresponding entity schema is actually called "study code". 
-
-![study code entity](img/study_code_screenshot.png){width=85%}
-
-The `.map_entity_field_names_to_warehouse_tables` function will take a warehouse data frame as input and return a character vector where the names are the entity column names in the data frame and the values are the warehouse table names. In this example, the `study` column in the `cc` data frame is connected to the `study_code` warehouse table. 
-
-```{r, eval=FALSE}
-.map_entity_field_names_to_warehouse_tables(conn, cc)
+```{r}
+DBI::dbGetQuery(conn, "SELECT * FROM simple_plate_analyte_mapping$raw WHERE entry_id$ = 'etr_MWQ7M7Pz'")
 ```
 
 
-The identifier for any custom entity will start with `bfi_`. To find more information about a custom entity, one can search the data warehouse by ID:
+Many of the columns in the "raw" tables should not be used, such as `_pkey` and `_sync_key`. It is important to also extract the `$archived$` column to see whether or not results are archived, as well as the `schema` column so that you may use `benchlingr` tools to pull information about entity fields in the results. 
 
-```{r, eval=FALSE}
-DBI::dbGetQuery(conn, "SELECT id,name$ FROM study_code WHERE id = 'bfi_ZAZ84eD3'")
+
+```{r}
+df <- DBI::dbGetQuery(conn, "SELECT schema,archived$,plate,analytes FROM simple_plate_analyte_mapping$raw WHERE entry_id$ = 'etr_MWQ7M7Pz'")
 ```
 
 ### Multi-select columns
@@ -204,18 +184,28 @@ Fields in entities and results can be configured such that multiple values can b
 
 To unpack the value such that the original row is copied for each value in the multi-select column, use the `shape="long"` argument. 
 
-```{r, eval=FALSE}
-new_df <- expand_multiselect_column(conn, df, column="analyte", shape="long")
+```{r, eval=TRUE}
+expand_multiselect_column(conn, df, column="analytes", shape="long")
 ```
 
-To unpack the value into new columns in the original row, use the `shape="wide"` argument. By default, the new columns are named by appending a number ($(1, 2, ..., n)$, where n is the maximum number of elements that appear in a value within the multi-select field) to the original column name.
+To unpack the value into new columns in the original row, use the `shape="wide"` argument. By default, the new columns are named by appending a number ($(1, 2, ..., n)$, where n is the maximum number of elements that appear in a value within the multi-select field) to the original column name. When the using the `"wide"` argument, the original column of `pq_jsonb` type is stored.
 
-```{r, eval=FALSE}
-new_df <- expand_multiselect_column(conn, df, column="analyte", shape="wide")
+```{r, eval=TRUE}
+expand_multiselect_column(conn, df, column="analytes", shape="wide")
 ```
 
 
 
+```{r}
+res <- expand_multiselect_column(conn, df, column="analytes", shape="long")
+replace_entity_id_with_name(conn, res)
+```
+
+
+```{r, eval=FALSE}
+res <- expand_multiselect_column(conn, df, column="analytes", shape="wide")
+replace_entity_id_with_name(conn, res)
+```
 
 
 # Accessing the Benchling API via the Python SDK in R. 

@@ -10,6 +10,15 @@ test_that("get_entity_table works for tables with one entity column", {
   expect_equal(nrow(res$analytes), 4)
 })
 
+test_that("get_entity_table works for tables with one entity column after
+           table has been transformed by replace_entity_id_with_name", {
+  df <- DBI::dbGetQuery(conn, "SELECT * FROM simple_plate_analyte_mapping$raw WHERE entry_id$ = 'etr_MWQ7M7Pz'")
+  df <- df %>% replace_entity_id_with_name(conn, .)
+  res <- get_entity_table(conn,  df, key = "name$")
+  expect_equal(nrow(res$analytes), 4)
+})
+
+
 
 test_that("get_entity_table works for tables with more than one entity column", {
   df <- DBI::dbGetQuery(

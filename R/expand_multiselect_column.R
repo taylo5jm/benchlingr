@@ -16,7 +16,6 @@
 #'     password = Sys.getenv("BENCHLING_DEV_WAREHOUSE_PASSWORD"))
 #' res <- DBI::dbGetQuery(conn, "SELECT * FROM simple_plate_analyte_mapping$raw")
 #' list_multiselect_columns(conn, res)
-#' DBI::dbDisconnect(conn)
 #' @export
 #' 
 list_multiselect_columns <- function(conn, df) {
@@ -28,6 +27,9 @@ list_multiselect_columns <- function(conn, df) {
   res <- DBI::dbGetQuery(conn, 
     glue::glue("SELECT * FROM schema_field WHERE schema_id = {shQuote(schema_id)}")) %>%
     dplyr::filter(!is.na(target_schema_id), is_multi)
+  vec <- purrr::map_int(res$name, ~ which(colnames(df) == .))
+  names(vec) <- res$name
+  vec
 }
 
 
