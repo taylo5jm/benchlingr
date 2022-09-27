@@ -113,7 +113,11 @@ In general, the Postgres views are more convenient to work with, since the raw t
 
 ## Retrieving data from the warehouse  
 
-To retrieve data from a table in the data warehouse, one can use the `DBI::dbGetQuery` function. For example, here is the code one would use to retrieve all the notebook entries from the data warehouse. Take a moment to look at the results of this query, as well as the [descriptions of the columns in the official Benchling documentation.](https://docs.benchling.com/docs/warehouse-columns-rows-descriptions).
+To retrieve data from a table in the data warehouse, one can use the `DBI::dbGetQuery` function. The data warehouse consists of several types of tables, each with a different set of base columns. 
+
+For example, here is the code one would use to retrieve all the notebook entries from the data warehouse. Take a moment to look at the results of this query, as well as the [descriptions of the columns in the official Benchling documentation](https://docs.benchling.com/docs/warehouse-columns-rows-descriptions). The 
+
+- 
 
 ```{r, eval=TRUE}
 DBI::dbGetQuery(conn, "SELECT * FROM entry") %>%
@@ -123,7 +127,7 @@ DBI::dbGetQuery(conn, "SELECT * FROM entry") %>%
 
 ### Custom entities
 
-The data warehouse for your tenant will come pre-loaded with tables relevant to any entity schemas that are universal to the Benchling system. For example, the `entry` schema is available on every Benchling installation with ELN functionality. When a custom entity or result schema is defined, Benchling creates a new set of tables in the database: one for the Postgres view and one for the raw data. For example, we defined a custom entity schema for representing analytes. 
+The data warehouse for your tenant will come pre-loaded with tables relevant to any entity schemas that are universal to the Benchling system. For example, the `entry` schema is available on every Benchling installation with ELN functionality. Other tables are created when new schemas are defined in Benchling. When a custom entity or result schema is defined, Benchling creates a new set of tables in the database: one for the Postgres view and one for the raw data. For example, we defined a custom entity schema for representing analytes. 
 
 ![Custom "Analyte" entity](img/analyte-screenshot.png){width=85%}
 ---
@@ -158,9 +162,9 @@ First, results do not have names, but entities do. Second, both results and enti
 
 Third, when entities are registered, they become available in the Postgres view in the data warehouse shortly after (Benchling always has a short delay for data to be exported to the warehouse). When results are submitted, they are *not* available in the Postgres view in the data warehouse, but they are available in the "raw" table. Results only become available in the Postgres view after the notebook entry is reviewed. For that reason, the "raw" tables for results typically need to be accessed more frequently than the "raw" tables for entities, especially if notebook entries are not always being reviewed before the data contained within must be accessed. 
 
-Finally, results are linked to particular notebook entries in the data warehouse, but entities are not. 
+Finally, results are linked to particular notebook entries in the data warehouse, but entities are not. In other words, a warehouse table for a results schema will have a column for a notebook entry identifier, but an entity table will not have a column for notebook entry identifier. 
 
-Shown below is a screenshot of a results table in a notebook entry with a schema called "Simple Plate Analyte Mapping". This result schema with two fields: "Plate" and "Analytes". The "Plate" field is an integer type that serves as a loose identifier for an assay plate, and the "Analytes" field is a custom entity type "Analyte" that we discussed in the previous section. The "Analytes" field can also take on multiple values. 
+Shown below is a screenshot of a results table in a notebook entry with a schema called "Simple Plate Analyte Mapping". This is a result schema with two fields: "Plate" and "Analytes". The "Plate" field is an integer type that serves as a loose identifier for an assay plate, and the "Analytes" field is a custom entity type "Analyte" that we discussed in the previous section. The "Analytes" field can also take on multiple values. 
 
 ![Example of a results table in a notebook with two fields: "Plate" and "Analytes". The "Plate" field is an integer type and the "Analytes" field is a custom entity type called "Analyte" and multiple values are enabled. plate 1 corresponds to the Methylmalonic Acid isotopes and plate 2 corresponds to the Uric Acid isotopes.](img/simple_plate_analyte_mapping_results_example.png)
 
@@ -171,7 +175,7 @@ DBI::dbGetQuery(conn, "SELECT * FROM simple_plate_analyte_mapping$raw WHERE entr
 ```
 
 
-Many of the columns in the "raw" tables should not be used, such as `_pkey` and `_sync_key`. It is important to also extract the `$archived$` column to see whether or not results are archived, as well as the `schema` column so that you may use `benchlingr` tools to pull information about entity fields in the results. 
+Many of the columns in the "raw" tables should not be used in any context, such as `_pkey` and `_sync_key`, because they are internal identifiers for Benchling. It is important to also extract the `$archived$` column to see whether or not results are archived, as well as the `schema` column so that you may use `benchlingr` tools to pull information about entity fields in the results. 
 
 
 ```{r}
@@ -188,23 +192,41 @@ To unpack the value such that the original row is copied for each value in the m
 expand_multiselect_column(conn, df, column="analytes", shape="long")
 ```
 
-To unpack the value into new columns in the original row, use the `shape="wide"` argument. By default, the new columns are named by appending a number ($(1, 2, ..., n)$, where n is the maximum number of elements that appear in a value within the multi-select field) to the original column name. When the using the `"wide"` argument, the original column of `pq_jsonb` type is stored.
+To unpack the value into new columns in the original row, use the `shape="wide"` argument. By default, the new columns are named by appending a number to the original column name ($(1, 2, ..., n)$, where n is the maximum number of elements that appear in a value within the multi-select field). When the using the `"wide"` argument, the original column of `pq_jsonb` type is stored in the data frame. 
 
 ```{r, eval=TRUE}
 expand_multiselect_column(conn, df, column="analytes", shape="wide")
 ```
+### Entities
 
-
+In a data warehouse table, entity links are represented as identifiers. In the example below, "analytes" is a custom-entity column, so all the identifiers start with "bfi_".  
 
 ```{r}
 res <- expand_multiselect_column(conn, df, column="analytes", shape="long")
-replace_entity_id_with_name(conn, res)
+res
+```
+
+With the `benchlingr` package, you can easily pull additional information about entities in a table without writing more SQL. The `get_entity_table` function will take a warehouse table as input and return information about the entities contained within the table. 
+
+In this example, we have a results table in which four distinct "analyte" entities appear. The `get_entity_table` will look in the correct warehouse table (`analyte`) for the rows that correspond to the identifiers in our data. The function also takes an argument called `columns` that allows one to choose which entity columns to pull information for. In the absence of a `columns` argument, the function will try to pull information for all entity columns in the table.
+
+```{r}
+get_entity_table(conn, res, columns = "analytes")
+```
+The `replace_entity_id_with_name` function will simply replace the Benchling identifiers with the names of the entities. 
+```{r}
+analytes <- replace_entity_id_with_name(conn, res)
+analytes
 ```
 
 
-```{r, eval=FALSE}
-res <- expand_multiselect_column(conn, df, column="analytes", shape="wide")
-replace_entity_id_with_name(conn, res)
+The function will not work properly for data frames in which a multi-select, entity column is expanded using the `shape='wide'` argument with the `expand_multiselect_column` function. If you need to replace identifiers of a multi-select, entity column, then it is best to use the `replace_entity_id_with_name` function *before* calling `expand_multiselect_column`. 
+
+```{r, eval=TRUE}
+head(df)
+res <- replace_entity_id_with_name(conn, df)
+res <- expand_multiselect_column(conn, res, column="analytes", shape="wide")
+head(res)
 ```
 
 
@@ -242,14 +264,6 @@ DBI::dbGetQuery(conn, "SELECT id,display_id,schema_id,entry_template_id,review_s
   head()
 ```
 
-If the notebook entry uses a custom metadata schema, that metadata can also be found in the data warehouse. For example, we have a "Study Plan Entry" notebook schema for a certain type of notebook entry. The warehouse table for this schema is `study_plan_entry`.
-
-```{r, eval=FALSE}
-DBI::dbGetQuery(conn, "SELECT id,study_code FROM study_plan_entry") %>%
-  head()
-```
-
-
 The content of the notebook entries (aside from results and entities), must be retrieved from the API. To retrieve a notebook entry, use the `entries$get_entry_by_id` method. The method takes the ID of an entry as an argument, which starts with `etr_`. 
 
 ```{r}
@@ -266,6 +280,9 @@ class(entry)
 Benchling users can record information in unstructured tables within notebook entries. 
 
 ![Example of an unstructured table in a Benchling notebook entry](img/unstructured_entry_tables.png)
+----
+
+
 The `read_entry_tables` function extracts all unstructured tables in a notebook entry, and returns them as a list of data frames for further processing in R. 
 
 ```{r}
@@ -280,7 +297,7 @@ In addition to unstructured tables, Benchling users can create "plate diagrams" 
 
 ![Plate diagrams in a Benchling notebook entry.](img/plate_diagram_entry.png)
 
-It is useful to convert these tables into long form for further processing in R. To do so, one can start with the `read_plate_diagrams` function instead of the `read_entry_tables` function. The `read_plate_diagrams` will extract the plate diagrams from the notebook entry and convert the output data frames into long form tables with three columns: row, column, and content. The `row` is a letter for the row on the plate, the `column` is an integer for the column on the plate, and `content` is the text that appears in the cell in the table. 
+It is useful to convert these tables into long form for further processing in R. To do so, one can start with the `read_plate_diagrams` function instead of the `read_entry_tables` function. The `read_plate_diagrams` will extract the plate diagrams from the notebook entry and convert the output data frames into long form tables with three columns: `row`, `column`, and `content`. The `row` is a letter for the row on the plate, the `column` is an integer for the column on the plate, and `content` is the text that appears in the cell in the table. 
 
 The names of the list will be the names of the tables in the notebook entry.  
 
@@ -308,10 +325,11 @@ Benchling users can attach files to results and entities, which are referred to 
 
 ----
 
-The schema name for this example table is `simple_plate_analyte_mapping`, so we can query the table to get the identifiers and file names for the blobs to download. 
+The schema name for this example table is `simple_plate_analyte_mapping`, so we can query the table to get the identifiers and file names for the blobs to download. In this case, we use the entry identifier to filter the table down to the results we actually care about, but one could filter the table in various ways (ex. creation time). 
 
 ```{r, eval=TRUE}
-d <- DBI::dbGetQuery(conn, "SELECT plate,analytes,file FROM simple_plate_analyte_mapping$raw WHERE entry_id$ = 'etr_JYUlMiIs'")
+d <- DBI::dbGetQuery(conn, "SELECT plate,analytes,file FROM simple_plate_analyte_mapping$raw 
+                     WHERE entry_id$ = 'etr_JYUlMiIs'")
 d
 ```
 

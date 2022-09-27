@@ -1,5 +1,9 @@
 # benchlingr
-### Unofficial R Interface to the "Benchling Cloud R&D" Laboratory Information Management System (LIMS).
+### Unofficial R Interface to the "Benchling Cloud R&D" Laboratory Information Management System (LIMS).  
+
+![R package check, build, and test](https://github.com/hemoshear/benchlingr/actions/workflows/check-full.yaml/badge.svg)
+
+
 
 Benchling is a laboratory information management system with a developer platform that is comprised of a Postgres database, an application programming interface (API), an "Events" system that is built on top of the AWS EventBridge service, as well as a Python software development kit (SDK). `benchlingr` is a R package that aims to make the developer platform accessible to data scientists.
 
