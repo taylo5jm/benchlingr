@@ -2,11 +2,11 @@
 # Need help debugging build failures? Start at https://github.com/r-lib/actions#where-to-find-help
 on:
   push:
-    branches: [9-working-r-cmd-check-github-workflow]
+    branches: [ 30-fix-cache-step-in-github-actions ]
   pull_request:
-    branches: [main, master]
+    branches: [ main, master ]
   release:
-    types: [published]
+    types: [ published ]
   workflow_dispatch:
 
 name: pkgdown
@@ -24,16 +24,34 @@ jobs:
       - uses: actions/checkout@v2
 
       - uses: r-lib/actions/setup-pandoc@v2
-      
+
       - name: Install dependencies
         run: |
           sudo apt-get update
           sudo apt-get install libcurl4-openssl-dev libharfbuzz-dev libfribidi-dev
-          
+
       - uses: r-lib/actions/setup-r@v2
         with:
           use-public-rspm: true
-          
+
+      - name: Set RENV_PATHS_ROOT
+        shell: bash
+        run: |
+          echo "RENV_PATHS_ROOT=${{ runner.temp }}/renv" >> $GITHUB_ENV
+
+      - name: Install and activate renv
+        run: |
+          install.packages("renv")
+          renv::activate()
+        shell: Rscript {0}
+
+      - name: Get R and OS version
+        id: get-version
+        run: |
+          cat("##[set-output name=os-version;]", sessionInfo()$running, "\n", sep = "")
+          cat("##[set-output name=r-version;]", R.Version()$version.string, sep = "")
+        shell: Rscript {0}
+
       - name: Cache packages
         uses: actions/cache@v1
         with:
@@ -41,17 +59,35 @@ jobs:
           key: ${{ runner.os }}-renv-${{ hashFiles('**/renv.lock') }}
           restore-keys: |
             ${{ runner.os }}-renv-
-      
-      - name: Restore packages
+
+#      - name: Restore packages
+#        shell: Rscript {0}
+#        run: |
+#          if (!requireNamespace("renv", quietly = TRUE)) install.packages("renv")
+#          renv::restore()
+
+      - name: Restore Renv package cache
+        uses: actions/cache@v2
+        with:
+          path: ${{ env.RENV_PATHS_ROOT }}
+          key: ${{ steps.get-version.outputs.os-version }}-${{ steps.get-version.outputs.r-version }}-${{inputs.cache-version }}-${{ hashFiles('renv.lock') }}
+          restore-keys: ${{ steps.get-version.outputs.os-version }}-${{ steps.get-version.outputs.r-version }}-${{inputs.cache-version }}-
+
+      - name: Install renv dependencies
+        run: renv::restore()
         shell: Rscript {0}
+
+      - name: Don't use tar 1.30 from Rtools35 to store the cache
+        shell: bash
         run: |
-          if (!requireNamespace("renv", quietly = TRUE)) install.packages("renv")
-          renv::restore()
-          
+          if command -v /c/Rtools/bin/tar && /c/Rtools/bin/tar --version | grep -q 'tar (GNU tar) 1.30'
+            then echo 'C:/Program Files/Git/usr/bin' >> $GITHUB_PATH
+          fi
+
       - name: Install devtools
         run: |
           sudo Rscript -e "install.packages('devtools')"
-          
+
       - name: Install benchlingr
         run: |
           sudo Rscript -e "devtools::install()"
