@@ -15,7 +15,6 @@ knitr::opts_chunk$set(
 ```
 
 ```{r setup}
-remotes::install_github("hemoshear/benchlingr", ref='main', auth_token={{secret.AUTH_TOKEN_GITHUB}})
 library(benchlingr)
 library(magrittr)
 ```
