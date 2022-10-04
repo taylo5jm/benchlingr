@@ -38,7 +38,7 @@ jobs:
         run: |
           install.packages("pkgdown")
           install.packages('remotes')
-          remotes::install_github("hemoshear/benchlingr", ref='main', auth_token={{ secrets.AUTH_TOKEN_GITHUB }})
+          remotes::install_github("hemoshear/benchlingr", ref='main', auth_token=${{ env.GITHUB_PAT }})
           pkgdown::build_site_github_pages(new_process = FALSE, install = FALSE)
         shell: Rscript {0}
 
