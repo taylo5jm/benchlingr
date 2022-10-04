@@ -38,9 +38,9 @@ jobs:
         uses: actions/cache@v1
         with:
           path: ${{ env.RENV_PATHS_ROOT }}
-          key: ${{ runner.os }}-renv-${{ hashFiles('**/renv.lock') }}
+          key: ${{ runner.os }}-renv-tess
           restore-keys: |
-            ${{ runner.os }}-renv-
+            ${{ runner.os }}-renv-test
 
       - name: Restore packages
         shell: Rscript {0}
