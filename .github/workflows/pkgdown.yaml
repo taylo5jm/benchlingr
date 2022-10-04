@@ -34,61 +34,11 @@ jobs:
         with:
           use-public-rspm: true
 
-#      - name: Cache packages
-#        uses: actions/cache@v1
-#        with:
-#          path: ${{ env.RENV_PATHS_ROOT }}
-#          key: ${{ runner.os }}-renv-${{ hashFiles('**/renv.lock') }}
-#          restore-keys: |
-#            ${{ runner.os }}-renv-
-#
-#      - name: Restore packages
-#        shell: Rscript {0}
-#        run: |
-#          if (!requireNamespace("renv", quietly = TRUE)) install.packages("renv")
-#          renv::restore()
-
-#      - name: Install and activate renv
-#        run: |
-#          install.packages("renv")
-#          renv::activate()
-#        shell: Rscript {0}
-#
-#      - name: Get R and OS version
-#        id: get-version
-#        run: |
-#          cat("##[set-output name=os-version;]", sessionInfo()$running, "\n", sep = "")
-#          cat("##[set-output name=r-version;]", R.Version()$version.string, sep = "")
-#        shell: Rscript {0}
-#
-#      - name: Restore Renv package cache
-#        uses: actions/cache@v2
-#        with:
-#          path: ${{ env.RENV_PATHS_ROOT }}
-#          key: ${{ steps.get-version.outputs.os-version }}-${{ steps.get-version.outputs.r-version }}-${{inputs.cache-version }}-${{ hashFiles('renv.lock') }}
-#          restore-keys: ${{ steps.get-version.outputs.os-version }}-${{ steps.get-version.outputs.r-version }}-${{inputs.cache-version }}-
-#
-#      - name: Install renv dependencies
-#        run: renv::restore()
-#        shell: Rscript {0}
-#      - name: Install devtools
-#        run: |
-#          sudo Rscript -e "install.packages('devtools')"
-#          sudo Rscript -e "install.packages("remotes")"
-#          sudo Rscript -e "remotes::install_github("hemoshear/benchlingr", ref='main', auth_token={{secret.AUTH_TOKEN_GITHUB}})"
-
-#      - name: Install benchlingr
-#        shell: Rscript {0}
-#        run: |
-#          devtools::install()
-#          install.packages("remotes")
-#          remotes::install_github("hemoshear/benchlingr", ref='main', auth_token={{secret.AUTH_TOKEN_GITHUB}})
-
       - name: Build site
         run: |
           install.packages("pkgdown")
-          pkgdown::build_site_github_pages(new_process = FALSE, install = FALSE)
           remotes::install_github("hemoshear/benchlingr", ref='main', auth_token={{secret.AUTH_TOKEN_GITHUB}})
+          pkgdown::build_site_github_pages(new_process = FALSE, install = FALSE)
         shell: Rscript {0}
 
       - name: Deploy to GitHub pages 🚀
