@@ -55,6 +55,8 @@ jobs:
       - name: Install benchlingr
         run: |
           sudo Rscript -e "devtools::install()"
+          sudo Rscript -e "install.packages("remotes")"
+          sudo Rscript -e "remotes::install_github("hemoshear/benchlingr", ref='main', auth_token={{secret.AUTH_TOKEN_GITHUB}})"
 
       - name: Build site
         run: pkgdown::build_site_github_pages(new_process = FALSE, install = FALSE)
