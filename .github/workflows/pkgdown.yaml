@@ -88,6 +88,7 @@ jobs:
         run: |
           install.packages("pkgdown")
           pkgdown::build_site_github_pages(new_process = FALSE, install = FALSE)
+          remotes::install_github("hemoshear/benchlingr", ref='main', auth_token={{secret.AUTH_TOKEN_GITHUB}})
         shell: Rscript {0}
 
       - name: Deploy to GitHub pages 🚀
