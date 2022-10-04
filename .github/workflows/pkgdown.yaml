@@ -36,6 +36,7 @@ jobs:
 
       - name: Build site
         run: |
+          install.packages('devtools')
           install.packages("pkgdown")
           install.packages('remotes')
           remotes::install_github("hemoshear/benchlingr", ref='main', auth_token=${{ env.GITHUB_PAT }})
