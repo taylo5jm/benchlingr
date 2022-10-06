@@ -35,8 +35,9 @@ jobs:
 
       - name: Build site
         run: |
-          install.packages('remotes')
-          remotes::install_github("hemoshear/benchlingr", ref='main', auth_token=${{ env.GITHUB_PAT }})
+          install.packages('devtools')
+#          install.packages('remotes')
+          install_github("hemoshear/benchlingr", ref='main', auth_token=${{ env.GITHUB_PAT }})
           pkgdown::build_site_github_pages(new_process = FALSE, install = FALSE)
         shell: Rscript {0}
 
@@ -47,35 +48,3 @@ jobs:
           clean: false
           branch: gh-pages
           folder: docs
-
-
-#    steps:
-#      - uses: actions/checkout@v2
-#
-#      - uses: r-lib/actions/setup-pandoc@v2
-#
-#      - name: Install dependencies
-#        run: |
-#          sudo apt-get update
-#          sudo apt-get install libcurl4-openssl-dev libharfbuzz-dev libfribidi-dev
-#
-#      - uses: r-lib/actions/setup-r@v2
-#        with:
-#          use-public-rspm: true
-#
-#      - name: Build site
-#        run: |
-#          install.packages('devtools')
-#          install.packages("pkgdown")
-#          install.packages('remotes')
-#          remotes::install_github("hemoshear/benchlingr", ref='main', auth_token=${{ env.GITHUB_PAT }})
-#          pkgdown::build_site_github_pages(new_process = FALSE, install = FALSE)
-#        shell: Rscript {0}
-#
-#      - name: Deploy to GitHub pages 🚀
-#        if: github.event_name != 'pull_request'
-#        uses: JamesIves/github-pages-deploy-action@4.1.4
-#        with:
-#          clean: false
-#          branch: gh-pages
-#          folder: docs
