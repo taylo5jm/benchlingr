@@ -19,6 +19,8 @@ jobs:
       group: pkgdown-${{ github.event_name != 'pull_request' || github.run_id }}
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+      BENCHLING_DEV_WAREHOUSE_USERNAME: ${{ secrets.BENCHLING_DEV_WAREHOUSE_USERNAME }}
+      BENCHLING_DEV_WAREHOUSE_PASSWORD: ${{ secrets.BENCHLING_DEV_WAREHOUSE_PASSWORD }}
     steps:
       - uses: actions/checkout@v2
 
