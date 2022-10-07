@@ -21,6 +21,7 @@ jobs:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
       BENCHLING_DEV_WAREHOUSE_USERNAME: ${{ secrets.BENCHLING_DEV_WAREHOUSE_USERNAME }}
       BENCHLING_DEV_WAREHOUSE_PASSWORD: ${{ secrets.BENCHLING_DEV_WAREHOUSE_PASSWORD }}
+      BENCHLING_DEV_API_KEY: ${{ secrets.BENCHLING_DEV_API_KEY }}
     steps:
       - uses: actions/checkout@v2
 
@@ -34,6 +35,12 @@ jobs:
         with:
           extra-packages: any::pkgdown, local::.
           needs: website
+
+      - name: Set Benchling R package environment variables
+        run: |
+          echo "BENCHLING_DEV_WAREHOUSE_USERNAME=${{ env.BENCHLING_DEV_WAREHOUSE_USERNAME}}" >> ~/.Renviron
+          echo "BENCHLING_DEV_WAREHOUSE_PASSWORD=${{ env.BENCHLING_DEV_WAREHOUSE_PASSWORD }}" >> ~/.Renviron
+          echo "BENCHLING_DEV_API_KEY=${{ env.BENCHLING_DEV_API_KEY }}" >> ~/.Renviron
 
       - name: Build site
         run: |
