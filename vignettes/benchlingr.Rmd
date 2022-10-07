@@ -28,7 +28,7 @@ Benchling R&D Cloud is a laboratory information management system with a [develo
 Install the `benchlingr` package from GitHub using the `remotes` package. 
 
 ```{r, eval=FALSE}
-remotes::install_github("hemoshear/benchlingr", ref='main', auth_token={{secret.AUTH_TOKEN_GITHUB}})
+remotes::install_github("hemoshear/benchlingr")
 ```
 
 The `benchlingr` package also requires Python. We recommend using the [Anaconda distribution](https://www.anaconda.com/products/distribution)

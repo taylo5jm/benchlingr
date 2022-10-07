@@ -7,7 +7,7 @@
 
 on:
   push:
-    branches: [ 30-fix-cache-step-in-github-actions ]
+    branches: [ main, master ]
   pull_request:
     branches: [ main, master ]
   release:
