@@ -1,7 +1,13 @@
 url: https://upgraded-succotash-8df2b926.pages.github.io/
 template:
   bootstrap: 5
-  
+
+authors:
+  Justin Taylor:
+    html: <a href="mailto:taylor@hemoshear.com">E-Mail</a>
+  Davut Ucar:
+    html: <a href="mailto:ucar@hemoshear.com">E-Mail</a>
+
 reference:
 - title: Data warehouse
   desc: The Benchling data warehouse is a read-only, Postgres database.
