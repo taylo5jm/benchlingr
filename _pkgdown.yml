@@ -4,9 +4,7 @@ template:
 
 authors:
   Justin Taylor:
-    html: <a href="mailto:taylor@hemoshear.com">E-Mail</a>
   Davut Ucar:
-    html: <a href="mailto:ucar@hemoshear.com">E-Mail</a>
 
 reference:
 - title: Data warehouse
