@@ -12,7 +12,7 @@ Benchling is a laboratory information management system with a developer platfor
 Install the R package directly from GitHub using the `install_github` function in the remotes package. Use `install.packages('remotes')` to install the `remotes` package if you do not already have it and see the documentation with `?remotes::install_github` for more information.
 
 ```
-remotes::install_github("hemoshear/benchlingr")
+remotes::install_github("hemoshear/benchlingr", ref='main', auth_token={{secret.AUTH_TOKEN_GITHUB}})
 ```
 
 ### Configuration

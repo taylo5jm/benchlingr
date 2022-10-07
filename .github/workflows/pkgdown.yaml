@@ -2,11 +2,11 @@
 # Need help debugging build failures? Start at https://github.com/r-lib/actions#where-to-find-help
 on:
   push:
-    branches: [9-working-r-cmd-check-github-workflow]
+    branches: [ main, master ]
   pull_request:
-    branches: [main, master]
+    branches: [ main, master ]
   release:
-    types: [published]
+    types: [ published ]
   workflow_dispatch:
 
 name: pkgdown
@@ -19,45 +19,41 @@ jobs:
       group: pkgdown-${{ github.event_name != 'pull_request' || github.run_id }}
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
-      RENV_PATHS_ROOT: ~/.local/share/renv
+      BENCHLING_DEV_WAREHOUSE_USERNAME: ${{ secrets.BENCHLING_DEV_WAREHOUSE_USERNAME }}
+      BENCHLING_DEV_WAREHOUSE_PASSWORD: ${{ secrets.BENCHLING_DEV_WAREHOUSE_PASSWORD }}
+      BENCHLING_DEV_API_KEY: ${{ secrets.BENCHLING_DEV_API_KEY }}
     steps:
       - uses: actions/checkout@v2
 
       - uses: r-lib/actions/setup-pandoc@v2
-      
-      - name: Install dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install libcurl4-openssl-dev libharfbuzz-dev libfribidi-dev
-          
+
       - uses: r-lib/actions/setup-r@v2
         with:
           use-public-rspm: true
-          
-      - name: Cache packages
-        uses: actions/cache@v1
+
+      - uses: r-lib/actions/setup-r-dependencies@v2
         with:
-          path: ${{ env.RENV_PATHS_ROOT }}
-          key: ${{ runner.os }}-renv-${{ hashFiles('**/renv.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-renv-
-      
-      - name: Restore packages
-        shell: Rscript {0}
+          extra-packages: any::pkgdown, local::.
+          needs: website
+
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+          cache: 'pip' # caching pip dependencies
+      - run: pip install benchling-sdk
+
+      - name: Set Benchling R package environment variables
         run: |
-          if (!requireNamespace("renv", quietly = TRUE)) install.packages("renv")
-          renv::restore()
-          
-      - name: Install devtools
-        run: |
-          sudo Rscript -e "install.packages('devtools')"
-          
-      - name: Install benchlingr
-        run: |
-          sudo Rscript -e "devtools::install()"
+          echo "BENCHLING_DEV_WAREHOUSE_USERNAME=${{ env.BENCHLING_DEV_WAREHOUSE_USERNAME}}" >> ~/.Renviron
+          echo "BENCHLING_DEV_WAREHOUSE_PASSWORD=${{ env.BENCHLING_DEV_WAREHOUSE_PASSWORD }}" >> ~/.Renviron
+          echo "BENCHLING_DEV_API_KEY=${{ env.BENCHLING_DEV_API_KEY }}" >> ~/.Renviron
 
       - name: Build site
-        run: pkgdown::build_site_github_pages(new_process = FALSE, install = FALSE)
+        run: |
+          install.packages('devtools')
+          devtools::install_github("hemoshear/benchlingr")
+          pkgdown::build_site_github_pages(new_process = FALSE, install = FALSE)
         shell: Rscript {0}
 
       - name: Deploy to GitHub pages 🚀

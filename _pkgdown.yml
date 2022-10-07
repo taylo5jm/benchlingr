@@ -1,7 +1,7 @@
 url: https://upgraded-succotash-8df2b926.pages.github.io/
 template:
   bootstrap: 5
-  
+
 reference:
 - title: Data warehouse
   desc: The Benchling data warehouse is a read-only, Postgres database.
