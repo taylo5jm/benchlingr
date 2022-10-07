@@ -7,7 +7,7 @@
 
 on:
   push:
-    branches: [ main, master ]
+    branches: [ 30-fix-cache-step-in-github-actions ]
   pull_request:
     branches: [ main, master ]
   release:
@@ -33,7 +33,7 @@ jobs:
 
     env:
       R_KEEP_PKG_SOURCE: yes
-
+      RENV_PATHS_ROOT: ~/.local/share/renv
     steps:
       - uses: actions/checkout@v2
 
@@ -59,15 +59,14 @@ jobs:
           extra-packages: rcmdcheck
 
       - name: Cache packages
-        uses: actions/cache@v1
-        env:
-          RENV_PATHS_ROOT: ~/.local/share/renv
+        uses: actions/cache@v3
         with:
           path: ${{ env.RENV_PATHS_ROOT }}
-          key: ${{ runner.os }}-renv-${{ hashFiles('renv.lock') }}
+          key: ${{ runner.os }}-renv-${{ hashFiles('**/renv.lock') }}
           restore-keys: |
             ${{ runner.os }}-renv-
-            
+            ${{ runner.os }}-
+
       - name: Restore packages
         shell: Rscript {0}
         run: |
