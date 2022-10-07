@@ -36,6 +36,13 @@ jobs:
           extra-packages: any::pkgdown, local::.
           needs: website
 
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+          cache: 'pip' # caching pip dependencies
+      - run: pip install benchling-sdk
+
       - name: Set Benchling R package environment variables
         run: |
           echo "BENCHLING_DEV_WAREHOUSE_USERNAME=${{ env.BENCHLING_DEV_WAREHOUSE_USERNAME}}" >> ~/.Renviron
