@@ -312,8 +312,15 @@ head(diagrams$Well1)
 
 Both entities and results can be created in tables within notebook entries. A data analyst will need to query a specific API endpoint or warehouse table to find the registered entities or results, so one needs to know the schema associated with the entity or results table. The Benchling user can change the name displayed for the tables in the notebook entry, so it is not always obvious which schemas are present in the notebook entry. Furthermore, if the data will be extracted from the warehouse, we'll need to know the names of the warehouse tables to query, which cannot always be inferred from the schema names alone. 
 
-```{r, eval=FALSE}
-list_schemas_in_entry("etr")
+For example, suppose you want to know the schemas of the tables in this notebook entry:
+
+![Example of a notebook entry with a registration table and a results table.](img/list_schemas_in_entry.png)
+
+The `list_schemas_in_entry` function returns a table with the names of the results and entity schemas contained within the notebook entry. The `name` and `system_name` fields are helpful because they tell you where to look in the Benchling GUI and the data warehouse, respectively. 
+
+```{r, eval=TRUE}
+entry <- client$entries$get_entry_by_id("etr_MWQ7M7Pz")
+list_schemas_in_entry(client, conn, entry)
 ```
 
 
