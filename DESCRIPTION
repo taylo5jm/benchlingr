@@ -3,7 +3,8 @@ Type: Package
 Title: Access the 'Benchling' RESTFUL API and data warehouse
 Version: 0.1.0
 Author: c(
-    person("Justin", "Taylor", email = "taylor@hemoshear.com", role = "cre"),
+    person("Justin", "Taylor", email = "taylor@hemoshear.com", role = "cre",
+    comment = c(ORCID = "0000-0003-4590-0777")),
     person("Davut", "Uçar", email = "ucar@hemoshear.com", role = "aut"),
     person("Steve", "Hoang", role = "aut"))
 Maintainer: Justin Taylor <taylor@hemoshear.com>
