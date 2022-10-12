@@ -28,7 +28,6 @@ jobs:
       matrix:
         config:
           # Use older ubuntu to maximise backward compatibility
-          - {os: macOS-latest,   r: 'devel'}
           - {os: macOS-latest,   r: 'release'}
 
     env:
