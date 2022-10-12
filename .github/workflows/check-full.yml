@@ -58,15 +58,6 @@ jobs:
         with:
           extra-packages: rcmdcheck
 
-      - name: Cache packages
-        uses: actions/cache@v3
-        with:
-          path: ${{ env.RENV_PATHS_ROOT }}
-          key: ${{ runner.os }}-renv-${{ hashFiles('**/renv.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-renv-
-            ${{ runner.os }}-
-
       - name: Restore packages
         shell: Rscript {0}
         run: |
