@@ -27,7 +27,6 @@ jobs:
       fail-fast: false
       matrix:
         config:
-          # Use older ubuntu to maximise backward compatibility
           - {os: macOS-latest,   r: 'release'}
 
     env:
