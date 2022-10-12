@@ -1,3 +1,4 @@
+^requirements\.txt$
 ^renv$
 ^renv\.lock$
 ^.*\.Rproj$
@@ -8,3 +9,5 @@
 ^docs$
 ^pkgdown$
 ^\.github$
+^.csv$
+cran-comments.md
