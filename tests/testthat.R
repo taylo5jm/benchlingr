@@ -10,7 +10,7 @@ library(testthat)
 library(benchlingr)
 
 # Only run tests on CI, because all functions require some API access.
-if (!(testthat:::on_cran() == "On CRAN")) {
-  test_check("benchlingr")
+if (!testthat:::on_cran() & .Platform$OS.type == "unix") {
+    test_check("benchlingr")
 }
 
