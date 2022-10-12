@@ -9,4 +9,8 @@
 library(testthat)
 library(benchlingr)
 
-test_check("benchlingr")
+# Only run tests on CI, because all functions require some API access.
+if (!(testthat:::on_cran() == "On CRAN")) {
+  test_check("benchlingr")
+}
+
