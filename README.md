@@ -15,7 +15,7 @@ remotes::install_github("hemoshear/benchlingr")
 
 ### Documentation
 
-- [GitHub Pages](upgraded-succotash-8df2b926.pages.github.io/)
+- [GitHub Pages](https://upgraded-succotash-8df2b926.pages.github.io/)
 
 
 ### Configuration
