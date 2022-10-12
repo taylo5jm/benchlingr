@@ -21,10 +21,12 @@ List the names and indices of entity columns in a data frame corresponding
 to a warehouse table.
 }
 \examples{
+\dontrun{
 conn <- warehouse_connect("hemoshear-dev", 
     username = Sys.getenv("BENCHLING_DEV_WAREHOUSE_USERNAME"),
     password = Sys.getenv("BENCHLING_DEV_WAREHOUSE_PASSWORD"))
 res <- DBI::dbGetQuery(conn, "SELECT * FROM simple_plate_analyte_mapping$raw")
 list_entity_columns(conn, res)
 DBI::dbDisconnect(conn)
+}
 }
