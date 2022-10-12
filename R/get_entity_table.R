@@ -6,6 +6,7 @@
 #' additional table in the warehouse that correspond to the entities in the 
 #' data frame. 
 #' 
+#' @importFrom methods is
 #' @include vec2sql_tuple.R
 #' @param conn Database connection opened by `warehouse_connect`
 #' @param df Data frame with one or more entity columns. The data frame
@@ -32,7 +33,7 @@
     key %in% c("id", "name$"),
     msg = glue::glue("key must be 'id' or 'name$'!"))
   # If the field is multi-select, then extract all identifiers
-  if (class(df[[column]]) == 'pq_jsonb') {
+  if (is(df[[column]], 'pq_jsonb')) {
     id_list <- .vec2sql_tuple(
       Filter(function(x) (length(x) > 0),
              purrr::map(as.character(df[[column]]),

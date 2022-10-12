@@ -38,6 +38,7 @@ Imports:
     dplyr,
     glue,
     magrittr,
+    methods,
     purrr,
     reticulate,
     RJSONIO,
