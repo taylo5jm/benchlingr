@@ -112,9 +112,10 @@ DBI::dbDisconnect(conn)
 One can use the `DBI::dbListTables` function to see all the tables in the database. You'll notice that every "table" in the database is actually comprised of two tables: an unedited version of the data, referred to as the "raw" table, and a cleaned up Postgres view of the data. For example, the `analyte` table is the Postgres view for a custom entity schema we defined, and the `analyte$raw` table is unedited table. 
 
 ```{r, eval=has_credentials}
-conn <- warehouse_connect(tenant = "hemoshear-dev",
-                          username = Sys.getenv("BENCHLING_DEV_WAREHOUSE_USERNAME"),
-                          password = Sys.getenv("BENCHLING_DEV_WAREHOUSE_PASSWORD"))
+conn <- warehouse_connect(
+  tenant = "hemoshear-dev",
+  username = Sys.getenv("BENCHLING_DEV_WAREHOUSE_USERNAME"),
+  password = Sys.getenv("BENCHLING_DEV_WAREHOUSE_PASSWORD"))
 DBI::dbListTables(conn)[1:6]
 ```
 
@@ -145,14 +146,16 @@ The data warehouse for your tenant will come pre-loaded with tables relevant to 
 When we defined the "Analyte" custom entity schema, Benchling created a table in the data warehouse called `analyte`. All the analyte entities we created can be retrieved with `DBI::dbGetQuery`. 
 
 ```{r, eval=has_credentials}
-DBI::dbGetQuery(conn, "SELECT schema,id,name$,precursor_ion_mz,product_ion_mz FROM analyte") %>%
+DBI::dbGetQuery(conn, 
+  "SELECT schema,id,name$,precursor_ion_mz,product_ion_mz FROM analyte") %>%
   head()
 ```
 
 Benchling also created a "raw" table for our custom analyte schema.
 
 ```{r, eval=FALSE}
-DBI::dbGetQuery(conn, "SELECT id,schema,precursor_ion_mz,product_ion_mz,assay FROM analyte$raw") %>%
+DBI::dbGetQuery(conn, 
+  "SELECT id,schema,precursor_ion_mz,product_ion_mz,assay FROM analyte$raw") %>%
   head()
 ```
 
@@ -181,7 +184,8 @@ Shown below is a screenshot of a results table in a notebook entry with a schema
 To extract this data from the warehouse, use the `DBI::dbGetQuery` function. In this case, I use the identifier for the notebook entry to extract all results of the `simple_plate_analyte_mapping` schema. I'm looking in the "raw" table because the notebook entry with this table has not been reviewed yet. 
 
 ```{r, eval=has_credentials}
-DBI::dbGetQuery(conn, "SELECT * FROM simple_plate_analyte_mapping$raw WHERE entry_id$ = 'etr_MWQ7M7Pz'")
+DBI::dbGetQuery(conn, 
+  "SELECT * FROM simple_plate_analyte_mapping$raw WHERE entry_id$ = 'etr_MWQ7M7Pz'")
 ```
 
 
@@ -189,7 +193,9 @@ Many of the columns in the "raw" tables should not be used in any context, such 
 
 
 ```{r, eval=has_credentials}
-df <- DBI::dbGetQuery(conn, "SELECT schema,archived$,plate,analytes FROM simple_plate_analyte_mapping$raw WHERE entry_id$ = 'etr_MWQ7M7Pz'")
+df <- DBI::dbGetQuery(conn, 
+  "SELECT schema,archived$,plate,analytes FROM simple_plate_analyte_mapping$raw 
+  WHERE entry_id$ = 'etr_MWQ7M7Pz'")
 ```
 
 ### Multi-select columns
@@ -245,8 +251,9 @@ head(res)
 To create an interface to the Benchling API, use the `benchling_api_auth` function after you have set the `BENCHLING_API_KEY` environment variable as described in the Python SDK configuration section. 
 
 ```{r, eval=has_credentials}
-client <- benchling_api_auth(tenant="https://hemoshear-dev.benchling.com",
-                             api_key=Sys.getenv("BENCHLING_DEV_API_KEY"))
+client <- benchling_api_auth(
+  tenant="https://hemoshear-dev.benchling.com",
+  api_key=Sys.getenv("BENCHLING_DEV_API_KEY"))
 ```
 
 The `benchling_api_auth` function returns the [facade object](https://benchling.com/sdk-docs/benchling_sdk.benchling.html) from the Benchling Python SDK that facilitates interaction with the API. Most of the attributes of the facade object are the [services in the Benchling API documentation](https://benchling.com/api/reference). 
@@ -267,10 +274,12 @@ names(client$entries)
 Notebook entries can be found in the `entry` table in the data warehouse. Note, this table contains some of the notebook entry metadata, but not the content of the entry itself.
 
 ```{r, eval=has_credentials}
-conn <- warehouse_connect("hemoshear-dev",
-                          username = Sys.getenv("BENCHLING_DEV_WAREHOUSE_USERNAME"),
-                          password = Sys.getenv("BENCHLING_DEV_WAREHOUSE_PASSWORD"))
-DBI::dbGetQuery(conn, "SELECT id,display_id,schema_id,entry_template_id,review_status FROM entry") %>%
+conn <- warehouse_connect(
+  "hemoshear-dev",
+  username = Sys.getenv("BENCHLING_DEV_WAREHOUSE_USERNAME"),
+  password = Sys.getenv("BENCHLING_DEV_WAREHOUSE_PASSWORD"))
+DBI::dbGetQuery(conn, 
+  "SELECT id,display_id,schema_id,entry_template_id,review_status FROM entry") %>%
   head()
 ```
 
@@ -345,8 +354,9 @@ Benchling users can attach files to results and entities, which are referred to 
 The schema name for this example table is `simple_plate_analyte_mapping`, so we can query the table to get the identifiers and file names for the blobs to download. In this case, we use the entry identifier to filter the table down to the results we actually care about, but one could filter the table in various ways (ex. creation time). 
 
 ```{r, eval=has_credentials}
-d <- DBI::dbGetQuery(conn, "SELECT plate,analytes,file FROM simple_plate_analyte_mapping$raw 
-                     WHERE entry_id$ = 'etr_JYUlMiIs'")
+d <- DBI::dbGetQuery(conn, 
+  "SELECT plate,analytes,file FROM simple_plate_analyte_mapping$raw 
+  WHERE entry_id$ = 'etr_JYUlMiIs'")
 d
 ```
 
