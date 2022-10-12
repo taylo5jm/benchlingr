@@ -39,7 +39,6 @@ Imports:
     glue,
     magrittr,
     purrr,
-    qpdf,
     reticulate,
     RJSONIO,
     rlang,
