@@ -49,6 +49,9 @@
 <li class="nav-item">
   <a class="nav-link" href="reference/index.html">Reference</a>
 </li>
+<li class="nav-item">
+  <a class="nav-link" href="news/index.html">Changelog</a>
+</li>
       </ul>
 <form class="form-inline my-2 my-lg-0" role="search">
         <input type="search" class="form-control me-sm-2" aria-label="Toggle navigation" name="search-input" data-search-index="search.json" id="search-input" placeholder="Search for" autocomplete="off">
@@ -83,7 +86,12 @@
 <h3 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h3>
 <p>Install the R package directly from GitHub using the <code>install_github</code> function in the remotes package. Use <code>install.packages('remotes')</code> to install the <code>remotes</code> package if you do not already have it and see the documentation with <code><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">?remotes::install_github</a></code> for more information.</p>
-<pre><code><span><span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"hemoshear/benchlingr"</span>, ref<span class="op">=</span><span class="st">'main'</span>, auth_token<span class="op">=</span><span class="op">{</span><span class="op">{</span><span class="va">secret.AUTH_TOKEN_GITHUB</span><span class="op">}</span><span class="op">}</span><span class="op">)</span></span></code></pre>
+<pre><code><span><span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"hemoshear/benchlingr"</span><span class="op">)</span></span></code></pre>
+</div>
+<div class="section level3">
+<h3 id="documentation">Documentation<a class="anchor" aria-label="anchor" href="#documentation"></a>
+</h3>
+<ul><li><a href="https://upgraded-succotash-8df2b926.pages.github.io/">GitHub Pages</a></li></ul>
 </div>
 <div class="section level3">
 <h3 id="configuration">Configuration<a class="anchor" aria-label="anchor" href="#configuration"></a>
@@ -92,7 +100,7 @@
 <div class="section level4">
 <h4 id="api">API<a class="anchor" aria-label="anchor" href="#api"></a>
 </h4>
-<p>In order to access the Benchling API service on one’s Benchling tenant, one must obtain an API key through the Benchling interface. <a href="linkhere">Follow the instructions in the official documentation</a> to obtain an API key. After obtaining an API key, it is recommended that you define a variable in <code>.Renviron</code> called <code>BENCHLING_API_KEY</code> to make this key accessible to the <code>benchlingr</code> package with the default function arguments.</p>
+<p>In order to access the Benchling API service on one’s Benchling tenant, one must obtain an API key through the Benchling interface. <a href="https://help.benchling.com/en/articles/2353570-access-the-benchling-developer-platform-enterprise" class="external-link">Follow the instructions in the official documentation</a> to obtain an API key. After obtaining an API key, it is recommended that you define a variable in <code>.Renviron</code> called <code>BENCHLING_API_KEY</code> to make this key accessible to the <code>benchlingr</code> package with the default function arguments.</p>
 <pre><code><span><span class="co"># ~/.Renviron</span></span>
 <span></span>
 <span><span class="co"># Benchling API key</span></span>
@@ -101,7 +109,7 @@
 <div class="section level4">
 <h4 id="data-warehouse">Data warehouse<a class="anchor" aria-label="anchor" href="#data-warehouse"></a>
 </h4>
-<p><a href="linkhere">Follow the instructions in the official documentation</a> to obtain a username and password for the data warehouse for your Benchling tenant. After obtaining a username and password, it is recommended that one define a variable in <code>.Renviron</code> called <code>BENCHLING_WAREHOUSE_KEY</code> and <code>BENCHLING_WAREHOUSE_PASSWORD</code> to make the credentials available to <code>benchlingr</code> with the default settings.</p>
+<p><a href="https://docs.benchling.com/docs/getting-started#obtaining-credentials" class="external-link">Follow the instructions in the official documentation</a> to obtain a username and password for the data warehouse for your Benchling tenant. After obtaining a username and password, it is recommended that one define a variable in <code>.Renviron</code> called <code>BENCHLING_WAREHOUSE_KEY</code> and <code>BENCHLING_WAREHOUSE_PASSWORD</code> to make the credentials available to <code>benchlingr</code> with the default settings.</p>
 <pre><code><span><span class="co"># ~/.Renviron</span></span>
 <span></span>
 <span><span class="co"># Benchling API key</span></span>
@@ -118,12 +126,6 @@
 <span><span class="fu">renv</span><span class="fu">::</span><span class="fu"><a href="https://rstudio.github.io/renv/reference/restore.html" class="external-link">restore</a></span><span class="op">(</span><span class="op">)</span></span></code></pre>
 </div>
 </div>
-</div>
-<div class="section level3">
-<h3 id="documentation">Documentation<a class="anchor" aria-label="anchor" href="#documentation"></a>
-</h3>
-<p>Use <code>pkgdown</code> to build the documentation site, which will be available online in the near future.</p>
-<pre><code><span><span class="fu">pkgdown</span><span class="fu">::</span><span class="fu"><a href="https://pkgdown.r-lib.org/reference/build_site.html" class="external-link">build_site</a></span><span class="op">(</span><span class="op">)</span></span></code></pre>
 </div>
 </div>
   </main><aside class="col-md-3"><div class="links">

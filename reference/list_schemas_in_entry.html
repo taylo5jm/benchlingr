@@ -28,6 +28,9 @@ a notebook entry"><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax
 <li class="active nav-item">
   <a class="nav-link" href="../reference/index.html">Reference</a>
 </li>
+<li class="nav-item">
+  <a class="nav-link" href="../news/index.html">Changelog</a>
+</li>
       </ul><form class="form-inline my-2 my-lg-0" role="search">
         <input type="search" class="form-control me-sm-2" aria-label="Toggle navigation" name="search-input" data-search-index="../search.json" id="search-input" placeholder="Search for" autocomplete="off"></form>
 
@@ -84,20 +87,15 @@ and registration schemas contained within a notebook entry.</p>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">conn</span> <span class="op">&lt;-</span> <span class="fu"><a href="warehouse_connect.html">warehouse_connect</a></span><span class="op">(</span><span class="st">"hemoshear-dev"</span>, </span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span></span>
+<span class="r-in"><span><span class="va">conn</span> <span class="op">&lt;-</span> <span class="fu"><a href="warehouse_connect.html">warehouse_connect</a></span><span class="op">(</span><span class="st">"hemoshear-dev"</span>, </span></span>
 <span class="r-in"><span>                         username <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Sys.getenv.html" class="external-link">Sys.getenv</a></span><span class="op">(</span><span class="st">"BENCHLING_DEV_WAREHOUSE_USERNAME"</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>                         password <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Sys.getenv.html" class="external-link">Sys.getenv</a></span><span class="op">(</span><span class="st">"BENCHLING_DEV_WAREHOUSE_PASSWORD"</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">client</span> <span class="op">&lt;-</span> <span class="fu"><a href="benchling_api_auth.html">benchling_api_auth</a></span><span class="op">(</span>tenant<span class="op">=</span><span class="st">"https://hemoshear-dev.benchling.com"</span>,</span></span>
 <span class="r-in"><span>                            api_key<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/Sys.getenv.html" class="external-link">Sys.getenv</a></span><span class="op">(</span><span class="st">"BENCHLING_DEV_API_KEY"</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">nb_entry</span> <span class="op">&lt;-</span> <span class="va">client</span><span class="op">$</span><span class="va">entries</span><span class="op">$</span><span class="fu">get_entry_by_id</span><span class="op">(</span><span class="st">"etr_MWQ7M7Pz"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu">list_schemas_in_entry</span><span class="op">(</span><span class="va">client</span>, <span class="va">conn</span>, <span class="va">nb_entry</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                  id  schema_type                         name</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1 assaysch_nIw4yAq8 assay_result Simple Plate Analyte Mapping</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2       ts_VvMdQcMn       entity                      Analyte</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                    system_name archived$ archive_purpose$</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1 simple_plate_analyte_mapping     FALSE             &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2                      analyte     FALSE             &lt;NA&gt;</span>
-<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="op">}</span></span></span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>

@@ -41,6 +41,9 @@
 <li class="nav-item">
   <a class="nav-link" href="../reference/index.html">Reference</a>
 </li>
+<li class="nav-item">
+  <a class="nav-link" href="../news/index.html">Changelog</a>
+</li>
       </ul>
 <form class="form-inline my-2 my-lg-0" role="search">
         <input type="search" class="form-control me-sm-2" aria-label="Toggle navigation" name="search-input" data-search-index="../search.json" id="search-input" placeholder="Search for" autocomplete="off">
@@ -75,6 +78,13 @@
     
     
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">has_credentials</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Sys.getenv.html" class="external-link">Sys.getenv</a></span><span class="op">(</span><span class="st">"BENCHLING_DEV_WAREHOUSE_USERNAME"</span><span class="op">)</span></span>
+<span><span class="kw">if</span> <span class="op">(</span><span class="va">has_credentials</span> <span class="op">==</span> <span class="st">""</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="va">has_credentials</span> <span class="op">&lt;-</span> <span class="cn">FALSE</span></span>
+<span><span class="op">}</span> <span class="kw">else</span> <span class="op">{</span></span>
+<span>  <span class="va">has_credentials</span> <span class="op">&lt;-</span> <span class="cn">TRUE</span></span>
+<span><span class="op">}</span></span></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/hemoshear/benchlingr" class="external-link">benchlingr</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://magrittr.tidyverse.org" class="external-link">magrittr</a></span><span class="op">)</span></span></code></pre></div>
 <p>Benchling R&amp;D Cloud is a laboratory information management system with a <a href="https://docs.benchling.com/docs" class="external-link">developer platform</a> consisting of a Postgres database, an application programming interface (API), an “Events” system that is built on top of the AWS EventBridge service, as well as a Python software development kit (SDK). <code>benchlingr</code> is an unofficial R package that aims to make the Benchling developer platform accessible to data scientists using R.</p>
@@ -82,7 +92,7 @@
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
 <p>Install the <code>benchlingr</code> package from GitHub using the <code>remotes</code> package.</p>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"hemoshear/benchlingr"</span><span class="op">)</span></span></code></pre></div>
 <p>The <code>benchlingr</code> package also requires Python. We recommend using the <a href="https://www.anaconda.com/products/distribution" class="external-link">Anaconda distribution</a></p>
 </div>
@@ -115,7 +125,7 @@
 <h3 id="python-sdk">Python SDK<a class="anchor" aria-label="anchor" href="#python-sdk"></a>
 </h3>
 <p>The <code>benchlingr</code> R package uses the official Benchling Python SDK to access the Benchling API service. The Python dependencies will be installed automatically into a <code>miniconda</code> environment. One can also create new <code>conda</code> or <code>virtualenv</code> environments with the <code>config_sdk_env</code> helper function, which simply creates an environment and installs the <code>benchling-sdk</code> package in it.</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/config_sdk_env.html">config_sdk_env</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <p>See the <a href="linkhere">official Anaconda documentation</a> for instructions on how to install Anaconda on your machine.</p>
 </div>
@@ -125,7 +135,7 @@
 </h2>
 <p>The Benchling data warehouse is a read-only, Postgres database that can be used to easily extract data pertaining to items such as the inventory, entities, results, and noteboook entries using SQL queries. Before moving on, we recommend that the user reads the <a href="https://docs.benchling.com/docs/getting-started" class="external-link">official Benchling documentation</a> for the data warehouse. The rest of this section will assume the user has a basic understanding of Benchling’s data warehouse, as we will discuss practical considerations of working with the database, including how to use <code>benchlingr</code> tools to streamline your interactions with the database.</p>
 <p>To connect to the data warehouse on your tenant with the <code>benchlingr</code> package, use the <code>warehouse_connect</code> function. By default, the function looks for two environment variables in <code>.Renviron</code>: <code>BENCHLING_WAREHOUSE_USERNAME</code> and <code>BENCHLING_WAREHOUSE_PASSWORD</code>. If this function is not working for you, please see the instructions for configuration in the <a href="https://docs.benchling.com/docs/getting-started#warehouse-configuration" class="external-link">official documentation</a>. Once you are able to connect to the database using the instructions in the official tutorial, the <code>warehouse_connect</code> function should work properly, assuming that the aforementioned environment variables are set.</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">conn</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/warehouse_connect.html">warehouse_connect</a></span><span class="op">(</span>tenant <span class="op">=</span> <span class="st">"hemoshear-dev"</span>,</span>
 <span>                          username <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Sys.getenv.html" class="external-link">Sys.getenv</a></span><span class="op">(</span><span class="st">"BENCHLING_DEV_WAREHOUSE_USERNAME"</span><span class="op">)</span>,</span>
 <span>                          password <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Sys.getenv.html" class="external-link">Sys.getenv</a></span><span class="op">(</span><span class="st">"BENCHLING_DEV_WAREHOUSE_PASSWORD"</span><span class="op">)</span><span class="op">)</span></span>
@@ -134,20 +144,21 @@
 <span><span class="co">#&gt; attr(,"package")</span></span>
 <span><span class="co">#&gt; [1] "RPostgres"</span></span></code></pre></div>
 <p>The <code>warehouse_connect</code> function will return a Postgres SQL database connection object (<code>PqConnection</code>), which can be used to make queries against the database using the <code>DBI</code> package in R. To verify that you are connected to the database for your Benchling tenant, one can use the <code>dbIsValid</code> to display information about the connection itself.</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">DBI</span><span class="fu">::</span><span class="fu"><a href="https://dbi.r-dbi.org/reference/dbIsValid.html" class="external-link">dbIsValid</a></span><span class="op">(</span><span class="va">conn</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] TRUE</span></span></code></pre></div>
 <p>The <code><a href="https://dbi.r-dbi.org/reference/dbDisconnect.html" class="external-link">DBI::dbDisconnect</a></code> function closes the warehouse connection.</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">DBI</span><span class="fu">::</span><span class="fu"><a href="https://dbi.r-dbi.org/reference/dbDisconnect.html" class="external-link">dbDisconnect</a></span><span class="op">(</span><span class="va">conn</span><span class="op">)</span></span></code></pre></div>
 <div class="section level3">
 <h3 id="raw-tables-and-postgres-views">“Raw” tables and Postgres views<a class="anchor" aria-label="anchor" href="#raw-tables-and-postgres-views"></a>
 </h3>
 <p>One can use the <code><a href="https://dbi.r-dbi.org/reference/dbListTables.html" class="external-link">DBI::dbListTables</a></code> function to see all the tables in the database. You’ll notice that every “table” in the database is actually comprised of two tables: an unedited version of the data, referred to as the “raw” table, and a cleaned up Postgres view of the data. For example, the <code>analyte</code> table is the Postgres view for a custom entity schema we defined, and the <code>analyte$raw</code> table is unedited table.</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">conn</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/warehouse_connect.html">warehouse_connect</a></span><span class="op">(</span>tenant <span class="op">=</span> <span class="st">"hemoshear-dev"</span>,</span>
-<span>                          username <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Sys.getenv.html" class="external-link">Sys.getenv</a></span><span class="op">(</span><span class="st">"BENCHLING_DEV_WAREHOUSE_USERNAME"</span><span class="op">)</span>,</span>
-<span>                          password <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Sys.getenv.html" class="external-link">Sys.getenv</a></span><span class="op">(</span><span class="st">"BENCHLING_DEV_WAREHOUSE_PASSWORD"</span><span class="op">)</span><span class="op">)</span></span>
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">conn</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/warehouse_connect.html">warehouse_connect</a></span><span class="op">(</span></span>
+<span>  tenant <span class="op">=</span> <span class="st">"hemoshear-dev"</span>,</span>
+<span>  username <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Sys.getenv.html" class="external-link">Sys.getenv</a></span><span class="op">(</span><span class="st">"BENCHLING_DEV_WAREHOUSE_USERNAME"</span><span class="op">)</span>,</span>
+<span>  password <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Sys.getenv.html" class="external-link">Sys.getenv</a></span><span class="op">(</span><span class="st">"BENCHLING_DEV_WAREHOUSE_PASSWORD"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="fu">DBI</span><span class="fu">::</span><span class="fu"><a href="https://dbi.r-dbi.org/reference/dbListTables.html" class="external-link">dbListTables</a></span><span class="op">(</span><span class="va">conn</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">6</span><span class="op">]</span></span>
 <span><span class="co">#&gt; [1] "analyte"                 "analyte$raw"            </span></span>
 <span><span class="co">#&gt; [3] "assay_result_schema"     "assay_result_schema$raw"</span></span>
@@ -162,7 +173,7 @@
 <ul>
 <li>
 </ul>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">DBI</span><span class="fu">::</span><span class="fu"><a href="https://dbi.r-dbi.org/reference/dbGetQuery.html" class="external-link">dbGetQuery</a></span><span class="op">(</span><span class="va">conn</span>, <span class="st">"SELECT * FROM entry"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">tail</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt;             id    source_id archived$ archive_purpose$   creator_id</span></span>
@@ -212,8 +223,9 @@
 <img src="img/analyte-screenshot.png" style="width:85.0%" alt="Custom “Analyte” entity"><a class="anchor" aria-label="anchor" href="#custom-analyte-entity"></a>
 </h3>
 <p>When we defined the “Analyte” custom entity schema, Benchling created a table in the data warehouse called <code>analyte</code>. All the analyte entities we created can be retrieved with <code><a href="https://dbi.r-dbi.org/reference/dbGetQuery.html" class="external-link">DBI::dbGetQuery</a></code>.</p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">DBI</span><span class="fu">::</span><span class="fu"><a href="https://dbi.r-dbi.org/reference/dbGetQuery.html" class="external-link">dbGetQuery</a></span><span class="op">(</span><span class="va">conn</span>, <span class="st">"SELECT schema,id,name$,precursor_ion_mz,product_ion_mz FROM analyte"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">DBI</span><span class="fu">::</span><span class="fu"><a href="https://dbi.r-dbi.org/reference/dbGetQuery.html" class="external-link">dbGetQuery</a></span><span class="op">(</span><span class="va">conn</span>, </span>
+<span>  <span class="st">"SELECT schema,id,name$,precursor_ion_mz,product_ion_mz FROM analyte"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt;    schema           id                  name$ precursor_ion_mz product_ion_mz</span></span>
 <span><span class="co">#&gt; 1 analyte bfi_9fKcrORv 12C-Methylmalonic Acid            117.0           73.1</span></span>
@@ -221,8 +233,9 @@
 <span><span class="co">#&gt; 3 analyte bfi_VVamxrKQ 13C-Methylmalonic Acid            121.3           76.4</span></span>
 <span><span class="co">#&gt; 4 analyte bfi_Q13AlXkf          13C-Uric Acid            171.0          126.0</span></span></code></pre></div>
 <p>Benchling also created a “raw” table for our custom analyte schema.</p>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">DBI</span><span class="fu">::</span><span class="fu"><a href="https://dbi.r-dbi.org/reference/dbGetQuery.html" class="external-link">dbGetQuery</a></span><span class="op">(</span><span class="va">conn</span>, <span class="st">"SELECT id,schema,precursor_ion_m_z,product_ion_m_z,assay FROM analyte$raw"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">DBI</span><span class="fu">::</span><span class="fu"><a href="https://dbi.r-dbi.org/reference/dbGetQuery.html" class="external-link">dbGetQuery</a></span><span class="op">(</span><span class="va">conn</span>, </span>
+<span>  <span class="st">"SELECT id,schema,precursor_ion_mz,product_ion_mz,assay FROM analyte$raw"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <p><code>schema</code>, <code>id</code>, and <code>name$</code> are important fields present in every entity warehouse table. The <code>schema</code> field is the system name of the schema, which is necessary for some of the critical functionality in <code>benchlingr</code>. The <code>id</code> field is the Benchling identifier for the entity. The identifier for a custom entity will always start with <code>bfi_</code>, but other built-in Benchling entities will have specific prefixes in their identifiers. For example, <code>container</code> is a built-in Benchling entity schema and the identifiers for containers start with <code>con_</code>. Finally, <code>name$</code> is the name for the entity. Typically the name is human-friendly, but there are several ways an entity can be named depending on how the schema is configured.</p>
 <p>In addition to <code>schema</code>, <code>id</code>, and <code>name$</code>, there are many other columns present in every entity table. Read more about the other columns in the <a href="https://docs.benchling.com/docs/warehouse-columns-rows-descriptions#example-entity-table" class="external-link">Benchling documentation</a>.</p>
@@ -239,8 +252,9 @@
 <img src="img/simple_plate_analyte_mapping_results_example.png" alt=""><p class="caption">Example of a results table in a notebook with two fields: “Plate” and “Analytes”. The “Plate” field is an integer type and the “Analytes” field is a custom entity type called “Analyte” and multiple values are enabled. plate 1 corresponds to the Methylmalonic Acid isotopes and plate 2 corresponds to the Uric Acid isotopes.</p>
 </div>
 <p>To extract this data from the warehouse, use the <code><a href="https://dbi.r-dbi.org/reference/dbGetQuery.html" class="external-link">DBI::dbGetQuery</a></code> function. In this case, I use the identifier for the notebook entry to extract all results of the <code>simple_plate_analyte_mapping</code> schema. I’m looking in the “raw” table because the notebook entry with this table has not been reviewed yet.</p>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">DBI</span><span class="fu">::</span><span class="fu"><a href="https://dbi.r-dbi.org/reference/dbGetQuery.html" class="external-link">dbGetQuery</a></span><span class="op">(</span><span class="va">conn</span>, <span class="st">"SELECT * FROM simple_plate_analyte_mapping$raw WHERE entry_id$ = 'etr_MWQ7M7Pz'"</span><span class="op">)</span></span>
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">DBI</span><span class="fu">::</span><span class="fu"><a href="https://dbi.r-dbi.org/reference/dbGetQuery.html" class="external-link">dbGetQuery</a></span><span class="op">(</span><span class="va">conn</span>, </span>
+<span>  <span class="st">"SELECT * FROM simple_plate_analyte_mapping$raw WHERE entry_id$ = 'etr_MWQ7M7Pz'"</span><span class="op">)</span></span>
 <span><span class="co">#&gt;                                     id                                _pkey</span></span>
 <span><span class="co">#&gt; 1 b30e02a0-6084-419d-a552-d6419aa564e0 31a79378-e82e-4a25-837d-65f4619770c9</span></span>
 <span><span class="co">#&gt; 2 48d937f3-4035-494d-b63a-b658c91aadbd ad4344c3-4b58-476f-9fc2-caf043bec69a</span></span>
@@ -260,15 +274,17 @@
 <span><span class="co">#&gt; 1     1 ["bfi_9fKcrORv", "bfi_VVamxrKQ"] &lt;NA&gt;</span></span>
 <span><span class="co">#&gt; 2     2 ["bfi_KsLU5uWV", "bfi_Q13AlXkf"] &lt;NA&gt;</span></span></code></pre></div>
 <p>Many of the columns in the “raw” tables should not be used in any context, such as <code>_pkey</code> and <code>_sync_key</code>, because they are internal identifiers for Benchling. It is important to also extract the <code>$archived$</code> column to see whether or not results are archived, as well as the <code>schema</code> column so that you may use <code>benchlingr</code> tools to pull information about entity fields in the results.</p>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">df</span> <span class="op">&lt;-</span> <span class="fu">DBI</span><span class="fu">::</span><span class="fu"><a href="https://dbi.r-dbi.org/reference/dbGetQuery.html" class="external-link">dbGetQuery</a></span><span class="op">(</span><span class="va">conn</span>, <span class="st">"SELECT schema,archived$,plate,analytes FROM simple_plate_analyte_mapping$raw WHERE entry_id$ = 'etr_MWQ7M7Pz'"</span><span class="op">)</span></span></code></pre></div>
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">df</span> <span class="op">&lt;-</span> <span class="fu">DBI</span><span class="fu">::</span><span class="fu"><a href="https://dbi.r-dbi.org/reference/dbGetQuery.html" class="external-link">dbGetQuery</a></span><span class="op">(</span><span class="va">conn</span>, </span>
+<span>  <span class="st">"SELECT schema,archived$,plate,analytes FROM simple_plate_analyte_mapping$raw </span></span>
+<span><span class="st">  WHERE entry_id$ = 'etr_MWQ7M7Pz'"</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level4">
 <h4 id="multi-select-columns">Multi-select columns<a class="anchor" aria-label="anchor" href="#multi-select-columns"></a>
 </h4>
 <p>Fields in entities and results can be configured such that multiple values can be submitted. These “multi-select” columns are represented as JSON objects in the data warehouse. To unpack the values in these columns to create new rows or columns in the data frame, use the <code>expand_multiselect_column</code> function.</p>
 <p>To unpack the value such that the original row is copied for each value in the multi-select column, use the <code>shape="long"</code> argument.</p>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/expand_multiselect_column.html">expand_multiselect_column</a></span><span class="op">(</span><span class="va">conn</span>, <span class="va">df</span>, column<span class="op">=</span><span class="st">"analytes"</span>, shape<span class="op">=</span><span class="st">"long"</span><span class="op">)</span></span>
 <span><span class="co">#&gt;                         schema archived$ plate     analytes</span></span>
 <span><span class="co">#&gt; 1 simple_plate_analyte_mapping     FALSE     1 bfi_9fKcrORv</span></span>
@@ -276,7 +292,7 @@
 <span><span class="co">#&gt; 3 simple_plate_analyte_mapping     FALSE     2 bfi_KsLU5uWV</span></span>
 <span><span class="co">#&gt; 4 simple_plate_analyte_mapping     FALSE     2 bfi_Q13AlXkf</span></span></code></pre></div>
 <p>To unpack the value into new columns in the original row, use the <code>shape="wide"</code> argument. By default, the new columns are named by appending a number to the original column name (<span class="math inline">\((1, 2, ..., n)\)</span>, where n is the maximum number of elements that appear in a value within the multi-select field). When the using the <code>"wide"</code> argument, the original column of <code>pq_jsonb</code> type is stored in the data frame.</p>
-<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/expand_multiselect_column.html">expand_multiselect_column</a></span><span class="op">(</span><span class="va">conn</span>, <span class="va">df</span>, column<span class="op">=</span><span class="st">"analytes"</span>, shape<span class="op">=</span><span class="st">"wide"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; New names:</span></span>
 <span><span class="co">#&gt; <span style="color: #00BBBB;">•</span> `` -&gt; `...1`</span></span>
@@ -292,7 +308,7 @@
 <h4 id="entities">Entities<a class="anchor" aria-label="anchor" href="#entities"></a>
 </h4>
 <p>In a data warehouse table, entity links are represented as identifiers. In the example below, “analytes” is a custom-entity column, so all the identifiers start with “bfi_”.</p>
-<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">res</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/expand_multiselect_column.html">expand_multiselect_column</a></span><span class="op">(</span><span class="va">conn</span>, <span class="va">df</span>, column<span class="op">=</span><span class="st">"analytes"</span>, shape<span class="op">=</span><span class="st">"long"</span><span class="op">)</span></span>
 <span><span class="va">res</span></span>
 <span><span class="co">#&gt;                         schema archived$ plate     analytes</span></span>
@@ -302,7 +318,7 @@
 <span><span class="co">#&gt; 4 simple_plate_analyte_mapping     FALSE     2 bfi_Q13AlXkf</span></span></code></pre></div>
 <p>With the <code>benchlingr</code> package, you can easily pull additional information about entities in a table without writing more SQL. The <code>get_entity_table</code> function will take a warehouse table as input and return information about the entities contained within the table.</p>
 <p>In this example, we have a results table in which four distinct “analyte” entities appear. The <code>get_entity_table</code> will look in the correct warehouse table (<code>analyte</code>) for the rows that correspond to the identifiers in our data. The function also takes an argument called <code>columns</code> that allows one to choose which entity columns to pull information for. In the absence of a <code>columns</code> argument, the function will try to pull information for all entity columns in the table.</p>
-<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/get_entity_table.html">get_entity_table</a></span><span class="op">(</span><span class="va">conn</span>, <span class="va">res</span>, columns <span class="op">=</span> <span class="st">"analytes"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; $analytes</span></span>
 <span><span class="co">#&gt;             id    source_id  schema archived$ archive_purpose$  creator_id$</span></span>
@@ -336,7 +352,7 @@
 <span><span class="co">#&gt; 3           76.4</span></span>
 <span><span class="co">#&gt; 4          126.0</span></span></code></pre></div>
 <p>The <code>replace_entity_id_with_name</code> function will simply replace the Benchling identifiers with the names of the entities.</p>
-<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">analytes</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/replace_entity_id_with_name.html">replace_entity_id_with_name</a></span><span class="op">(</span><span class="va">conn</span>, <span class="va">res</span><span class="op">)</span></span>
 <span><span class="va">analytes</span></span>
 <span><span class="co">#&gt;                         schema archived$ plate               analytes</span></span>
@@ -345,7 +361,7 @@
 <span><span class="co">#&gt; 3 simple_plate_analyte_mapping     FALSE     2          12C-Uric Acid</span></span>
 <span><span class="co">#&gt; 4 simple_plate_analyte_mapping     FALSE     2          13C-Uric Acid</span></span></code></pre></div>
 <p>The function will not work properly for data frames in which a multi-select, entity column is expanded using the <code>shape='wide'</code> argument with the <code>expand_multiselect_column</code> function. If you need to replace identifiers of a multi-select, entity column, then it is best to use the <code>replace_entity_id_with_name</code> function <em>before</em> calling <code>expand_multiselect_column</code>.</p>
-<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">df</span><span class="op">)</span></span>
 <span><span class="co">#&gt;                         schema archived$ plate                         analytes</span></span>
 <span><span class="co">#&gt; 1 simple_plate_analyte_mapping     FALSE     1 ["bfi_9fKcrORv", "bfi_VVamxrKQ"]</span></span>
@@ -372,16 +388,17 @@
 <h2 id="accessing-the-benchling-api-via-the-python-sdk-in-r-">Accessing the Benchling API via the Python SDK in R.<a class="anchor" aria-label="anchor" href="#accessing-the-benchling-api-via-the-python-sdk-in-r-"></a>
 </h2>
 <p>To create an interface to the Benchling API, use the <code>benchling_api_auth</code> function after you have set the <code>BENCHLING_API_KEY</code> environment variable as described in the Python SDK configuration section.</p>
-<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">client</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/benchling_api_auth.html">benchling_api_auth</a></span><span class="op">(</span>tenant<span class="op">=</span><span class="st">"https://hemoshear-dev.benchling.com"</span>,</span>
-<span>                             api_key<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/Sys.getenv.html" class="external-link">Sys.getenv</a></span><span class="op">(</span><span class="st">"BENCHLING_DEV_API_KEY"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<p>The <code>benchling_api_auth</code> function returns the <a href="https://benchling.com/sdk-docs/benchling_sdk.benchling.html" class="external-link">facade object</a> from the Benchling Python SDK that facilitates interaction with the API. Most of the attributes of the facade object are the <a href="https://benchling.com/api/reference" class="external-link">services in the Benchling API documentation</a>.</p>
 <div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">client</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/benchling_api_auth.html">benchling_api_auth</a></span><span class="op">(</span></span>
+<span>  tenant<span class="op">=</span><span class="st">"https://hemoshear-dev.benchling.com"</span>,</span>
+<span>  api_key<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/Sys.getenv.html" class="external-link">Sys.getenv</a></span><span class="op">(</span><span class="st">"BENCHLING_DEV_API_KEY"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<p>The <code>benchling_api_auth</code> function returns the <a href="https://benchling.com/sdk-docs/benchling_sdk.benchling.html" class="external-link">facade object</a> from the Benchling Python SDK that facilitates interaction with the API. Most of the attributes of the facade object are the <a href="https://benchling.com/api/reference" class="external-link">services in the Benchling API documentation</a>.</p>
+<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">client</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] "aa_sequences"  "api"           "apps"          "assay_results"</span></span>
 <span><span class="co">#&gt; [5] "assay_runs"    "blobs"</span></span></code></pre></div>
 <p>Each service will have multiple methods available.</p>
-<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">client</span><span class="op">$</span><span class="va">entries</span><span class="op">)</span></span>
 <span><span class="co">#&gt;  [1] "archive_entries"          "bulk_get_entries"        </span></span>
 <span><span class="co">#&gt;  [3] "client"                   "create_entry"            </span></span>
@@ -394,11 +411,13 @@
 <h2 id="notebook-entries">Notebook Entries<a class="anchor" aria-label="anchor" href="#notebook-entries"></a>
 </h2>
 <p>Notebook entries can be found in the <code>entry</code> table in the data warehouse. Note, this table contains some of the notebook entry metadata, but not the content of the entry itself.</p>
-<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">conn</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/warehouse_connect.html">warehouse_connect</a></span><span class="op">(</span><span class="st">"hemoshear-dev"</span>,</span>
-<span>                          username <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Sys.getenv.html" class="external-link">Sys.getenv</a></span><span class="op">(</span><span class="st">"BENCHLING_DEV_WAREHOUSE_USERNAME"</span><span class="op">)</span>,</span>
-<span>                          password <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Sys.getenv.html" class="external-link">Sys.getenv</a></span><span class="op">(</span><span class="st">"BENCHLING_DEV_WAREHOUSE_PASSWORD"</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="fu">DBI</span><span class="fu">::</span><span class="fu"><a href="https://dbi.r-dbi.org/reference/dbGetQuery.html" class="external-link">dbGetQuery</a></span><span class="op">(</span><span class="va">conn</span>, <span class="st">"SELECT id,display_id,schema_id,entry_template_id,review_status FROM entry"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">conn</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/warehouse_connect.html">warehouse_connect</a></span><span class="op">(</span></span>
+<span>  <span class="st">"hemoshear-dev"</span>,</span>
+<span>  username <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Sys.getenv.html" class="external-link">Sys.getenv</a></span><span class="op">(</span><span class="st">"BENCHLING_DEV_WAREHOUSE_USERNAME"</span><span class="op">)</span>,</span>
+<span>  password <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Sys.getenv.html" class="external-link">Sys.getenv</a></span><span class="op">(</span><span class="st">"BENCHLING_DEV_WAREHOUSE_PASSWORD"</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="fu">DBI</span><span class="fu">::</span><span class="fu"><a href="https://dbi.r-dbi.org/reference/dbGetQuery.html" class="external-link">dbGetQuery</a></span><span class="op">(</span><span class="va">conn</span>, </span>
+<span>  <span class="st">"SELECT id,display_id,schema_id,entry_template_id,review_status FROM entry"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt;             id  display_id schema_id entry_template_id review_status</span></span>
 <span><span class="co">#&gt; 1 etr_f1bpDIes EXP22000001      &lt;NA&gt;              &lt;NA&gt;          &lt;NA&gt;</span></span>
@@ -407,9 +426,9 @@
 <span><span class="co">#&gt; 4 etr_lnZDpRVI EXP22000005      &lt;NA&gt;              &lt;NA&gt;          &lt;NA&gt;</span></span>
 <span><span class="co">#&gt; 5 etr_MWQ7M7Pz EXP22000003      &lt;NA&gt;              &lt;NA&gt;          &lt;NA&gt;</span></span></code></pre></div>
 <p>The content of the notebook entries (aside from results and entities), must be retrieved from the API. To retrieve a notebook entry, use the <code>entries$get_entry_by_id</code> method. The method takes the ID of an entry as an argument, which starts with <code>etr_</code>.</p>
-<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">entry</span> <span class="op">&lt;-</span> <span class="va">client</span><span class="op">$</span><span class="va">entries</span><span class="op">$</span><span class="fu">get_entry_by_id</span><span class="op">(</span><span class="st">"etr_T3WZTyAe"</span><span class="op">)</span></span></code></pre></div>
 <div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">entry</span> <span class="op">&lt;-</span> <span class="va">client</span><span class="op">$</span><span class="va">entries</span><span class="op">$</span><span class="fu">get_entry_by_id</span><span class="op">(</span><span class="st">"etr_T3WZTyAe"</span><span class="op">)</span></span></code></pre></div>
+<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/class.html" class="external-link">class</a></span><span class="op">(</span><span class="va">entry</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] "benchling_api_client.v2.stable.models.entry.Entry"</span></span>
 <span><span class="co">#&gt; [2] "python.builtin.object"</span></span></code></pre></div>
@@ -423,7 +442,7 @@
 <img src="img/unstructured_entry_tables.png" alt="Example of an unstructured table in a Benchling notebook entry"><a class="anchor" aria-label="anchor" href="#example-of-an-unstructured-table-in-a-benchling-notebook-entry"></a>
 </h3>
 <p>The <code>read_entry_tables</code> function extracts all unstructured tables in a notebook entry, and returns them as a list of data frames for further processing in R.</p>
-<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">tables</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/read_entry_tables.html">read_entry_tables</a></span><span class="op">(</span><span class="va">entry</span><span class="op">)</span></span>
 <span><span class="va">tables</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span></span>
 <span><span class="co">#&gt;   sample_id treatment</span></span>
@@ -443,7 +462,7 @@
 </div>
 <p>It is useful to convert these tables into long form for further processing in R. To do so, one can start with the <code>read_plate_diagrams</code> function instead of the <code>read_entry_tables</code> function. The <code>read_plate_diagrams</code> will extract the plate diagrams from the notebook entry and convert the output data frames into long form tables with three columns: <code>row</code>, <code>column</code>, and <code>content</code>. The <code>row</code> is a letter for the row on the plate, the <code>column</code> is an integer for the column on the plate, and <code>content</code> is the text that appears in the cell in the table.</p>
 <p>The names of the list will be the names of the tables in the notebook entry.</p>
-<div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">entry</span> <span class="op">&lt;-</span> <span class="va">client</span><span class="op">$</span><span class="va">entries</span><span class="op">$</span><span class="fu">get_entry_by_id</span><span class="op">(</span><span class="st">"etr_f1bpDIes"</span><span class="op">)</span></span>
 <span><span class="va">diagrams</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/read_plate_diagrams.html">read_plate_diagrams</a></span><span class="op">(</span><span class="va">entry</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">diagrams</span><span class="op">)</span></span>
@@ -474,7 +493,7 @@
 <img src="img/list_schemas_in_entry.png" alt=""><p class="caption">Example of a notebook entry with a registration table and a results table.</p>
 </div>
 <p>The <code>list_schemas_in_entry</code> function returns a table with the names of the results and entity schemas contained within the notebook entry. The <code>name</code> and <code>system_name</code> fields are helpful because they tell you where to look in the Benchling GUI and the data warehouse, respectively.</p>
-<div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">entry</span> <span class="op">&lt;-</span> <span class="va">client</span><span class="op">$</span><span class="va">entries</span><span class="op">$</span><span class="fu">get_entry_by_id</span><span class="op">(</span><span class="st">"etr_MWQ7M7Pz"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/list_schemas_in_entry.html">list_schemas_in_entry</a></span><span class="op">(</span><span class="va">client</span>, <span class="va">conn</span>, <span class="va">entry</span><span class="op">)</span></span>
 <span><span class="co">#&gt;                  id  schema_type                         name</span></span>
@@ -488,15 +507,16 @@
 <div class="section level2">
 <h2 id="downloading-attached-files">Downloading attached files<a class="anchor" aria-label="anchor" href="#downloading-attached-files"></a>
 </h2>
-<p>Benchling users can attach files to results and entities, which are referred to as blobs in the backend.</p>
+<p>Benchling users can attach files to results and entities, which are referred to as blobs.</p>
 <div class="figure">
 <img src="img/blobs_in_table.png" alt=""><p class="caption">A results table in a Benchling notebook entry with files attached.</p>
 </div>
 <hr>
 <p>The schema name for this example table is <code>simple_plate_analyte_mapping</code>, so we can query the table to get the identifiers and file names for the blobs to download. In this case, we use the entry identifier to filter the table down to the results we actually care about, but one could filter the table in various ways (ex. creation time).</p>
-<div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">d</span> <span class="op">&lt;-</span> <span class="fu">DBI</span><span class="fu">::</span><span class="fu"><a href="https://dbi.r-dbi.org/reference/dbGetQuery.html" class="external-link">dbGetQuery</a></span><span class="op">(</span><span class="va">conn</span>, <span class="st">"SELECT plate,analytes,file FROM simple_plate_analyte_mapping$raw </span></span>
-<span><span class="st">                     WHERE entry_id$ = 'etr_JYUlMiIs'"</span><span class="op">)</span></span>
+<div class="sourceCode" id="cb31"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">d</span> <span class="op">&lt;-</span> <span class="fu">DBI</span><span class="fu">::</span><span class="fu"><a href="https://dbi.r-dbi.org/reference/dbGetQuery.html" class="external-link">dbGetQuery</a></span><span class="op">(</span><span class="va">conn</span>, </span>
+<span>  <span class="st">"SELECT plate,analytes,file FROM simple_plate_analyte_mapping$raw </span></span>
+<span><span class="st">  WHERE entry_id$ = 'etr_JYUlMiIs'"</span><span class="op">)</span></span>
 <span><span class="va">d</span></span>
 <span><span class="co">#&gt;   plate         analytes</span></span>
 <span><span class="co">#&gt; 1     2 ["bfi_VVamxrKQ"]</span></span>
@@ -505,7 +525,7 @@
 <span><span class="co">#&gt; 1 {"id": "a2ed3ec8-59b9-451a-81eb-c4fb5322858b", "url": "https://hemoshear-dev.benchling.com/blobs/a2ed3ec8-59b9-451a-81eb-c4fb5322858b", "name": "Plate2-Data.csv"}</span></span>
 <span><span class="co">#&gt; 2 {"id": "ff0cca5f-b400-4e42-9df6-9f1badc4b7e2", "url": "https://hemoshear-dev.benchling.com/blobs/ff0cca5f-b400-4e42-9df6-9f1badc4b7e2", "name": "Plate1-Data.csv"}</span></span></code></pre></div>
 <p>Each “blob” consists of an identifier, a URL, and a name. <code>download_blobs</code> is a low-level wrapper for the Python SDK that downloads a set of blobs from Benchling as specified by their ID and file name.</p>
-<div class="sourceCode" id="cb31"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/download_blobs.html">download_blobs</a></span><span class="op">(</span></span>
 <span>  <span class="va">client</span>, </span>
 <span>  file_map <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
@@ -513,7 +533,7 @@
 <span>    <span class="st">"a2ed3ec8-59b9-451a-81eb-c4fb5322858b"</span> <span class="op">=</span> <span class="st">"Plate2-Data.csv"</span><span class="op">)</span>,</span>
 <span>  outdir<span class="op">=</span><span class="st">'data'</span><span class="op">)</span></span></code></pre></div>
 <p>The <code>download_blobs_in_warehouse_table</code> function will download all files attached to a particular set of columns in a warehouse table. By default, it will try to download files from all blob columns unless a specific set is passed to the <code>column</code> argument. The files in each column are saved to a subdirectory within <code>outdir</code>.</p>
-<div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb33"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/download_blobs_in_warehouse_table.html">download_blobs_in_warehouse_table</a></span><span class="op">(</span><span class="va">conn</span>, <span class="va">d</span>, column<span class="op">=</span><span class="st">'file'</span>, outdir<span class="op">=</span><span class="st">"data"</span><span class="op">)</span></span></code></pre></div>
 </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>

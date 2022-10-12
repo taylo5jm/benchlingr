@@ -28,6 +28,9 @@ data frame."><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs
 <li class="active nav-item">
   <a class="nav-link" href="../reference/index.html">Reference</a>
 </li>
+<li class="nav-item">
+  <a class="nav-link" href="../news/index.html">Changelog</a>
+</li>
       </ul><form class="form-inline my-2 my-lg-0" role="search">
         <input type="search" class="form-control me-sm-2" aria-label="Toggle navigation" name="search-input" data-search-index="../search.json" id="search-input" placeholder="Search for" autocomplete="off"></form>
 
@@ -104,43 +107,13 @@ corresponds to an entity column in the input data frame.</p>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">conn</span> <span class="op">&lt;-</span> <span class="fu"><a href="warehouse_connect.html">warehouse_connect</a></span><span class="op">(</span><span class="st">"hemoshear-dev"</span>, </span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span></span>
+<span class="r-in"><span><span class="va">conn</span> <span class="op">&lt;-</span> <span class="fu"><a href="warehouse_connect.html">warehouse_connect</a></span><span class="op">(</span><span class="st">"hemoshear-dev"</span>, </span></span>
 <span class="r-in"><span>   username <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Sys.getenv.html" class="external-link">Sys.getenv</a></span><span class="op">(</span><span class="st">"BENCHLING_DEV_WAREHOUSE_USERNAME"</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>   password <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Sys.getenv.html" class="external-link">Sys.getenv</a></span><span class="op">(</span><span class="st">"BENCHLING_DEV_WAREHOUSE_PASSWORD"</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">df</span> <span class="op">&lt;-</span> <span class="fu">DBI</span><span class="fu">::</span><span class="fu"><a href="https://dbi.r-dbi.org/reference/dbGetQuery.html" class="external-link">dbGetQuery</a></span><span class="op">(</span><span class="va">conn</span>, <span class="st">"SELECT * FROM simple_plate_analyte_mapping$raw"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu">get_entity_table</span><span class="op">(</span><span class="va">conn</span>,  <span class="va">df</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $analytes</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>             id    source_id  schema archived$ archive_purpose$  creator_id$</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1 bfi_9fKcrORv src_fv7Pvd8R analyte     FALSE             &lt;NA&gt; ent_Ec76qX9f</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2 bfi_KsLU5uWV src_fv7Pvd8R analyte     FALSE             &lt;NA&gt; ent_Ec76qX9f</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3 bfi_VVamxrKQ src_fv7Pvd8R analyte     FALSE             &lt;NA&gt; ent_Ec76qX9f</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4 bfi_Q13AlXkf src_fv7Pvd8R analyte     FALSE             &lt;NA&gt; ent_Ec76qX9f</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>           created_at$        modified_at$                  name$</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1 2022-09-20 13:07:45 2022-09-20 13:07:45 12C-Methylmalonic Acid</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2 2022-09-20 13:07:45 2022-09-20 13:07:45          12C-Uric Acid</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3 2022-09-20 13:07:45 2022-09-20 13:07:45 13C-Methylmalonic Acid</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4 2022-09-20 13:07:45 2022-09-20 13:07:45          13C-Uric Acid</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   file_registry_id$  schema_id$   folder_id$  project_id$</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1              A001 ts_VvMdQcMn lib_F5H5Syfw src_ZRvTYOgM</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2              A002 ts_VvMdQcMn lib_F5H5Syfw src_ZRvTYOgM</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3              A003 ts_VvMdQcMn lib_F5H5Syfw src_ZRvTYOgM</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4              A004 ts_VvMdQcMn lib_F5H5Syfw src_ZRvTYOgM</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                                                                                                              url$</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1 https://hemoshear-dev.benchling.com/hemoshear_therapeutics_org/f/lib_HG4kUobQ-registry/bfi_9fKcrORv-12c-methylmalonic-acid/edit</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2          https://hemoshear-dev.benchling.com/hemoshear_therapeutics_org/f/lib_HG4kUobQ-registry/bfi_KsLU5uWV-12c-uric-acid/edit</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3 https://hemoshear-dev.benchling.com/hemoshear_therapeutics_org/f/lib_HG4kUobQ-registry/bfi_VVamxrKQ-13c-methylmalonic-acid/edit</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4          https://hemoshear-dev.benchling.com/hemoshear_therapeutics_org/f/lib_HG4kUobQ-registry/bfi_Q13AlXkf-13c-uric-acid/edit</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   validation_status$         type$ is_registered$ precursor_ion_mz</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1             PASSED custom_entity           TRUE            117.0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2             PASSED custom_entity           TRUE            166.9</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3             PASSED custom_entity           TRUE            121.3</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4             PASSED custom_entity           TRUE            171.0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   product_ion_mz</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1           73.1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2          123.9</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3           76.4</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4          126.0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-in"><span><span class="op">}</span></span></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
