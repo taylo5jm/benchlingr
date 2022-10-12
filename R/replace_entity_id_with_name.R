@@ -14,7 +14,7 @@
 #' @return data.frame with the Benchling entity identifiers replaced by the 
 #' names of the entities. 
 #' @export
-#' @examples 
+#' @examples \dontrun{
 #' conn <- warehouse_connect("hemoshear-dev", 
 #'     username = Sys.getenv("BENCHLING_DEV_WAREHOUSE_USERNAME"),
 #'     password = Sys.getenv("BENCHLING_DEV_WAREHOUSE_PASSWORD"))
@@ -24,6 +24,7 @@
 #' entry_id$ = 'etr_lnZDpRVI'")
 #' res <- replace_entity_id_with_name(conn, df)
 #' DBI::dbDisconnect(conn)
+#' }
 
 replace_entity_id_with_name <- function(conn, df) {
   # Get the rows from the data warehouse tables that correspond

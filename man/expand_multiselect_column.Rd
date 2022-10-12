@@ -44,6 +44,7 @@ one to unpack the values in the column, creating either new rows or new
 columns in the data frame.
 }
 \examples{
+\dontrun{
 conn <- warehouse_connect("hemoshear-dev", 
     username = Sys.getenv("BENCHLING_DEV_WAREHOUSE_USERNAME"),
     password = Sys.getenv("BENCHLING_DEV_WAREHOUSE_PASSWORD"))
@@ -52,6 +53,6 @@ WHERE entry_id$ = 'etr_MWQ7M7Pz'")
 res <- expand_multiselect_column(conn, d, column="analytes", shape="long")
 res <- expand_multiselect_column(conn, d, column="analytes", shape="wide")
 DBI::dbDisconnect(conn)
-
+}
 
 }

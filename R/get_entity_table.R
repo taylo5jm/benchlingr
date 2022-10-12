@@ -6,6 +6,7 @@
 #' additional table in the warehouse that correspond to the entities in the 
 #' data frame. 
 #' 
+#' @importFrom methods is
 #' @include vec2sql_tuple.R
 #' @param conn Database connection opened by `warehouse_connect`
 #' @param df Data frame with one or more entity columns. The data frame
@@ -32,7 +33,7 @@
     key %in% c("id", "name$"),
     msg = glue::glue("key must be 'id' or 'name$'!"))
   # If the field is multi-select, then extract all identifiers
-  if (class(df[[column]]) == 'pq_jsonb') {
+  if (is(df[[column]], 'pq_jsonb')) {
     id_list <- .vec2sql_tuple(
       Filter(function(x) (length(x) > 0),
              purrr::map(as.character(df[[column]]),
@@ -98,12 +99,13 @@
 #' entities found in the input data frame (`df`). Each element in the list 
 #' corresponds to an entity column in the input data frame.
 #' @export
-#' @examples 
+#' @examples \dontrun{
 #' conn <- warehouse_connect("hemoshear-dev", 
 #'    username = Sys.getenv("BENCHLING_DEV_WAREHOUSE_USERNAME"),
 #'    password = Sys.getenv("BENCHLING_DEV_WAREHOUSE_PASSWORD"))
 #' df <- DBI::dbGetQuery(conn, "SELECT * FROM simple_plate_analyte_mapping$raw")
 #' get_entity_table(conn,  df)
+#' }
 #' 
 get_entity_table <- function(conn, df, columns=NULL, return_cols='*',
                              key="id") {

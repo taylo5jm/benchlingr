@@ -8,6 +8,7 @@
 #' plate diagrams into data frames for further processing in R.
 #' 
 #' @include read_entry_tables.R
+#' @importFrom stats setNames
 #' @param entry response from GET /entry/{entry_id}
 #' @param plate_dim A numeric vector of length 2 that describes the dimensions
 #' of the plates that should be extracted from the notebook entry. For example,
@@ -17,11 +18,12 @@
 #' return plates of all sizes supported by Benchling. 
 #' @return List of data frames representing the plate diagrams present
 #' in the notebook entry.
-#' @examples 
+#' @examples \dontrun{
 #' client <- benchling_api_auth(tenant="https://hemoshear-dev.benchling.com",
 #'                             api_key=Sys.getenv("BENCHLING_DEV_API_KEY"))
 #' entry <- client$entries$get_entry_by_id("etr_f1bpDIes")
 #' plate_diagrams <- read_plate_diagrams(entry)
+#' }
 #' @export
 read_plate_diagrams <- function(entry, plate_dim=NULL) {
   is_plate_diagram <- function(df, plate_dim=NULL) {

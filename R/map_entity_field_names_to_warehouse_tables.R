@@ -6,6 +6,7 @@
 #' uses the `schema` and `schema_field` tables in the warehouse to link 
 #' the field name in one schema to the actual name of the entity.
 #' 
+#' @importFrom rlang .data
 #' @include vec2sql_tuple.R
 #' @importFrom magrittr %<>% %>%
 #' @param conn Database connection opened by `warehouse_connect`
@@ -14,7 +15,7 @@
 #' in the schema and the values are the warehouse names for the entities in the 
 #' schema 
 #' @export
-#' @examples 
+#' @examples \dontrun{
 #' conn <- warehouse_connect(
 #' "hemoshear-dev",
 #'  username = Sys.getenv("BENCHLING_DEV_WAREHOUSE_USERNAME"),
@@ -22,6 +23,7 @@
 #'  
 #'  d <- DBI::dbGetQuery(conn, "SELECT * FROM simple_plate_analyte_mapping$raw")
 #'  .map_entity_field_names_to_warehouse_tables(conn, d)
+#'  }
 .map_entity_field_names_to_warehouse_tables <- function(conn, df) {
   if (!('schema' %in% colnames(df))) {
     stop("'schema' column is missing from the input data.frame.
@@ -35,14 +37,14 @@
   res <- DBI::dbGetQuery(conn, glue::glue(
     "SELECT * FROM schema_field WHERE schema_id = {shQuote(schema_id)}"))
   # Retain only the entity fields in the schema
-  res %<>% dplyr::filter(!is.na(target_schema_id))
+  res %<>% dplyr::filter(!is.na(.data$target_schema_id))
   # Get the actual names of the entity types in the target schema
   schema <- DBI::dbGetQuery(conn, 
     glue::glue("SELECT * FROM schema WHERE id IN {.vec2sql_tuple(res$target_schema_id)}"))
   # Trim the data frame down to the name and ID we care about. 
   ## The first column here is the name of the schema
   ## The second column is the name of the *field* that is the entity type. 
-  schema <- dplyr::select(schema, id, system_name)
+  schema <- dplyr::select(schema, .data$id, .data$system_name)
   colnames(schema) <- c('target_schema_id', 'entity_system_name')
   # Join the names we need to the original schema
   res %<>% dplyr::inner_join(schema, by='target_schema_id')
