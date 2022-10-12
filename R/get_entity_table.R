@@ -98,12 +98,13 @@
 #' entities found in the input data frame (`df`). Each element in the list 
 #' corresponds to an entity column in the input data frame.
 #' @export
-#' @examples 
+#' @examples \dontrun{
 #' conn <- warehouse_connect("hemoshear-dev", 
 #'    username = Sys.getenv("BENCHLING_DEV_WAREHOUSE_USERNAME"),
 #'    password = Sys.getenv("BENCHLING_DEV_WAREHOUSE_PASSWORD"))
 #' df <- DBI::dbGetQuery(conn, "SELECT * FROM simple_plate_analyte_mapping$raw")
 #' get_entity_table(conn,  df)
+#' }
 #' 
 get_entity_table <- function(conn, df, columns=NULL, return_cols='*',
                              key="id") {

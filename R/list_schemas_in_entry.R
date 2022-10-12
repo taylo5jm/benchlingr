@@ -9,7 +9,7 @@
 #' @return A data frame that includes the names and identifiers of the results
 #' and registration schemas contained within a notebook entry. 
 #' @export
-#' @examples 
+#' @examples \dontrun{
 #' conn <- warehouse_connect("hemoshear-dev", 
 #'                          username = Sys.getenv("BENCHLING_DEV_WAREHOUSE_USERNAME"),
 #'                          password = Sys.getenv("BENCHLING_DEV_WAREHOUSE_PASSWORD"))
@@ -17,7 +17,7 @@
 #'                             api_key=Sys.getenv("BENCHLING_DEV_API_KEY"))
 #' nb_entry <- client$entries$get_entry_by_id("etr_MWQ7M7Pz")
 #' list_schemas_in_entry(client, conn, nb_entry)
-#' 
+#' }
 
 list_schemas_in_entry <- function(client, conn, entry) {
     

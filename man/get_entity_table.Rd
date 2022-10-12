@@ -39,10 +39,12 @@ additional tables in the warehouse that correspond to the entities in the
 data frame.
 }
 \examples{
+\dontrun{
 conn <- warehouse_connect("hemoshear-dev", 
    username = Sys.getenv("BENCHLING_DEV_WAREHOUSE_USERNAME"),
    password = Sys.getenv("BENCHLING_DEV_WAREHOUSE_PASSWORD"))
 df <- DBI::dbGetQuery(conn, "SELECT * FROM simple_plate_analyte_mapping$raw")
 get_entity_table(conn,  df)
+}
 
 }

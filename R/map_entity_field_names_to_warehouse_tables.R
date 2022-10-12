@@ -15,7 +15,7 @@
 #' in the schema and the values are the warehouse names for the entities in the 
 #' schema 
 #' @export
-#' @examples 
+#' @examples \dontrun{
 #' conn <- warehouse_connect(
 #' "hemoshear-dev",
 #'  username = Sys.getenv("BENCHLING_DEV_WAREHOUSE_USERNAME"),
@@ -23,6 +23,7 @@
 #'  
 #'  d <- DBI::dbGetQuery(conn, "SELECT * FROM simple_plate_analyte_mapping$raw")
 #'  .map_entity_field_names_to_warehouse_tables(conn, d)
+#'  }
 .map_entity_field_names_to_warehouse_tables <- function(conn, df) {
   if (!('schema' %in% colnames(df))) {
     stop("'schema' column is missing from the input data.frame.

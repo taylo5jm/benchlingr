@@ -23,6 +23,7 @@ will have an identifier that looks like "bfi_10dgdgFJx", but the name
 might be "My cell line".
 }
 \examples{
+\dontrun{
 conn <- warehouse_connect("hemoshear-dev", 
     username = Sys.getenv("BENCHLING_DEV_WAREHOUSE_USERNAME"),
     password = Sys.getenv("BENCHLING_DEV_WAREHOUSE_PASSWORD"))
@@ -32,4 +33,5 @@ simple_plate_analyte_mapping_with_two_analytes$raw WHERE
 entry_id$ = 'etr_lnZDpRVI'")
 res <- replace_entity_id_with_name(conn, df)
 DBI::dbDisconnect(conn)
+}
 }

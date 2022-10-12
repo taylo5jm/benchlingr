@@ -22,9 +22,11 @@ List the multi-select columns in a data frame retrieved from the data
 warehouse
 }
 \examples{
+\dontrun{
 conn <- warehouse_connect("hemoshear-dev", 
     username = Sys.getenv("BENCHLING_DEV_WAREHOUSE_USERNAME"),
     password = Sys.getenv("BENCHLING_DEV_WAREHOUSE_PASSWORD"))
 res <- DBI::dbGetQuery(conn, "SELECT * FROM simple_plate_analyte_mapping$raw")
 list_multiselect_columns(conn, res)
+}
 }

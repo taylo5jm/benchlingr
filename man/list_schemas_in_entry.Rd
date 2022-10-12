@@ -23,6 +23,7 @@ List the schemas for the results and registration tables contained within
 a notebook entry
 }
 \examples{
+\dontrun{
 conn <- warehouse_connect("hemoshear-dev", 
                          username = Sys.getenv("BENCHLING_DEV_WAREHOUSE_USERNAME"),
                          password = Sys.getenv("BENCHLING_DEV_WAREHOUSE_PASSWORD"))
@@ -30,5 +31,5 @@ client <- benchling_api_auth(tenant="https://hemoshear-dev.benchling.com",
                             api_key=Sys.getenv("BENCHLING_DEV_API_KEY"))
 nb_entry <- client$entries$get_entry_by_id("etr_MWQ7M7Pz")
 list_schemas_in_entry(client, conn, nb_entry)
-
+}
 }

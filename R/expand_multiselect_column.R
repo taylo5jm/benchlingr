@@ -11,12 +11,13 @@
 #' @return Character vector where the names are the names of the multi-select
 #' columns in the data frame and the values are the positions of the multi-select
 #' columns in the data frame. 
-#' @examples 
+#' @examples \dontrun{
 #' conn <- warehouse_connect("hemoshear-dev", 
 #'     username = Sys.getenv("BENCHLING_DEV_WAREHOUSE_USERNAME"),
 #'     password = Sys.getenv("BENCHLING_DEV_WAREHOUSE_PASSWORD"))
 #' res <- DBI::dbGetQuery(conn, "SELECT * FROM simple_plate_analyte_mapping$raw")
 #' list_multiselect_columns(conn, res)
+#' }
 #' @export
 #' 
 list_multiselect_columns <- function(conn, df) {
@@ -60,7 +61,7 @@ list_multiselect_columns <- function(conn, df) {
 #' or `replace_entity_id_with_name` with the new columns.
 #' @return Data frame with the values in `column` unpacked. 
 #' @export
-#' @examples 
+#' @examples \dontrun{
 #' conn <- warehouse_connect("hemoshear-dev", 
 #'     username = Sys.getenv("BENCHLING_DEV_WAREHOUSE_USERNAME"),
 #'     password = Sys.getenv("BENCHLING_DEV_WAREHOUSE_PASSWORD"))
@@ -69,7 +70,7 @@ list_multiselect_columns <- function(conn, df) {
 #' res <- expand_multiselect_column(conn, d, column="analytes", shape="long")
 #' res <- expand_multiselect_column(conn, d, column="analytes", shape="wide")
 #' DBI::dbDisconnect(conn)
-#' 
+#' }
 #' 
 expand_multiselect_column <- function(conn, df, column, shape="long",
                                       column_prefix=NULL) {
