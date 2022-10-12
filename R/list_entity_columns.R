@@ -11,13 +11,14 @@
 #' @param df Data frame with entity columns
 #' @return Vector where the names are the names of entity columns in the data frame
 #' and the values are the corresponding indices. 
-#' @examples 
+#' @examples \dontrun{
 #' conn <- warehouse_connect("hemoshear-dev", 
 #'     username = Sys.getenv("BENCHLING_DEV_WAREHOUSE_USERNAME"),
 #'     password = Sys.getenv("BENCHLING_DEV_WAREHOUSE_PASSWORD"))
 #' res <- DBI::dbGetQuery(conn, "SELECT * FROM simple_plate_analyte_mapping$raw")
 #' list_entity_columns(conn, res)
 #' DBI::dbDisconnect(conn)
+#' }
 #' @export 
 list_entity_columns <- function(conn, df) {
   is_schema_in_dataframe(df)
