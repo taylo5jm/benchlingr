@@ -42,6 +42,7 @@ Imports:
     qpdf,
     reticulate,
     RJSONIO,
+    rlang,
     RPostgres,
     snakecase,
     tidyr

@@ -4,6 +4,7 @@
 #' warehouse
 #'
 #' @include util.R 
+#' @importFrom rlang .data
 #' @importFrom magrittr %>%
 #' @param conn Database connection opened with `warehouse_connect`.
 #' @param df Data frame retrieved from the data warehouse.
@@ -26,7 +27,7 @@ list_multiselect_columns <- function(conn, df) {
     as.character()
   res <- DBI::dbGetQuery(conn, 
     glue::glue("SELECT * FROM schema_field WHERE schema_id = {shQuote(schema_id)}")) %>%
-    dplyr::filter(!is.na(target_schema_id), is_multi)
+    dplyr::filter(!is.na(.data$target_schema_id), .data$is_multi)
   vec <- purrr::map_int(res$name, ~ which(colnames(df) == .))
   names(vec) <- res$name
   vec
@@ -41,6 +42,7 @@ list_multiselect_columns <- function(conn, df) {
 #' one to unpack the values in the column, creating either new rows or new 
 #' columns in the data frame. 
 #' 
+#' @importFrom rlang .data
 #' @param conn Database connection opened by `warehouse_connect`. This is used
 #' to ensure that the specified `column` is actually a multi-select field
 #' defined in the schema. 

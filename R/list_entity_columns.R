@@ -3,7 +3,9 @@
 #' List the names and indices of entity columns in a data frame corresponding
 #' to a warehouse table. 
 #' 
+#' 
 #' @include util.R
+#' @importFrom rlang .data
 #' @importFrom magrittr %>%
 #' @param conn Database connection opened with `warehouse_connect`
 #' @param df Data frame with entity columns
@@ -24,7 +26,7 @@ list_entity_columns <- function(conn, df) {
     as.character()
   res <- DBI::dbGetQuery(conn, glue::glue(
     "SELECT * FROM schema_field WHERE schema_id = {shQuote(schema_id)}")) %>%
-    dplyr::filter(!is.na(target_schema_id))
+    dplyr::filter(!is.na(.data$target_schema_id))
   entities <- which(colnames(df) %in% res$system_name)
   names(entities) <- colnames(df)[entities]
   entities
