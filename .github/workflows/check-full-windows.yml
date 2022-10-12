@@ -44,11 +44,6 @@ jobs:
           http-user-agent: ${{ matrix.config.http-user-agent }}
           use-public-rspm: true
 
-      - name: Set Benchling R package environment variables
-        run: |
-          echo "BENCHLING_DEV_WAREHOUSE_USERNAME=${{ secrets.BENCHLING_DEV_WAREHOUSE_USERNAME}}" >> ~/.Renviron
-          echo "BENCHLING_DEV_WAREHOUSE_PASSWORD=${{ secrets.BENCHLING_DEV_WAREHOUSE_PASSWORD }}" >> ~/.Renviron
-          echo "BENCHLING_DEV_API_KEY=${{ secrets.BENCHLING_DEV_API_KEY }}" >> ~/.Renviron
       - uses: r-lib/actions/setup-r-dependencies@v1
         with:
           extra-packages: rcmdcheck
