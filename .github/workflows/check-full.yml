@@ -84,13 +84,6 @@ jobs:
                      
       - name: Comprehensive check
         uses: r-lib/actions/check-r-package@v1
-        with:
-          args: --no-manual
-      
-      - name: CRAN check
-        uses: r-lib/actions/check-r-package@v1
-        with:
-          args: c('--no-manual', '--as-cran')
       
       - name: Show testthat output
         if: always()
