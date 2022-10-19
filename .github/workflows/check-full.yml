@@ -7,7 +7,7 @@
 
 on:
   push:
-    branches: [ main, master ]
+    branches: [ main, master, 21-implement-function-to-upload-results-from-a-data-frame ]
   pull_request:
     branches: [ main, master ]
   release:

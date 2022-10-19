@@ -3,10 +3,9 @@ library(jsonlite)
 
 #' Makes a direct API Call to Benchling Schema endpoints without benchling-sdk client.
 #'
-#' @param schema_id
+#' @param schema_id provided schema id
 #' @param schema_type schema type name as it shown on benhcling API endpoints with or without `-schemas` ending.
 #' @param tenant is tenant name. If missing, it will be reading from sys.env
-#' @export schema fields.
 #' @examples \dontrun{
 #' schema_id <- "assaysch_nIw4yAq8"
 #' schema_type <- "assay-result"
@@ -37,9 +36,9 @@ get_schema_fields <- function(schema_id, schema_type, tenant) {
 #'
 #' compares schema fields with dataframe colnames and verifies
 #'
-#' @param schema_id
+#' @param schema_id provided schema id
 #' @param schema_type schema type name as it shown on benhcling API endpoints with or without `-schemas` ending.
-#' @param df
+#' @param df provided dataframe
 #' @param strict_check is an optional arguement. if set TRUE, the function looks for every schema field names in colnames.
 #' @param tenant is tenant name. If missing, it will be reading from sys.env
 #' @examples \dontrun{

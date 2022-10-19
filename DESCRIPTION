@@ -62,4 +62,6 @@ Collate:
     'read_entry_tables.R'
     'read_plate_diagrams.R'
     'replace_entity_id_with_name.R'
+    'schema_utils.R'
+    'upload_results.R'
     'warehouse_connect.R'
