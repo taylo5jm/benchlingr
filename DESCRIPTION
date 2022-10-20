@@ -37,6 +37,7 @@ Imports:
     DBI,
     dplyr,
     glue,
+    httr,
     magrittr,
     methods,
     purrr,

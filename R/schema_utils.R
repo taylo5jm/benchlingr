@@ -24,8 +24,8 @@ get_schema_fields <- function(schema_id, schema_type, tenant) {
 
   base_url <- glue::glue('https://{tenant}.benchling.com/api/v2/{schema_type}-schemas/{schema_id}')
 
-  schema_fields_raw <- GET(url = base_url, httr::authenticate(Sys.getenv('BENCHLING_DEV_API_KEY'), ''))
-  schema_fields <- content(schema_fields_raw)
+  schema_fields_raw <- httr::GET(url = base_url, httr::authenticate(Sys.getenv('BENCHLING_DEV_API_KEY'), ''))
+  schema_fields <- httr::content(schema_fields_raw)
   if (length(schema_fields$error) > 0) {
     stop(schema_fields$error)
   }
