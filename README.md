@@ -6,7 +6,8 @@
 ![Windows R package check, build, and test](https://github.com/hemoshear/benchlingr/actions/workflows/check-full-windows.yml/badge.svg)
 
 
-Benchling is a laboratory information management system with a developer platform that is comprised of a Postgres database, an application programming interface (API), an "Events" system that is built on top of the AWS EventBridge service, as well as a Python software development kit (SDK). `benchlingr` is a R package that aims to make the developer platform accessible to data scientists.
+Benchling is a laboratory information management system with a developer platform that is comprised of a Postgres database, an application programming interface (API), an "Events" system that is built on top of the AWS EventBridge service, as well as a Python software development kit (SDK).`benchlingr` is an unofficial R package that allows one to easily connect tables in the Benchling data warehouse, download file attachments, extract unstructured tables from notebook entries, and upload assay results to the platform. 
+
 
 ### Installation
 
