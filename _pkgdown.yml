@@ -28,7 +28,6 @@ reference:
   desc: Notebook entries
   contents:
   - find_entry_tables
-  - read_entry_table
   - read_entry_tables
   - read_plate_diagrams
   - list_schemas_in_entry
