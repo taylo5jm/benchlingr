@@ -4,14 +4,14 @@
 \alias{read_entry_table}
 \title{Read unstructured table in a notebook entry}
 \usage{
-read_entry_table(entry, day, table_index, table_name = TRUE)
+read_entry_table(entry, day, table_position, table_name = TRUE)
 }
 \arguments{
 \item{entry}{Notebook entry in JSON format.}
 
 \item{day}{Integer for the day in the notebook entry. See `find_entry_tables`.}
 
-\item{table_index}{Integer for the position of the table in the notebook entry list. 
+\item{table_position}{Integer for the position of the table in the notebook entry list. 
 See `find_entry_tables`.}
 
 \item{table_name}{bool Determines how
@@ -33,6 +33,7 @@ client <- benchling_api_auth(tenant="https://hemoshear-dev.benchling.com",
 entry <- client$entries$get_entry_by_id("etr_T3WZTyAe")
 table_indices <- benchlingr:::find_entry_tables(entry)
 print(table_indices)
-a_table <- read_entry_table(entry, day=1, table_index=2)
+a_table <- read_entry_table(entry, day=1, table_position=2)
 }
 }
+\keyword{internal}

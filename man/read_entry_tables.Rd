@@ -4,7 +4,13 @@
 \alias{read_entry_tables}
 \title{Read all unstructured tables in a notebook entry.}
 \usage{
-read_entry_tables(entry, table_name = TRUE, verbose = FALSE)
+read_entry_tables(
+  entry,
+  day = NULL,
+  table_position = NULL,
+  table_name = TRUE,
+  verbose = FALSE
+)
 }
 \arguments{
 \item{entry}{Notebook entry in JSON format. See `get_entry`.}
