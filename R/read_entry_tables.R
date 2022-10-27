@@ -92,32 +92,38 @@ read_entry_table <- function(entry, day, table_index,
 #' }
 #' @export
 
-read_entry_tables <- function(entry, table_name=TRUE, verbose=FALSE) {
-  table_indices <- find_entry_tables(entry)
-  res <- list(); k <- 1;
-  for (i in 1:length(table_indices)) {
-    if (length(table_indices[[i]]) > 0) {
-      for (j in 1:length(table_indices[[i]])) {
-        res[[k]] <- read_entry_table(entry, day=i, 
-                               table_index=table_indices[[i]][j],
-                               table_name=table_name)
-        k <- k + 1
-      }
-      # If table_name is TRUE, then make the table names the names of the list
-      # itself and remove them from the original data frames. 
-      if (table_name) {
-        names(res) <- purrr::map(res, ~ unique(.$table_name)) %>%
-          unlist
-        for (i in 1:length(res)) {
-          res[[i]]$table_name <- NULL
+read_entry_tables <- function(entry, day=NULL, table_position=NULL,
+                              table_name=TRUE, verbose=FALSE) {
+  if (is.null(day) & is.null(table_position)) {
+    table_indices <- find_entry_tables(entry)
+    res <- list(); k <- 1;
+    for (i in 1:length(table_indices)) {
+      if (length(table_indices[[i]]) > 0) {
+        for (j in 1:length(table_indices[[i]])) {
+          res[[k]] <- read_entry_table(entry, day=i, 
+                                       table_index=table_indices[[i]][j],
+                                       table_name=table_name)
+          k <- k + 1
+        }
+        # If table_name is TRUE, then make the table names the names of the list
+        # itself and remove them from the original data frames. 
+        if (table_name) {
+          names(res) <- purrr::map(res, ~ unique(.$table_name)) %>%
+            unlist
+          for (i in 1:length(res)) {
+            res[[i]]$table_name <- NULL
+          }
+        }
+        
+      } else {
+        if (verbose) {
+          cat(glue::glue("No tables found for day {`i`}\n"))
         }
       }
-      
-    } else {
-      if (verbose) {
-        cat(glue::glue("No tables found for day {`i`}\n"))
-      }
     }
+  } else {
+    res <- read_entry_table(entry, day=day, table_index=table_position,
+                     table_name=table_name)
   }
   res 
 }
