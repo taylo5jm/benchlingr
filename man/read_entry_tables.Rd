@@ -15,6 +15,11 @@ read_entry_tables(
 \arguments{
 \item{entry}{Notebook entry in JSON format. See `get_entry`.}
 
+\item{day}{Integer for the day in the notebook entry. See `find_entry_tables`.}
+
+\item{table_position}{Integer for the position of the table in the notebook entry list. 
+See `find_entry_tables`.}
+
 \item{table_name}{If table_name is TRUE, then the names of the tables
 in the notebook entry will be returned as names in the output list.}
 

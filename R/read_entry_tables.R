@@ -83,6 +83,9 @@ read_entry_table <- function(entry, day, table_position,
 #' 
 #' @include find_entry_tables.R
 #' @param entry Notebook entry in JSON format. See `get_entry`.
+#' @param day Integer for the day in the notebook entry. See `find_entry_tables`.
+#' @param table_position Integer for the position of the table in the notebook entry list. 
+#' See `find_entry_tables`.
 #' @param table_name If table_name is TRUE, then the names of the tables
 #' in the notebook entry will be returned as names in the output list. 
 #' @param verbose If verbose, then the function will alert the user
