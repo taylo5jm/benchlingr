@@ -23,7 +23,7 @@ jobs:
       BENCHLING_DEV_WAREHOUSE_PASSWORD: ${{ secrets.BENCHLING_DEV_WAREHOUSE_PASSWORD }}
       BENCHLING_DEV_API_KEY: ${{ secrets.BENCHLING_DEV_API_KEY }}
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
       - uses: r-lib/actions/setup-pandoc@v2
 
@@ -36,7 +36,6 @@ jobs:
           extra-packages: any::pkgdown, local::.
           needs: website
 
-      - uses: actions/checkout@v3
       - uses: actions/setup-python@v4
         with:
           python-version: '3.9'
