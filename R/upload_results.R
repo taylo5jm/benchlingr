@@ -14,8 +14,6 @@
 #' schemaId <- "assaysch_BoT5QoQc"
 #' }
 
-conn <- warehouse_connect("hemoshear")
-# client <- benchlingr::benchling_api_auth(tenant="https://hemoshear.benchling.com")
 upload_results <- function(conn, df, project_id, schema_id, tenant=Sys.getenv("BENCHLING_TENANT"),
                            id_or_name='name') {
   
