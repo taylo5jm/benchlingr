@@ -4,7 +4,13 @@
 \alias{verify_schema_fields}
 \title{compares schema fields with dataframe colnames and verifies}
 \usage{
-verify_schema_fields(schema_id, schema_type, df, strict_check = FALSE, tenant)
+verify_schema_fields(
+  schema_id,
+  schema_type,
+  df,
+  strict_check = FALSE,
+  tenant = Sys.getenv("BENCHLING_TENANT")
+)
 }
 \arguments{
 \item{schema_id}{provided schema id}
@@ -34,3 +40,4 @@ df <- data.frame(
  check.names = FALSE
 }
 }
+\keyword{internal}

@@ -1,21 +1,28 @@
-library(httr)
-library(jsonlite)
-
 #' Makes a direct API Call to Benchling Schema endpoints without benchling-sdk client.
-#'
+#' 
+#' @include error.R
 #' @param schema_id provided schema id
-#' @param schema_type schema type name as it shown on benhcling API endpoints with or without `-schemas` ending.
-#' @param tenant is tenant name. If missing, it will be reading from sys.env
+#' @param schema_type schema type name as it shown on benhcling API endpoints 
+#' with or without `-schemas` ending. See \url{https://benchling.com/api/reference#/Schemas}.
+#' @param tenant is tenant name in the form "https://your-organization.benchling.com".
+#' Default value is the `BENCHLING_TENANT` environment variable. 
+#' @param api_key API key. Default value is the `BENCHLING_API_KEY` environment
+#' variable. 
 #' @examples \dontrun{
 #' schema_id <- "assaysch_nIw4yAq8"
 #' schema_type <- "assay-result"
 #' }
-#'
-
-get_schema_fields <- function(schema_id, schema_type, tenant) {
-
-  if (missing(tenant)) {
-    tenant <- Sys.getenv("BENCHLING_TENANT")
+#' @keywords internal
+get_schema_fields <- function(schema_id, schema_type, 
+                              tenant=Sys.getenv("BENCHLING_TENANT"),
+                              api_key=Sys.getenv("BENCHLING_API_KEY")) {
+  
+  if (api_key == "") {
+    .missing_api_key_error()
+  }
+  
+  if (tenant == "") {
+    .missing_tenant_error()
   }
 
   if ('-schemas' %in% schema_type) {
@@ -24,7 +31,7 @@ get_schema_fields <- function(schema_id, schema_type, tenant) {
 
   base_url <- glue::glue('https://{tenant}.benchling.com/api/v2/{schema_type}-schemas/{schema_id}')
 
-  schema_fields_raw <- httr::GET(url = base_url, httr::authenticate(Sys.getenv('BENCHLING_DEV_API_KEY'), ''))
+  schema_fields_raw <- httr::GET(url = base_url, httr::authenticate(api_key, ''))
   schema_fields <- httr::content(schema_fields_raw)
   if (length(schema_fields$error) > 0) {
     stop(schema_fields$error)
@@ -51,11 +58,13 @@ get_schema_fields <- function(schema_id, schema_type, tenant) {
 #'  check.names = FALSE
 #' }
 #' @return boolean field
+#' @keywords internal
 
-verify_schema_fields <- function(schema_id, schema_type, df, strict_check = FALSE, tenant) {
+verify_schema_fields <- function(schema_id, schema_type, df, strict_check = FALSE, 
+                                 tenant=Sys.getenv("BENCHLING_TENANT")) {
 
-  if (missing(tenant)) {
-    tenant <- Sys.getenv("BENCHLING_TENANT")
+  if (tenant == "") {
+    .missing_tenant_error()
   }
 
   if (is.null(df) || nrow(df) == 0) {
