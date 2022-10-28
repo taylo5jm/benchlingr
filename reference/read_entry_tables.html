@@ -57,13 +57,28 @@ returning a list of data frames.</p>
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">read_entry_tables</span><span class="op">(</span><span class="va">entry</span>, table_name <span class="op">=</span> <span class="cn">TRUE</span>, verbose <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">read_entry_tables</span><span class="op">(</span></span>
+<span>  <span class="va">entry</span>,</span>
+<span>  day <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  table_position <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  table_name <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  verbose <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
     <dl><dt>entry</dt>
 <dd><p>Notebook entry in JSON format. See `get_entry`.</p></dd>
+
+
+<dt>day</dt>
+<dd><p>Integer for the day in the notebook entry. See `find_entry_tables`.</p></dd>
+
+
+<dt>table_position</dt>
+<dd><p>Integer for the position of the table in the notebook entry list. 
+See `find_entry_tables`.</p></dd>
 
 
 <dt>table_name</dt>
