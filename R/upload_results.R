@@ -2,19 +2,21 @@
 
 #' Upload assay results to Benchling from a data frame
 #' 
+#' @importFrom magrittr %<>%
 #' @include schema_utils.R
 #' @param conn Database connection. 
 #' @param client Benchling API client. 
 #' @param df Data frame / tibble of results to be uploaded to Benchling. 
-#' @param projectId Benchling project identifier.
-#' @param schemaId Results schema ID (starts with "assaysch_"). 
+#' @param project_id Benchling project identifier.
+#' @param schema_id Results schema ID (starts with "assaysch_"). 
 #' @export
 #' @examples \dontrun{
 #' schemaId <- "assaysch_BoT5QoQc"
 #' }
-#' 
+
+conn <- warehouse_connect("hemoshear")
 # client <- benchlingr::benchling_api_auth(tenant="https://hemoshear.benchling.com")
-upload_results <- function(df, project_id, schema_id, tenant=Sys.getenv("BENCHLING_TENANT"),
+upload_results <- function(conn, df, project_id, schema_id, tenant=Sys.getenv("BENCHLING_TENANT"),
                            id_or_name='name') {
   
   if (tenant == "") {
@@ -27,87 +29,116 @@ upload_results <- function(df, project_id, schema_id, tenant=Sys.getenv("BENCHLI
 
   # Stop if not
   # 3. Check to see if the types of the columns in the data frame match the types of the fields in the schema.
-  conn <- warehouse_connect("hemoshear")
   schema_def <- DBI::dbGetQuery(conn, glue::glue(
-    "SELECT schema_field.archived$,schema.name,schema.id,
+    "SELECT schema_field.archived$,schema.name as schema_name,schema.id,
     schema_field.name,schema_field.display_name,schema_field.type,
-    schema_field.is_multi,schema_field.is_required,schema_field.system_name  
+    schema_field.is_multi,schema_field.is_required,schema_field.system_name,
+    schema_field.target_schema_id 
     FROM schema INNER JOIN schema_field ON 
     schema.id = schema_field.schema_id WHERE schema.id = '{`schemaId`}'"))
+  
+  # Create a lookup for the column types.
   type_map <- as.character(schema_def$type)
   names(type_map) <- as.character(schema_def$system_name)
   
+  # Create a lookup for multi-select.
   multi_select_map <- as.character(schema_def$is_multi)
   names(multi_select_map) <- as.character(schema_def$system_name)
   
-  #table_name <- as.character(schema_def$is_multi)
-  #names(multi_select_map) <- as.character(schema_def$system_name)
+  # Find the warehouse table names for the entity_link and storage_link columns. 
+  connected_tables <- DBI::dbGetQuery(
+    conn, 
+    glue::glue(
+    "SELECT id as target_schema_id,schema_type,
+    system_name as warehouse_table_name FROM schema WHERE id IN 
+    {.vec2sql_tuple(unique(schema_def$target_schema_id))}"))
+  schema_def %<>% dplyr::left_join(connected_tables)
+
+  # Create a lookup for the warehouse tables
+  target_schema_map <- as.character(schema_def$warehouse_table_name)
+  names(target_schema_map) <- as.character(connected_tables$system_name)
   
   to_query <- c('entity_link', 'dropdown', 'storage_link')
   basic_type_mapping <- c('integer' = 'numeric', 'float' = 'numeric')
-  schema_def
-  errors <- c('')
+
+  errors <- c()
   for (i in 1:length(colnames(df))) {
-    # type check
-    if (type_map[colnames(df)] %in% c('text', to_query)) {
-      is_text <- all(is.character(df[,i]))
-      if (!is_text) {
-        errors <- c(errors, c(glue::glue('{colnames(df)[i]} must be a character type.')))
-      }
+    errors <- .validate_column_types(errors, df, i)
+    errors <- .validate_column_values(errors, df, i)
+  }
+  # Stop function execution and show all errors to the user. 
+  assertthat::assert_that(length(errors) == 0,
+                          msg=paste0(errors, collapse='\n'))
       
-    } else if (type_map[colnames(df)] %in% names(basic_type_mapping)) {
-      is_numeric <- all(is.numeric(df[,i]))
-      if (!is_numeric) {
-        errors <- c(errors, glue::glue("{colnames(df)[i]} must be a numeric type."))
-      }
-    } else if (multi_select_map[colnames(df)[i]]) {
-      is_multiselect_list <- is.list(df[,i])
-      if (!is_multiselect_list) {
-        errors <- c(errors, glue::glue("{colnames(df)[i]} must be a list."))
-      }
-      
-    }
-    
-    # If the column is an entity_link, storage_link, or  dropdown,
-    # then we need to check the values against the ones already registered. 
-    if (type_map[colnames(df)[i]] == 'entity_link') {
-      registered_values <- DBI::dbGetQuery(conn, "SELECT {`id_or_name`} FROM {colnames(df)[i]} WHERE 
-                      {`id_or_name`} IN {.vec2sql_tuple(unique(df[[i]]))}")
-      if (!(all(unique(df[[i]]) %in% registered_values))) {
-        errors <- c(errors, glue::glue(("Not all values in '{colnames(df)[i]}' are registered.")))
-      }
-    } else if (type_map[colnames(df)[i]] == 'dropdown') {
-      # get_dropdown_schema()
-      
-    } else if (type_map[colnames(df)[i]] == 'storage_link') {
-      
-    } else if (type_map[colnames(df)[i]] == 'blob_link') {
-      # upload the files
-      # get the IDs
-      # upload IDs with results. 
-      
-    } else { # text / float / integer 
-      next()
-    }
-    
-    # warn user if info is not getting written but present in the data frame
+    # warn user if info is not getting written but notresent in the data frame
     # upload results with API/SDK
     # return a data frame with the submitted results, as well as the IDs. 
-    
-  }
   
   
 }
 
+.validate_column_types <- function(errors, df, i) {
+  # type check
+  if (type_map[colnames(df)[i]] %in% c('text', to_query)) {
+    is_text <- all(is.character(df[,i]))
+    if (!is_text) {
+      errors <- c(errors, c(glue::glue('{colnames(df)[i]} must be a character type.')))
+    }
+    
+  } else if (type_map[colnames(df)[i]] %in% names(basic_type_mapping)) {
+    is_numeric <- all(is.numeric(df[,i]))
+    if (!is_numeric) {
+      errors <- c(errors, glue::glue("{colnames(df)[i]} must be a numeric type."))
+    }
+  } else if (multi_select_map[colnames(df)[i]]) {
+    is_multiselect_list <- is.list(df[,i])
+    if (!is_multiselect_list) {
+      errors <- c(errors, glue::glue("{colnames(df)[i]} must be a list."))
+    }
+  } else { # final case is text / decimal
+    
+  }
+  
+  return(errors)
+}
+
+
+.validate_column_values <- function(errors, df, i) {
+  # If the column is an entity_link, storage_link, or  dropdown,
+  # then we need to check the values against the ones already registered. 
+  if (type_map[colnames(df)[i]] == 'entity_link') {
+    registered_values <- DBI::dbGetQuery(conn, 
+                                         "SELECT {`id_or_name`} FROM {colnames(df)[i]} WHERE 
+      {`id_or_name`} IN {.vec2sql_tuple(unique(df[[i]]))}")
+    if (!(all(unique(df[[i]]) %in% registered_values))) {
+      errors <- c(errors, 
+                  glue::glue(
+                    "Not all values in '{colnames(df)[i]}' are registered."))
+    }
+  } else if (type_map[colnames(df)[i]] == 'dropdown') {
+    # get_dropdown_schema()
+    
+  } else if (type_map[colnames(df)[i]] == 'storage_link') {
+    
+  } else if (type_map[colnames(df)[i]] == 'blob_link') {
+    # upload the files
+    # get the IDs
+    # upload IDs with results. 
+    
+  } else { # text / float / integer 
+    
+  }
+  return(errors)
+}
 # Add these convenience functions for getting hte ProjectIds and results schema Ids
 
-get_project_ids <- function() {
+get_project_ids <- function(conn) {
   DBI::dbGetQuery(conn, "SELECT id,name FROM project")
 }
 
 
 
-get_results_schema_ids <- function() {
+get_results_schema_ids <- function(conn) {
   DBI::dbGetQuery(conn, "SELECT id,name FROM schema WHERE schema_type = 'assay_result'")
 }
 

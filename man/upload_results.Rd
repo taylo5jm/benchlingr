@@ -15,13 +15,13 @@ upload_results(
 \arguments{
 \item{df}{Data frame / tibble of results to be uploaded to Benchling.}
 
+\item{project_id}{Benchling project identifier.}
+
+\item{schema_id}{Results schema ID (starts with "assaysch_").}
+
 \item{conn}{Database connection.}
 
 \item{client}{Benchling API client.}
-
-\item{projectId}{Benchling project identifier.}
-
-\item{schemaId}{Results schema ID (starts with "assaysch_").}
 }
 \description{
 Upload assay results to Benchling from a data frame
