@@ -16,7 +16,7 @@
 benchling_api_auth <- function(
   tenant, api_key=Sys.getenv("BENCHLING_API_KEY")) {
   if (api_key == "") {
-    missing_api_key_error()
+    .missing_api_key_error()
   }
   reticulate::source_python(
     system.file("python", "benchling_api_client.py", package = "benchlingr"))
