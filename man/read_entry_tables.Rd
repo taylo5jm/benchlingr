@@ -4,10 +4,21 @@
 \alias{read_entry_tables}
 \title{Read all unstructured tables in a notebook entry.}
 \usage{
-read_entry_tables(entry, table_name = TRUE, verbose = FALSE)
+read_entry_tables(
+  entry,
+  day = NULL,
+  table_position = NULL,
+  table_name = TRUE,
+  verbose = FALSE
+)
 }
 \arguments{
 \item{entry}{Notebook entry in JSON format. See `get_entry`.}
+
+\item{day}{Integer for the day in the notebook entry. See `find_entry_tables`.}
+
+\item{table_position}{Integer for the position of the table in the notebook entry list. 
+See `find_entry_tables`.}
 
 \item{table_name}{If table_name is TRUE, then the names of the tables
 in the notebook entry will be returned as names in the output list.}
