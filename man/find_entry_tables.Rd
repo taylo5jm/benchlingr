@@ -24,11 +24,10 @@ from other API endpoints / data warehouse tables.
 }
 \examples{
 \dontrun{
-conn <- warehouse_connect("hemoshear-dev", 
-    username = Sys.getenv("BENCHLING_DEV_WAREHOUSE_USERNAME"),
-    password = Sys.getenv("BENCHLING_DEV_WAREHOUSE_PASSWORD"))
-entry <- get_entry(id="xxxxxx", download=FALSE)
-find_tables(entry)
-DBI::dbDisconnect(conn)
+client <- benchlingr::benchling_api_auth(
+    tenant="https://hemoshear-dev.benchling.com",
+    api_key = Sys.getenv("BENCHLING_DEV_API_KEY"))
+json <- client$entries$get_entry_by_id("etr_T3WZTyAe")
+benchlingr::find_entry_tables(json)
 }
 }
