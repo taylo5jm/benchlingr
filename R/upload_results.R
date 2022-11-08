@@ -12,6 +12,7 @@
 #' @export
 #' @examples \dontrun{
 #' schemaId <- "assaysch_BoT5QoQc"
+#' conn <- warehouse_connect("hemoshear")
 #' }
 
 upload_results <- function(conn, df, project_id, schema_id, tenant=Sys.getenv("BENCHLING_TENANT"),
@@ -21,9 +22,9 @@ upload_results <- function(conn, df, project_id, schema_id, tenant=Sys.getenv("B
     .missing_tenant_error()
   }
   # 1. Check to see if all columns are present for all required fields in the results schema.
-  df_is_valid <- verify_schema_fields(schema_id, schema_type='assay-result',
-                       df=df, strict_check = TRUE,
-                       tenant=tenant)
+  df_is_valid <- verify_schema_fields(
+    schema_id, schema_type='assay-result',
+    df=df, strict_check = TRUE, tenant=tenant)
 
   # Stop if not
   # 3. Check to see if the types of the columns in the data frame match the types of the fields in the schema.
@@ -57,12 +58,15 @@ upload_results <- function(conn, df, project_id, schema_id, tenant=Sys.getenv("B
   names(target_schema_map) <- as.character(connected_tables$system_name)
   
   to_query <- c('entity_link', 'dropdown', 'storage_link')
-  basic_type_mapping <- c('integer' = 'numeric', 'float' = 'numeric')
 
   errors <- c()
   for (i in 1:length(colnames(df))) {
-    errors <- .validate_column_types(errors, df, i)
-    errors <- .validate_column_values(errors, df, i)
+    errors <- .validate_column_types(
+      errors, df[,i], colnames(d)[i],
+      type_map=type_map, multi_select_map = multi_select_map)
+    errors <- .validate_column_values(
+      errors, df[,i], colnames(d)[i],
+      type_map=type_map, multi_select_map=multi_select_map)
   }
   # Stop function execution and show all errors to the user. 
   assertthat::assert_that(length(errors) == 0,
@@ -75,46 +79,49 @@ upload_results <- function(conn, df, project_id, schema_id, tenant=Sys.getenv("B
   
 }
 
-.validate_column_types <- function(errors, df, i) {
-  # type check
-  if (type_map[colnames(df)[i]] %in% c('text', to_query)) {
-    is_text <- all(is.character(df[,i]))
+.validate_column_types <- function(errors, values, column_name,
+                                   type_map, multi_select_map) {
+  numeric_type_mapping <- c('integer' = 'numeric', 'float' = 'numeric')
+  # Check characters
+  if (type_map[column_name] %in% c('text', 'entity_link', 'dropdown',
+                                       'long_text', 'storage_link', 'blob_link',
+                                       'dna_sequence_link')) {
+    is_text <- all(is.character(values))
     if (!is_text) {
-      errors <- c(errors, c(glue::glue('{colnames(df)[i]} must be a character type.')))
+      errors <- c(errors, c(glue::glue('{column_name} must be a character type.')))
     }
-    
-  } else if (type_map[colnames(df)[i]] %in% names(basic_type_mapping)) {
-    is_numeric <- all(is.numeric(df[,i]))
+    #   
+  } else if (type_map[column_name] %in% names(numeric_type_mapping)) {
+    is_numeric <- all(is.numeric(values))
     if (!is_numeric) {
-      errors <- c(errors, glue::glue("{colnames(df)[i]} must be a numeric type."))
+      errors <- c(errors, glue::glue("{column_name} must be a numeric type."))
     }
-  } else if (multi_select_map[colnames(df)[i]]) {
-    is_multiselect_list <- is.list(df[,i])
+  } else if (multi_select_map[column_name]) {
+    is_multiselect_list <- is.list(values)
     if (!is_multiselect_list) {
-      errors <- c(errors, glue::glue("{colnames(df)[i]} must be a list."))
+      errors <- c(errors, glue::glue("{column_name} must be a list."))
     }
-  } else { # final case is text / decimal
-    
-  }
+  } 
   
   return(errors)
 }
 
 
-.validate_column_values <- function(errors, df, i) {
+.validate_column_values <- function(errors, values, column_name) {
   # If the column is an entity_link, storage_link, or  dropdown,
   # then we need to check the values against the ones already registered. 
-  if (type_map[colnames(df)[i]] == 'entity_link') {
+  if (type_map[column_name] == 'entity_link') {
     registered_values <- DBI::dbGetQuery(conn, 
                                          "SELECT {`id_or_name`} FROM {colnames(df)[i]} WHERE 
       {`id_or_name`} IN {.vec2sql_tuple(unique(df[[i]]))}")
-    if (!(all(unique(df[[i]]) %in% registered_values))) {
+    if (!(all(unique(values) %in% registered_values))) {
+      # Which ones?
       errors <- c(errors, 
                   glue::glue(
-                    "Not all values in '{colnames(df)[i]}' are registered."))
+                    "Not all values in '{column_name}' are registered."))
     }
   } else if (type_map[colnames(df)[i]] == 'dropdown') {
-    # get_dropdown_schema()
+    get_dropdown_schema()
     
   } else if (type_map[colnames(df)[i]] == 'storage_link') {
     
@@ -141,8 +148,14 @@ get_results_schema_ids <- function(conn) {
 }
 
 
-get_dropdown_schema <- function(conn, dropdown_id) {
-  DBI::dbGetQuery(conn, glue::glue("SELECT dropdown_option.name FROM dropdown INNER JOIN dropdown_option ON 
-                  dropdown.id = dropdown_option.dropdown_id 
-                  WHERE dropdown.id = '{dropdown_id}'"))
+get_dropdown_options <- function(conn, dropdown_id) {
+  DBI::dbGetQuery(conn, 
+  glue::glue("SELECT dropdown_option.name FROM dropdown INNER JOIN 
+  dropdown_option ON dropdown.id = dropdown_option.dropdown_id 
+             WHERE dropdown.id = '{dropdown_id}'"))
+}
+
+
+get_dropdown <- function(conn, name) {
+  DBI::dbGetQuery(conn, glue::glue("SELECT dropdown WHERE name = '{name}'"))
 }
