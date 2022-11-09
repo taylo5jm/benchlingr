@@ -59,7 +59,7 @@ verify_schema_fields <- function(schema_id, schema_type, df, strict_check = FALS
   }
 
   if (is.null(df) || nrow(df) == 0) {
-    warning('Dataframe is empty or none.')
+    stop('Dataframe is empty or none.')
     return(FALSE)
   }
 
@@ -67,23 +67,44 @@ verify_schema_fields <- function(schema_id, schema_type, df, strict_check = FALS
   field_definitions <- get_schema_fields(schema_id, schema_type, tenant = tenant)
 
   if (length(field_definitions) == 0) {
-    warning("This schema has no fields.")
+    stop("This schema has no fields.")
     return(FALSE)
   }
 
   for (field in field_definitions) {
     if (field$isRequired == TRUE) {
       if (!(field$name %in% column_names)) {
-        warning(glue::glue('\`{field$name}\` is a required field of this schema. Please verify your dataframe fields.'))
+        stop(glue::glue('\`{field$name}\` is a required field of this schema.
+        Please verify your dataframe fields.'))
         return(FALSE)
       }
     }else if (strict_check) {
       if (!(field$name %in% column_names)) {
-        warning(glue::glue('\`{field$name}\` does not match with any column of this df. Please either provide the required field or call this method with strict_check=FALSE'))
+        stop(glue::glue('\`{field$name}\` does not match with any column of this df.
+         Please either provide the required field or call this method with strict_check=FALSE'))
         return(FALSE)
       }
     }
   }
 
+  # todo Check to see if the types of the columns in the data frame match the types of the fields in the schema.
+
   return(TRUE)
 }
+
+.verify_schema_field_types <- function(schema_fields, df, strict_check) {
+
+
+}
+
+# schema_id <- 'assaysch_nIw4yAq8'
+# schema_type <- 'assay-result'
+# df <- data.frame(
+#   "plate" = c('davut'),
+#   "analytes" = c('0.2'),
+#   'file' = c('aaaa'),
+#   check.names = FALSE
+# )
+#
+# result <- verify_schema_fields(schema_id = schema_id, schema_type = schema_type, df = df)
+# print(result)
