@@ -1,6 +1,7 @@
 # benchling_api_client.R
 #' Create a Benchling API client that can be used to access the API via R. 
 #' 
+#' @include error.R
 #' @param tenant URL for the Benchling tenant (character).
 #' @param api_key API key for the Benchling tenant (character). The default
 #' value is the "BENCHLING_API_KEY" environment variable in the `.Renviron`
@@ -15,10 +16,7 @@
 benchling_api_auth <- function(
   tenant, api_key=Sys.getenv("BENCHLING_API_KEY")) {
   if (api_key == "") {
-    stop("'api_key' cannot be an empty string. Set the 'BENCHLING_API_KEY' 
-         environment variable in your .Renviron file. Edit the .Renviron file
-         in R using the following command:
-         usethis::edit_r_environ()")
+    .missing_api_key_error()
   }
   reticulate::source_python(
     system.file("python", "benchling_api_client.py", package = "benchlingr"))

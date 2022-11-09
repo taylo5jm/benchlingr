@@ -4,14 +4,24 @@
 \alias{get_schema_fields}
 \title{Makes a direct API Call to Benchling Schema endpoints without benchling-sdk client.}
 \usage{
-get_schema_fields(schema_id, schema_type, tenant)
+get_schema_fields(
+  schema_id,
+  schema_type,
+  tenant = Sys.getenv("BENCHLING_TENANT"),
+  api_key = Sys.getenv("BENCHLING_API_KEY")
+)
 }
 \arguments{
 \item{schema_id}{provided schema id}
 
-\item{schema_type}{schema type name as it shown on benhcling API endpoints with or without `-schemas` ending.}
+\item{schema_type}{schema type name as it shown on benhcling API endpoints 
+with or without `-schemas` ending. See \url{https://benchling.com/api/reference#/Schemas}.}
 
-\item{tenant}{is tenant name. If missing, it will be reading from sys.env}
+\item{tenant}{is tenant name in the form "https://your-organization.benchling.com".
+Default value is the `BENCHLING_TENANT` environment variable.}
+
+\item{api_key}{API key. Default value is the `BENCHLING_API_KEY` environment
+variable.}
 }
 \description{
 Makes a direct API Call to Benchling Schema endpoints without benchling-sdk client.
@@ -21,5 +31,5 @@ Makes a direct API Call to Benchling Schema endpoints without benchling-sdk clie
 schema_id <- "assaysch_nIw4yAq8"
 schema_type <- "assay-result"
 }
-
 }
+\keyword{internal}

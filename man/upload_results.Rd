@@ -4,18 +4,24 @@
 \alias{upload_results}
 \title{Upload assay results to Benchling from a data frame}
 \usage{
-upload_results(conn, client, df, projectId, schemaId)
+upload_results(
+  df,
+  project_id,
+  schema_id,
+  tenant = Sys.getenv("BENCHLING_TENANT"),
+  id_or_name = "name"
+)
 }
 \arguments{
+\item{df}{Data frame / tibble of results to be uploaded to Benchling.}
+
+\item{project_id}{Benchling project identifier.}
+
+\item{schema_id}{Results schema ID (starts with "assaysch_").}
+
 \item{conn}{Database connection.}
 
 \item{client}{Benchling API client.}
-
-\item{df}{Data frame / tibble of results to be uploaded to Benchling.}
-
-\item{projectId}{Benchling project identifier.}
-
-\item{schemaId}{Results schema ID (starts with "assaysch_").}
 }
 \description{
 Upload assay results to Benchling from a data frame
