@@ -4,18 +4,22 @@
 #' 
 #' @importFrom magrittr %<>%
 #' @include schema_utils.R
+#' @include error.R
 #' @param conn Database connection. 
 #' @param client Benchling API client. 
 #' @param df Data frame / tibble of results to be uploaded to Benchling. 
 #' @param project_id Benchling project identifier.
 #' @param schema_id Results schema ID (starts with "assaysch_"). 
+#' @param id_or_name Are the entity links identifiers or names?
 #' @export
 #' @examples \dontrun{
-#' schemaId <- "assaysch_BoT5QoQc"
-#' conn <- warehouse_connect("hemoshear")
+#' schema_id <- "assaysch_yKoqVsej"
+#' conn <- warehouse_connect("hemoshear-dev")
+#' api_key <- Sys.getenv("BENCHLING_DEV_API_KEY")
+#' tenant <- "hemoshear-dev"
 #' }
 
-upload_results <- function(conn, df, project_id, schema_id, tenant=Sys.getenv("BENCHLING_TENANT"),
+upload_results <- function(conn, client, df, project_id, schema_id, tenant=Sys.getenv("BENCHLING_TENANT"),
                            id_or_name='name') {
   
   if (tenant == "") {
@@ -28,6 +32,10 @@ upload_results <- function(conn, df, project_id, schema_id, tenant=Sys.getenv("B
 
   # Stop if not
   # 3. Check to see if the types of the columns in the data frame match the types of the fields in the schema.
+  #schema_def <- get_schema_fields(schema_id=schema_id, schema_type='assay-result',
+  #                                tenant=tenant, api_key=api_key) %>%
+  #  purrr::map_df(~ .)
+  
   schema_def <- DBI::dbGetQuery(conn, glue::glue(
     "SELECT schema_field.archived$,schema.name as schema_name,schema.id,
     schema_field.name,schema_field.display_name,schema_field.type,
@@ -79,13 +87,22 @@ upload_results <- function(conn, df, project_id, schema_id, tenant=Sys.getenv("B
   
 }
 
+
+#' Ensure that column types are valid for a data frame that is to be uploaded
+#' to Benchling as a results table. 
+#' 
+#' integer|float --> numeric
+#' text|entity_link|dropdown|long_text|storage_link|blob_link|dna_sequence_link --> character
+#' @keywords internal
+#' 
+
 .validate_column_types <- function(errors, values, column_name,
                                    type_map, multi_select_map) {
   numeric_type_mapping <- c('integer' = 'numeric', 'float' = 'numeric')
   # Check characters
-  if (type_map[column_name] %in% c('text', 'entity_link', 'dropdown',
-                                       'long_text', 'storage_link', 'blob_link',
-                                       'dna_sequence_link')) {
+  if (type_map[column_name] %in% 
+      c('text', 'entity_link', 'dropdown', 'long_text', 
+        'storage_link', 'blob_link', 'dna_sequence_link')) {
     is_text <- all(is.character(values))
     if (!is_text) {
       errors <- c(errors, c(glue::glue('{column_name} must be a character type.')))
@@ -107,25 +124,101 @@ upload_results <- function(conn, df, project_id, schema_id, tenant=Sys.getenv("B
 }
 
 
+
+#' Verify that the identifiers (or names) for an entity link field match
+#' identifiers (or names) that currently exist in the registry. 
+#' @keywords internal
+.validate_entity_column_values <- function(errors, values, column_name,
+                                           id_or_name) {
+  registered_values <- DBI::dbGetQuery(
+    conn, "SELECT {`id_or_name`} FROM {column_name} WHERE 
+      {`id_or_name`} IN {.vec2sql_tuple(values)}")
+  if (!(all(unique(values) %in% registered_values))) {
+    # Which ones?
+    errors <- c(errors, glue::glue(
+                  "Not all values in '{column_name}' are registered."))
+  }
+  return(errors)
+  
+}
+
+#' Verify that values in dropdown column are valid options in the dropdown schema. 
+#' @keywords internal
+.validate_dropdown_column_values <- function(conn, errors, values, column_name,
+                                             dropdown_id) {
+  valid_options <- get_dropdown_options(conn, dropdown_id)
+  invalid <- setdiff(values, valid_options)
+  if (length(invalid) > 0) {
+    errors <- c(errors, glue::glue("Not all values in '{column_name}' are valid dropdown options.
+                         {shQuote(paste0(invalid, collapse=','))} '"))
+  }
+  return(errors)
+}
+
+
+.validate_storage_link_column_values <- function(errors, values, column_name) {
+  
+}
+
+
+#' Verify that values in a blob link column refer to valid file paths on the 
+#' local machine.
+#' 
+#' @param errors Errors
+#' @param values Values in the column. 
+#' @param column_name Name of the column in the input data frame. 
+#' @keywords internal
+.validate_blob_link_column_values <- function(errors, values, column_name,
+                                              multi_select_map) {
+  # If multi-select then the column type will be a list
+  if (multi_select_map[column_name]) {
+    new_errors <- list()
+    for (i in 1:length(values)) {
+      new_errors <- purrr::map2(values[[i]], values[[i]], 
+                            ~ data.frame(exists =  file.exists(.x),
+                                         filename = .y))
+    }
+  }
+  else {
+    new_errors <- purrr::map2(values, values, 
+                              ~ data.frame(exists =  file.exists(.x),
+                                           filename = .y))
+  }
+  new_errors <- dplyr::bind_rows(new_errors) %>%
+    dplyr::filter(!exists)
+  if (nrow(new_errors) > 0) {
+    new_errors <- paste0(
+      new_errors$filename, " does not exist on the local machine.")
+    return(c(errors, new_errors))
+  } else {
+    return(errors)
+  }
+    
+}
+  
+
+#' Validate the values in the column of a results table.
+#' 
+#' If the column refers to an entity link field, the entity IDs in the input
+#' data frame are checked against those currently in the registry. If the column
+#' is a dropdown, then the values are checked against the dropdown options. 
+#' If the column is a storage link, the function checks to see if the IDs in the 
+#' input data frame exist in the inventory. If the column refers to a blob
+#' link field, then the function will assume the values are file paths and will
+#' check to see if the file exists on the local machine. 
+#' 
+
 .validate_column_values <- function(errors, values, column_name) {
   # If the column is an entity_link, storage_link, or  dropdown,
   # then we need to check the values against the ones already registered. 
   if (type_map[column_name] == 'entity_link') {
-    registered_values <- DBI::dbGetQuery(conn, 
-                                         "SELECT {`id_or_name`} FROM {colnames(df)[i]} WHERE 
-      {`id_or_name`} IN {.vec2sql_tuple(unique(df[[i]]))}")
-    if (!(all(unique(values) %in% registered_values))) {
-      # Which ones?
-      errors <- c(errors, 
-                  glue::glue(
-                    "Not all values in '{column_name}' are registered."))
-    }
-  } else if (type_map[colnames(df)[i]] == 'dropdown') {
-    get_dropdown_schema()
-    
-  } else if (type_map[colnames(df)[i]] == 'storage_link') {
-    
-  } else if (type_map[colnames(df)[i]] == 'blob_link') {
+    errors <- .validate_entity_column_values(errors, values, column_name)
+  } else if (type_map[column_name] == 'dropdown') {
+    errors <- .validate_dropdown_column_values(errors, values, column_name)
+  } else if (type_map[column_name] == 'storage_link') {
+    errors <- .validate_storage_link_column_values(errors, values, column_name)
+  } else if (type_map[column_name] == 'blob_link') {
+    errors <- .validate_blob_link_column_values(errors, values, column_name)
     # upload the files
     # get the IDs
     # upload IDs with results. 
@@ -137,25 +230,50 @@ upload_results <- function(conn, df, project_id, schema_id, tenant=Sys.getenv("B
 }
 # Add these convenience functions for getting hte ProjectIds and results schema Ids
 
+
+
+#' Get Benchling project metadata
+#' 
+#' @param conn Database connection opened with `warehouse_connect`.
+#' @return data.frame with `id` and `name` attributes for Benchling projects. 
+#' @export
+
 get_project_ids <- function(conn) {
-  DBI::dbGetQuery(conn, "SELECT id,name FROM project")
+  return(DBI::dbGetQuery(conn, "SELECT id,name FROM project"))
 }
 
 
 
 get_results_schema_ids <- function(conn) {
-  DBI::dbGetQuery(conn, "SELECT id,name FROM schema WHERE schema_type = 'assay_result'")
+  return(DBI::dbGetQuery(
+    conn, 
+    "SELECT id,name FROM schema WHERE schema_type = 'assay_result'"))
+}
+
+#' Get the options in a dropdown menu
+#' 
+#' 
+#' @param conn Database connection opened with `warehouse_connect`.
+#' @param dropdown_id Schema ID for the dropdown.
+#' @return character vector of dropdown menu options 
+#' @export
+
+get_dropdown_options <- function(conn, id) {
+  return(DBI::dbGetQuery(
+    conn, 
+      glue::glue("SELECT dropdown_option.name FROM dropdown INNER JOIN 
+      dropdown_option ON dropdown.id = dropdown_option.dropdown_id 
+                 WHERE dropdown.id = '{id}'")))
 }
 
 
-get_dropdown_options <- function(conn, dropdown_id) {
-  DBI::dbGetQuery(conn, 
-  glue::glue("SELECT dropdown_option.name FROM dropdown INNER JOIN 
-  dropdown_option ON dropdown.id = dropdown_option.dropdown_id 
-             WHERE dropdown.id = '{dropdown_id}'"))
-}
-
-
+#' Get metadata for a dropdown menu
+#' 
+#' @param conn Database connection opened with `warehouse_connect`.
+#' @param name Schema name for the dropdown
+#' @export
+#' 
 get_dropdown <- function(conn, name) {
-  DBI::dbGetQuery(conn, glue::glue("SELECT dropdown WHERE name = '{name}'"))
+  return(DBI::dbGetQuery(
+    conn, glue::glue("SELECT dropdown WHERE name = '{name}'")))
 }
