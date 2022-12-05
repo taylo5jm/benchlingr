@@ -48,6 +48,8 @@ get_schema_fields <- function(schema_id, schema_type,
 #' @param df provided dataframe
 #' @param strict_check is an optional arguement. if set TRUE, the function looks for every schema field names in colnames.
 #' @param tenant is tenant name. If missing, it will be reading from sys.env
+#' @param api_key API key. Default value is the `BENCHLING_API_KEY` environment
+#' variable. 
 #' @examples \dontrun{
 #' schema_id <- "assaysch_nIw4yAq8"
 #' schema_type <- "assay-result",
@@ -61,7 +63,8 @@ get_schema_fields <- function(schema_id, schema_type,
 #' @keywords internal
 
 verify_schema_fields <- function(schema_id, schema_type, df, strict_check = FALSE, 
-                                 tenant=Sys.getenv("BENCHLING_TENANT")) {
+                                 tenant=Sys.getenv("BENCHLING_TENANT"),
+                                 api_key=Sys.getenv("BENCHLING_API_KEY")) {
 
   if (tenant == "") {
     .missing_tenant_error()
@@ -73,7 +76,8 @@ verify_schema_fields <- function(schema_id, schema_type, df, strict_check = FALS
   }
 
   column_names <- names(df)
-  field_definitions <- get_schema_fields(schema_id, schema_type, tenant = tenant)
+  field_definitions <- get_schema_fields(schema_id, schema_type, tenant = tenant,
+                                         api_key=api_key)
 
   if (length(field_definitions) == 0) {
     stop("This schema has no fields.")
