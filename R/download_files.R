@@ -74,7 +74,8 @@ download_blobs <- function(client, file_map, outdir,
 #' download_blobs_in_warehouse_table(conn, res, outdir='temp_data_dir/')
 #' }
 
-download_blobs_in_warehouse_table <- function(client, conn, df, columns=NULL, outdir='.') {
+download_blobs_in_warehouse_table <- function(client, conn, df, columns=NULL, 
+                                              outdir='.', outdir_column=NULL) {
   is_schema_in_dataframe(df)
   blob_link_columns <- DBI::dbGetQuery(conn, glue::glue(
     "SELECT schema_field.name FROM schema 
@@ -88,13 +89,38 @@ download_blobs_in_warehouse_table <- function(client, conn, df, columns=NULL, ou
   if (is.null(columns)) {
     columns <- blob_link_columns
   }
-  assertthat::assert_that(all(columns %in% blob_link_columns),
-                          msg="The columns argument ({paste0(columns, collapse=',')})
-                             contains columns that do not exist in the schema. 
-                            Only the following columns are blob links in this schema ({unique(df$schema)}):
-                            paste0('-', blob_link_columns, '\n')")
+  assertthat::assert_that(
+    all(columns %in% blob_link_columns),
+    msg="The columns argument ({paste0(columns, collapse=',')})
+         contains columns that do not exist in the schema. 
+         Only the following columns are blob links in this schema ({unique(df$schema)}):
+        paste0('-', blob_link_columns, '\n')")
+  if (!is.null(outdir_column)) {
+    assertthat::assert_that(
+      length(outdir_column) == 1,
+      msg=glue::glue("The 'outdir_column' argument ({paste0(outdir_column, collapse=',')})
+      must be a character vector of length 1.")
+    )
+    assertthat::assert_that(
+      outdir_column %in% colnames(df),
+      msg=glue::glue("The 'outdir_column' argument ({paste0(outdir_column, collapse=',')})
+      must be the name of a column in the input data frame.")
+    )
+    for (i in 1:length(unique(df[[outdir_column]]))) {
+      if (!dir.exists(df[[outdir_column]][i])) {
+        dir.create(df[[outdir_column]][i])
+      }
+    }
 
-  .download_blobs <- function(client, df, column, outdir) {
+    if (!is.null(outdir)) {
+      warning("Both `outdir` and `outdir_column` were passed to the function.
+            Using `outdir_column`.")
+    }
+    
+  }
+
+
+  .download_blobs <- function(client, df, column, outdir, outdir_column) {
     reticulate::source_python(
       system.file("python", "download_files.py", package = "benchlingr"))
     file_col <- purrr::map(as.character(df[[column]]),
