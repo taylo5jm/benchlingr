@@ -102,12 +102,17 @@ expand_multiselect_column <- function(conn, df, column, shape="long",
 #' 
 .unpack_long <- function(df, column) {
   res <- vector("list", length=nrow(df))
-  df[[column]] <- purrr::map(as.character(df[[column]]), ~RJSONIO::fromJSON(.))
+  df[[column]] <- purrr::map(
+    as.character(df[[column]]), ~RJSONIO::fromJSON(.))
   new_rows <- list()
   for (i in 1:nrow(df)) {
+    if (length(df[[i,column]]) == 0 ) {
+      new_rows[[i]] <- df[i,]
+    } else {
     new_rows[[i]] <- purrr::map_df(
       df[[i,column]], 
       ~ dplyr::mutate(df[i,], {{ column }} := .))
+    }
   }
   do.call("rbind", new_rows)
 }
