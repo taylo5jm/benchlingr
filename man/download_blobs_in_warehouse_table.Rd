@@ -9,7 +9,8 @@ download_blobs_in_warehouse_table(
   conn,
   df,
   columns = NULL,
-  outdir = "."
+  outdir = NULL,
+  outdir_column = NULL
 )
 }
 \arguments{
@@ -25,7 +26,11 @@ blobs from.}
 
 \item{outdir}{Directory where the files should be saved on the local machine.
 Subdirectories are created within this directory for each blob link column
-in the data frame.}
+in the data frame. If `outdir_column` is provided, then this argument is 
+ignored.}
+
+\item{outdir_column}{Column in the data frame that represents the directories
+in which the files should be saved. This argument overrides `outdir`.}
 }
 \description{
 Download blobs contained within a warehouse table.

@@ -379,7 +379,7 @@ The schema name for this example table is `simple_plate_analyte_mapping`, so we 
 
 ```{r, eval=has_credentials}
 d <- DBI::dbGetQuery(conn, 
-  "SELECT plate,analytes,file FROM simple_plate_analyte_mapping$raw 
+  "SELECT id,plate,analytes,file FROM simple_plate_analyte_mapping$raw 
   WHERE entry_id$ = 'etr_JYUlMiIs'")
 d
 ```
@@ -395,12 +395,18 @@ download_blobs(
   outdir='data')
 ```
 
-The `download_blobs_in_warehouse_table` function will download all files attached to a particular set of columns in a warehouse table. By default, it will try to download files from all blob columns unless a specific set is passed to the `column` argument. The files in each column are saved to a subdirectory within `outdir`. 
+The `download_blobs_in_warehouse_table` function will download all files attached to a particular set of columns in a warehouse table. By default, it will try to download files from all blob columns unless a specific set is passed to the `column` argument. The files in each column are saved to the directory specified in `outdir`.
 
 ```{r, eval=FALSE}
 download_blobs_in_warehouse_table(conn, d, column='file', outdir="data")
 ```
 
+Alternatively, one can use a column in the data frame to specify where the files should be saved using the `outdir_columns` argument.
+
+```{r, eval=FALSE}
+d$outdir <- file.path("data", d$id)
+download_blobs_in_warehouse_table(conn, d, column='file', outdir_columns="outdir")
+```
 
 
 ```{r, eval=FALSE, echo=FALSE}
