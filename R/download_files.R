@@ -60,7 +60,11 @@ download_blobs <- function(client, file_map, outdir,
 #' blobs from. 
 #' @param outdir Directory where the files should be saved on the local machine.
 #' Subdirectories are created within this directory for each blob link column
-#' in the data frame. 
+#' in the data frame. If `outdir_column` is provided, then this argument is 
+#' ignored.
+#' @param outdir_column Column in the data frame that represents the directories
+#' in which the files should be saved. This argument overrides `outdir`.
+#' 
 #' @export
 #' @examples \dontrun{
 #' library(magrittr)
@@ -75,7 +79,7 @@ download_blobs <- function(client, file_map, outdir,
 #' }
 
 download_blobs_in_warehouse_table <- function(client, conn, df, columns=NULL, 
-                                              outdir='.', outdir_column=NULL) {
+                                              outdir=NULL, outdir_column=NULL) {
   is_schema_in_dataframe(df)
   blob_link_columns <- DBI::dbGetQuery(conn, glue::glue(
     "SELECT schema_field.name FROM schema 
@@ -85,6 +89,11 @@ download_blobs_in_warehouse_table <- function(client, conn, df, columns=NULL,
   .[,1]
   assertthat::assert_that(length(blob_link_columns) > 0,
                           msg="There are no blob link fields in this schema.")
+  if (is.null(outdir) & is.null(outdir_column)) {
+    warning("Both 'outdir' and 'outdir_column' are missing. Saving files to
+            the current directory")
+    outdir <- '.'
+  }
   # Download all files in the data frame if columns is missing
   if (is.null(columns)) {
     columns <- blob_link_columns
@@ -108,7 +117,7 @@ download_blobs_in_warehouse_table <- function(client, conn, df, columns=NULL,
     )
     for (i in 1:length(unique(df[[outdir_column]]))) {
       if (!dir.exists(df[[outdir_column]][i])) {
-        dir.create(df[[outdir_column]][i])
+        dir.create(df[[outdir_column]][i], recursive = T)
       }
     }
 
@@ -117,26 +126,53 @@ download_blobs_in_warehouse_table <- function(client, conn, df, columns=NULL,
             Using `outdir_column`.")
     }
     
+  } else {
+    if (!dir.exists(outdir)) {
+      dir.create(outdir, recursive = T)
+    }
   }
-
 
   .download_blobs <- function(client, df, column, outdir, outdir_column) {
     reticulate::source_python(
       system.file("python", "download_files.py", package = "benchlingr"))
     file_col <- purrr::map(as.character(df[[column]]),
                            ~ RJSONIO::fromJSON(.))
+    # If user wants to save results in child directories named by result ID,
+    # then carry that information with the rest of the file metadata.
+    for (i in 1:length(file_col)) {
+      # Single value
+      if (is.character(file_col[[i]])) {
+        if (!is.null(outdir_column)) {
+          file_col[[i]]['outdir'] <- df[[outdir_column]][i]
+        } else {
+          file_col[[i]]['outdir'] <- outdir
+        }
+      } else { # multi-select
+        for (j in 1:length(file_col[[i]])) {
+          if (!is.null(outdir_column)) {
+            file_col[[i]][[j]]['outdir'] <- df[[outdir_column]][i]
+          } else {
+            file_col[[i]][[j]]['outdir'] <- outdir
+            }
+          }
+      }
+    }
     unlisted_file_col <- unlist(file_col, recursive = FALSE)
+  
     # multi-select
     if (is.list(unlisted_file_col)) {
       file_col <- unlisted_file_col
     }
-    file_map <- file.path(outdir, purrr::map_chr(file_col, ~ .['name']))
+    
+    file_map <- purrr::map_chr(
+        file_col, ~ file.path(.['outdir'], .['name']))
+
     names(file_map) <- purrr::map_chr(file_col, ~ .['id'])
     file_map <- as.list(file_map)
     download_files(client, file_map)
   }
-  if (!dir.exists(outdir)) {
-    dir.create(outdir)
-  }
-  purrr::walk(columns, ~ .download_blobs(client, df, ., outdir))
+
+  purrr::walk(columns, ~ .download_blobs(client, df, ., outdir,
+                                         outdir_column))
+  return(df)
 }
