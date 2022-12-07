@@ -88,12 +88,11 @@ Benchling API endpoint here.</p></dd>
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span></span>
-<span class="r-in"><span><span class="va">conn</span> <span class="op">&lt;-</span> <span class="fu"><a href="warehouse_connect.html">warehouse_connect</a></span><span class="op">(</span><span class="st">"hemoshear-dev"</span>, </span></span>
-<span class="r-in"><span>    username <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Sys.getenv.html" class="external-link">Sys.getenv</a></span><span class="op">(</span><span class="st">"BENCHLING_DEV_WAREHOUSE_USERNAME"</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>    password <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Sys.getenv.html" class="external-link">Sys.getenv</a></span><span class="op">(</span><span class="st">"BENCHLING_DEV_WAREHOUSE_PASSWORD"</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">entry</span> <span class="op">&lt;-</span> <span class="fu">get_entry</span><span class="op">(</span>id<span class="op">=</span><span class="st">"xxxxxx"</span>, download<span class="op">=</span><span class="cn">FALSE</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu">find_tables</span><span class="op">(</span><span class="va">entry</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu">DBI</span><span class="fu">::</span><span class="fu"><a href="https://dbi.r-dbi.org/reference/dbDisconnect.html" class="external-link">dbDisconnect</a></span><span class="op">(</span><span class="va">conn</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">client</span> <span class="op">&lt;-</span> <span class="fu">benchlingr</span><span class="fu">::</span><span class="fu"><a href="benchling_api_auth.html">benchling_api_auth</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>    tenant<span class="op">=</span><span class="st">"https://hemoshear-dev.benchling.com"</span>,</span></span>
+<span class="r-in"><span>    api_key <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Sys.getenv.html" class="external-link">Sys.getenv</a></span><span class="op">(</span><span class="st">"BENCHLING_DEV_API_KEY"</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">json</span> <span class="op">&lt;-</span> <span class="va">client</span><span class="op">$</span><span class="va">entries</span><span class="op">$</span><span class="fu">get_entry_by_id</span><span class="op">(</span><span class="st">"etr_T3WZTyAe"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">benchlingr</span><span class="fu">::</span><span class="fu">find_entry_tables</span><span class="op">(</span><span class="va">json</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">}</span></span></span>
 </code></pre></div>
     </div>
