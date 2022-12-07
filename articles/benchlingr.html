@@ -802,12 +802,12 @@ results we actually care about, but one could filter the table in
 various ways (ex. creation time).</p>
 <div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">d</span> <span class="op">&lt;-</span> <span class="fu">DBI</span><span class="fu">::</span><span class="fu"><a href="https://dbi.r-dbi.org/reference/dbGetQuery.html" class="external-link">dbGetQuery</a></span><span class="op">(</span><span class="va">conn</span>, </span>
-<span>  <span class="st">"SELECT plate,analytes,file FROM simple_plate_analyte_mapping$raw </span></span>
+<span>  <span class="st">"SELECT id,plate,analytes,file FROM simple_plate_analyte_mapping$raw </span></span>
 <span><span class="st">  WHERE entry_id$ = 'etr_JYUlMiIs'"</span><span class="op">)</span></span>
 <span><span class="va">d</span></span>
-<span><span class="co">#&gt;   plate         analytes</span></span>
-<span><span class="co">#&gt; 1     2 ["bfi_VVamxrKQ"]</span></span>
-<span><span class="co">#&gt; 2     1 ["bfi_9fKcrORv"]</span></span>
+<span><span class="co">#&gt;                                     id plate         analytes</span></span>
+<span><span class="co">#&gt; 1 19ef2e88-761c-41d4-8a65-80acc2c30e3a     2 ["bfi_VVamxrKQ"]</span></span>
+<span><span class="co">#&gt; 2 f72e61f1-a1dc-48d1-9e5e-ad5cb118d716     1 ["bfi_9fKcrORv"]</span></span>
 <span><span class="co">#&gt;                                                                                                                                                                 file</span></span>
 <span><span class="co">#&gt; 1 {"id": "a2ed3ec8-59b9-451a-81eb-c4fb5322858b", "url": "https://hemoshear-dev.benchling.com/blobs/a2ed3ec8-59b9-451a-81eb-c4fb5322858b", "name": "Plate2-Data.csv"}</span></span>
 <span><span class="co">#&gt; 2 {"id": "ff0cca5f-b400-4e42-9df6-9f1badc4b7e2", "url": "https://hemoshear-dev.benchling.com/blobs/ff0cca5f-b400-4e42-9df6-9f1badc4b7e2", "name": "Plate1-Data.csv"}</span></span></code></pre></div>
@@ -826,10 +826,16 @@ and file name.</p>
 download all files attached to a particular set of columns in a
 warehouse table. By default, it will try to download files from all blob
 columns unless a specific set is passed to the <code>column</code>
-argument. The files in each column are saved to a subdirectory within
-<code>outdir</code>.</p>
+argument. The files in each column are saved to the directory specified
+in <code>outdir</code>.</p>
 <div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/download_blobs_in_warehouse_table.html">download_blobs_in_warehouse_table</a></span><span class="op">(</span><span class="va">conn</span>, <span class="va">d</span>, column<span class="op">=</span><span class="st">'file'</span>, outdir<span class="op">=</span><span class="st">"data"</span><span class="op">)</span></span></code></pre></div>
+<p>Alternatively, one can use a column in the data frame to specify
+where the files should be saved using the <code>outdir_columns</code>
+argument.</p>
+<div class="sourceCode" id="cb33"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">d</span><span class="op">$</span><span class="va">outdir</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="st">"data"</span>, <span class="va">d</span><span class="op">$</span><span class="va">id</span><span class="op">)</span></span>
+<span><span class="fu"><a href="../reference/download_blobs_in_warehouse_table.html">download_blobs_in_warehouse_table</a></span><span class="op">(</span><span class="va">conn</span>, <span class="va">d</span>, column<span class="op">=</span><span class="st">'file'</span>, outdir_columns<span class="op">=</span><span class="st">"outdir"</span><span class="op">)</span></span></code></pre></div>
 </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
     </nav></aside>

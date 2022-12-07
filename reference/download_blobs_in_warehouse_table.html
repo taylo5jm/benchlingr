@@ -59,7 +59,8 @@
 <span>  <span class="va">conn</span>,</span>
 <span>  <span class="va">df</span>,</span>
 <span>  columns <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  outdir <span class="op">=</span> <span class="st">"."</span></span>
+<span>  outdir <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  outdir_column <span class="op">=</span> <span class="cn">NULL</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -86,7 +87,13 @@ blobs from.</p></dd>
 <dt>outdir</dt>
 <dd><p>Directory where the files should be saved on the local machine.
 Subdirectories are created within this directory for each blob link column
-in the data frame.</p></dd>
+in the data frame. If `outdir_column` is provided, then this argument is 
+ignored.</p></dd>
+
+
+<dt>outdir_column</dt>
+<dd><p>Column in the data frame that represents the directories
+in which the files should be saved. This argument overrides `outdir`.</p></dd>
 
 </dl></div>
 
