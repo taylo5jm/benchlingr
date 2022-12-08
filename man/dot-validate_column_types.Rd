@@ -5,7 +5,13 @@
 \title{Ensure that column types are valid for a data frame that is to be uploaded
 to Benchling as a results table.}
 \usage{
-.validate_column_types(errors, values, column_name, type_map, multi_select_map)
+.validate_column_types(
+  errors,
+  values,
+  column_name,
+  benchling_type,
+  multi_select
+)
 }
 \description{
 integer|float --> numeric

@@ -4,7 +4,30 @@
 \alias{.validate_column_values}
 \title{Validate the values in the column of a results table.}
 \usage{
-.validate_column_values(errors, values, column_name)
+.validate_column_values(
+  conn,
+  errors,
+  values,
+  column_name,
+  benchling_type,
+  multi_select,
+  id_or_name,
+  target_schema_id
+)
+}
+\arguments{
+\item{column_name}{Name of the column in the data frame to be uploaded to Benchling.}
+
+\item{benchling_type}{The Benchling "type" that the column corresponds to.}
+
+\item{multi_select}{Boolean indicating whether or not the column corresponds
+to a multi-select field.}
+
+\item{id_or_name}{String "id" or "name$" which indicates whether the column
+represents the Benchling ID or name of the entities.}
+
+\item{target_schema_id}{The name of the warehouse table which corresponds
+to the column.}
 }
 \description{
 If the column refers to an entity link field, the entity IDs in the input
@@ -15,3 +38,4 @@ input data frame exist in the inventory. If the column refers to a blob
 link field, then the function will assume the values are file paths and will
 check to see if the file exists on the local machine.
 }
+\keyword{internal}

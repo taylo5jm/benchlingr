@@ -9,7 +9,8 @@ verify_schema_fields(
   schema_type,
   df,
   strict_check = FALSE,
-  tenant = Sys.getenv("BENCHLING_TENANT")
+  tenant = Sys.getenv("BENCHLING_TENANT"),
+  api_key = Sys.getenv("BENCHLING_API_KEY")
 )
 }
 \arguments{
@@ -22,6 +23,9 @@ verify_schema_fields(
 \item{strict_check}{is an optional arguement. if set TRUE, the function looks for every schema field names in colnames.}
 
 \item{tenant}{is tenant name. If missing, it will be reading from sys.env}
+
+\item{api_key}{API key. Default value is the `BENCHLING_API_KEY` environment
+variable.}
 }
 \value{
 boolean field

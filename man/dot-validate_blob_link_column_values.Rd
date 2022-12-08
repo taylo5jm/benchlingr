@@ -5,12 +5,7 @@
 \title{Verify that values in a blob link column refer to valid file paths on the 
 local machine.}
 \usage{
-.validate_blob_link_column_values(
-  errors,
-  values,
-  column_name,
-  multi_select_map
-)
+.validate_blob_link_column_values(errors, values, column_name, multi_select)
 }
 \arguments{
 \item{errors}{Errors}

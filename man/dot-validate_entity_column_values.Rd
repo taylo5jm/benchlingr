@@ -5,7 +5,14 @@
 \title{Verify that the identifiers (or names) for an entity link field match
 identifiers (or names) that currently exist in the registry.}
 \usage{
-.validate_entity_column_values(errors, values, column_name, id_or_name)
+.validate_entity_column_values(
+  conn,
+  errors,
+  values,
+  column_name,
+  target_schema_id,
+  id_or_name
+)
 }
 \description{
 Verify that the identifiers (or names) for an entity link field match

@@ -85,8 +85,11 @@ upload_results <- function(conn, client, df, project_id, schema_id, tenant=Sys.g
   # Stop function execution and show all errors to the user. 
   assertthat::assert_that(length(errors) == 0,
                           msg=paste0(errors, collapse='\n'))
-  return(errors)
-      
+  if (length(errors) == 0) {
+    upload_assay_results(client, df)
+  } else {
+    return(errors)
+  }
     # warn user if info is not getting written but notresent in the data frame
     # upload results with API/SDK
     # return a data frame with the submitted results, as well as the IDs. 
@@ -260,6 +263,81 @@ upload_results <- function(conn, client, df, project_id, schema_id, tenant=Sys.g
     
 }
   
+
+
+#' Create an assay result to be uploaded to Benchling
+#' 
+#' @param project_id Identifier for the Benchling project
+#' @param schema Identifier for the result schema
+#' @param fields List where the keys are strings corresponding to the field names. The values
+#' should be lists with at least one element named `value`, which is the value that should be submitted
+#' for that field. 
+#' ex. list(study = list(value = "MyFakeStudy"))
+#' @param id UUID for result. Optional
+#' @param field_validation Field validation for result. Optional. 
+#' @return List to be passed to `upload_assay_result`.
+#' @keywords internal
+
+.create_assay_result <- function(project_id, schema_id, fields, id=NULL, 
+                                 field_validation=NULL) {
+  assertthat::assert_that(is.list(fields),
+                          msg="fields must be a nested list.")
+  assertthat::assert_that(is.character(project_id),
+                          msg="project_id must be a character vector.")
+  assertthat::assert_that(is.character(schema_id),
+                          msg="schema_id must be a character vector.")
+  res <- list(project_id = project_id,
+              schema_id = schema_id,
+              fields = fields)
+  if (!is.null(id)) {
+    res$id <- id
+  } 
+  if (!is.null(field_validation)) {
+    res$field_validation <- field_validation
+  }
+  res
+}
+
+
+
+#' @importFrom magrittr %>%
+upload_assay_results <- function(client, df, schema_id) {
+  # This function takes a data frame and converts each row into the nested list
+  # that .create_assay_result needs.
+  .to_fields <- function(df) {
+    res <- vector("list", length=nrow(df))
+    for (i in 1:nrow(df)){
+      res[[i]] <- df[i,] %>% as.list() %>%
+        purrr::map(~ as.list(.) %>%
+                     magrittr::set_names(., 'value'))
+    }
+    return(res)
+  }
+  
+  created_results <- list()
+  created_fields <- .to_fields(df)
+  for (i in 1:nrow(df)) {
+    created_results[[i]] <- .create_assay_result(
+      project_id=NULL,
+      # id="3874274892743492837423984723",
+      schema_id=schema_id,
+      fields=created_fields[i])
+  }
+
+  .upload_results <- function(results) {
+    reticulate::source_python(
+      system.file(
+        "python", "upload_results.py", 
+        package = "benchlingr"))
+    res <- upload_assay_results(client, results)
+    return(res)
+  }
+
+  .upload_results(created_results)
+}
+
+
+
 # Add these convenience functions for getting hte ProjectIds and results schema Ids
 
 

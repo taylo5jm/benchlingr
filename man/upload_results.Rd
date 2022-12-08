@@ -11,7 +11,8 @@ upload_results(
   project_id,
   schema_id,
   tenant = Sys.getenv("BENCHLING_TENANT"),
-  id_or_name = "name"
+  id_or_name = "name",
+  api_key = Sys.getenv("BENCHLING_API_KEY")
 )
 }
 \arguments{
