@@ -184,17 +184,7 @@ test_that(".validate_entity_column_types returns nothing when character
 # upload_assay_results -------------------------------
 
 
-res <- data.frame(
-  file = "test-upload_assay_results.R",
-  plate = 1,
-  study_name = "MAC1",
-  date = as.character(Sys.Date()),
-  datetime = as.character(Sys.time()),
-  bool = 1,
-  json = RJSONIO::toJSON(list(algorithm="sgd")),
-  dna_sequence = "seq_Cuf0bmCm",
-  analyte="bfi_KsLU5uWV"
-)
+
 
 #benchlingr::upload_assay_results(conn, client, df=res, project_id=NULL, 
 #               schema_id="assaysch_eBsoKyRO", tenant="hemoshear-dev",
@@ -218,15 +208,34 @@ test_that("upload_assay_results will stop if a file in a blob link column
 test_that("upload_assay_results will succeed with valid input.", {
             res$file <- 'test-upload_results.R'
             testthat::expect_error(
-              res <- benchlingr::upload_assay_results(
+              benchlingr::upload_assay_results(
                 conn, client, df=res, project_id="src_ZRvTYOgM", 
                 schema_id="assaysch_eBsoKyRO", 
                 tenant="https://hemoshear-dev.benchling.com",
                 api_key=Sys.getenv("BENCHLING_DEV_API_KEY"),
                 id_or_name = "id")
             )
-          }
+}
 )
 
 
-# DBI::dbGetQuery(conn, 'SELECT * FROM uploadresulttestschema$raw')
+
+test_that("upload_assay_results will succeed with valid set of minimal input.", {
+    res <- data.frame(
+      study_name = "MAC1",
+      date = as.character(Sys.Date()),
+      datetime = as.character(Sys.time()),
+      json = RJSONIO::toJSON(list(algorithm="sgd")),
+      dna_sequence = "seq_Cuf0bmCm",
+      analyte="bfi_KsLU5uWV"
+    )
+    benchlingr::upload_assay_results(
+      conn, client, df=res, project_id="src_ZRvTYOgM", 
+      schema_id="assaysch_eBsoKyRO", 
+      tenant="https://hemoshear-dev.benchling.com",
+      api_key=Sys.getenv("BENCHLING_DEV_API_KEY"),
+      id_or_name = "id")
+}
+)
+
+# DBI::dbGetQuery(conn, 'SELECT id FROM uploadresulttestschema$raw')
