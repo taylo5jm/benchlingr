@@ -29,7 +29,7 @@ get_schema_fields <- function(schema_id, schema_type,
     schema_type <- gsub("-schemas", "", schema_type)
   }
 
-  base_url <- glue::glue('https://{tenant}.benchling.com/api/v2/{schema_type}-schemas/{schema_id}')
+  base_url <- glue::glue('{tenant}/api/v2/{schema_type}-schemas/{schema_id}')
 
   schema_fields_raw <- httr::GET(url = base_url, httr::authenticate(api_key, ''))
   schema_fields <- httr::content(schema_fields_raw)

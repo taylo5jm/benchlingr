@@ -1,3 +1,40 @@
+#' @keywords internal
+#' @importFrom magrittr %>%
+.upload_results <- function(client, df, project_id, schema_id) {
+  # This function takes a data frame and converts each row into the 
+  # nested list that .create_assay_result needs.
+  .to_fields <- function(df) {
+    res <- vector("list", length=nrow(df))
+    for (i in 1:nrow(df)){
+      res[[i]] <- df[i,] %>% as.list() %>%
+        purrr::map(~ as.list(.) %>%
+                     magrittr::set_names(., 'value'))
+    }
+    return(res)
+  }
+  
+  created_results <- list()
+  created_fields <- .to_fields(df)
+  for (i in 1:nrow(df)) {
+    created_results[[i]] <- .create_assay_result(
+      project_id=project_id,
+      schema_id=schema_id,
+      fields=created_fields[i])
+  }
+  
+  .upload_results_with_python_sdk <- function(results) {
+    reticulate::source_python(
+      system.file(
+        "python", "upload_results_with_sdk.py", 
+        package = "benchlingr"))
+    res <- upload_results_with_sdk(client, results)
+    return(res)
+  }
+  # return(created_results)
+
+  .upload_results_with_python_sdk(created_results)
+
+}
 
 
 #' Upload assay results to Benchling from a data frame
@@ -19,7 +56,8 @@
 #' tenant <- "hemoshear-dev"
 #' }
 
-upload_results <- function(conn, client, df, project_id, schema_id, tenant=Sys.getenv("BENCHLING_TENANT"),
+upload_assay_results <- function(conn, client, df, project_id, schema_id, 
+                           tenant=Sys.getenv("BENCHLING_TENANT"),
                            id_or_name='name', api_key=Sys.getenv("BENCHLING_API_KEY")) {
   
   if (tenant == "") {
@@ -45,6 +83,10 @@ upload_results <- function(conn, client, df, project_id, schema_id, tenant=Sys.g
     FROM schema INNER JOIN schema_field ON 
     schema.id = schema_field.schema_id WHERE schema.id = '{`schema_id`}'"))
   
+  if (nrow(schema_def) == 0) {
+    stop('Schema ID not found. Run `DBI::dbGetQuery(conn, "SELECT * FROM schema")`
+         to see all')
+  }
   # Create a lookup for the column types.
   type_map <- as.character(schema_def$type)
   names(type_map) <- as.character(schema_def$system_name)
@@ -83,10 +125,13 @@ upload_results <- function(conn, client, df, project_id, schema_id, tenant=Sys.g
       target_schema_id=target_schema_map[colnames(df)[i]])
   }
   # Stop function execution and show all errors to the user. 
-  assertthat::assert_that(length(errors) == 0,
-                          msg=paste0(errors, collapse='\n'))
+  assertthat::assert_that(
+    length(errors) == 0,
+    msg=paste0(errors, collapse='\n'))
   if (length(errors) == 0) {
-    upload_assay_results(client, df)
+    .upload_results(client, df,
+                    project_id=project_id,
+                    schema_id=schema_id)
   } else {
     return(errors)
   }
@@ -299,42 +344,6 @@ upload_results <- function(conn, client, df, project_id, schema_id, tenant=Sys.g
 }
 
 
-
-#' @importFrom magrittr %>%
-upload_assay_results <- function(client, df, schema_id) {
-  # This function takes a data frame and converts each row into the nested list
-  # that .create_assay_result needs.
-  .to_fields <- function(df) {
-    res <- vector("list", length=nrow(df))
-    for (i in 1:nrow(df)){
-      res[[i]] <- df[i,] %>% as.list() %>%
-        purrr::map(~ as.list(.) %>%
-                     magrittr::set_names(., 'value'))
-    }
-    return(res)
-  }
-  
-  created_results <- list()
-  created_fields <- .to_fields(df)
-  for (i in 1:nrow(df)) {
-    created_results[[i]] <- .create_assay_result(
-      project_id=NULL,
-      # id="3874274892743492837423984723",
-      schema_id=schema_id,
-      fields=created_fields[i])
-  }
-
-  .upload_results <- function(results) {
-    reticulate::source_python(
-      system.file(
-        "python", "upload_results.py", 
-        package = "benchlingr"))
-    res <- upload_assay_results(client, results)
-    return(res)
-  }
-
-  .upload_results(created_results)
-}
 
 
 

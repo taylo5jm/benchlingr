@@ -23,7 +23,7 @@ test_that(".validate_blob_link_column_values throws error when file does
 test_that(".validate_blob_link_column_values returns nothing when file exists.", {
             testthat::expect_equal(
               benchlingr:::.validate_blob_link_column_values(
-                errors=c(), values="test-upload_results.R", 
+                errors=c(), values="test-upload_assay_results.R", 
                 column_name="MyFileColumn", multi_select=FALSE),
               c())
           }
@@ -172,7 +172,7 @@ test_that(".validate_entity_column_types returns nothing when character
 test_that(".validate_entity_column_types returns nothing when character
           vector is passed to a blob link", {
             testthat::expect_equal(
-              .validate_column_types(errors=c(),  values=c("test-upload_results.R"), 
+              .validate_column_types(errors=c(),  values=c("test-upload_assay_results.R"), 
                                      column_name="MyValidBlobLinkColumn",
                                      benchling_type="blob_link", 
                                      multi_select=FALSE),
@@ -181,34 +181,52 @@ test_that(".validate_entity_column_types returns nothing when character
 )
 
 
-# upload_results -------------------------------
+# upload_assay_results -------------------------------
 
 
 res <- data.frame(
-  file = "test-upload_results.R",
+  file = "test-upload_assay_results.R",
   plate = 1,
   study_name = "MAC1",
-  date = Sys.Date(),
-  datetime = Sys.time(),
+  date = as.character(Sys.Date()),
+  datetime = as.character(Sys.time()),
   bool = 1,
   json = RJSONIO::toJSON(list(algorithm="sgd")),
   dna_sequence = "seq_Cuf0bmCm",
   analyte="bfi_KsLU5uWV"
 )
 
-#benchlingr::upload_results(conn, client, df=res, project_id=NULL, 
+#benchlingr::upload_assay_results(conn, client, df=res, project_id=NULL, 
 #               schema_id="assaysch_eBsoKyRO", tenant="hemoshear-dev",
 #               api_key=Sys.getenv("BENCHLING_DEV_API_KEY"),
 #               id_or_name = "id")
 
-test_that("upload_results will stop if a file in a blob link column
+test_that("upload_assay_results will stop if a file in a blob link column
           does not exist on the local machine.", {
     res$file <- 'fakefile'
     testthat::expect_error(
-    benchlingr::upload_results(conn, client, df=res, project_id=NULL, 
-                               schema_id="assaysch_eBsoKyRO", tenant="hemoshear-dev",
-                               api_key=Sys.getenv("BENCHLING_DEV_API_KEY"),
-                               id_or_name = "id")
+    benchlingr::upload_assay_results(
+      conn, client, df=res, project_id="src_ZRvTYOgM", 
+      schema_id="assaysch_eBsoKyRO",
+      tenant="https://hemoshear-dev.benchling.com",
+      api_key=Sys.getenv("BENCHLING_DEV_API_KEY"),
+      id_or_name = "id")
     )
 }
 )
+
+test_that("upload_assay_results will succeed with valid input.", {
+            res$file <- 'test-upload_results.R'
+            testthat::expect_error(
+              res <- benchlingr::upload_assay_results(
+                conn, client, df=res, project_id="src_ZRvTYOgM", 
+                schema_id="assaysch_eBsoKyRO", 
+                tenant="https://hemoshear-dev.benchling.com",
+                api_key=Sys.getenv("BENCHLING_DEV_API_KEY"),
+                id_or_name = "id")
+            )
+          }
+)
+
+
+# DBI::dbGetQuery(conn, 'SELECT * FROM uploadresulttestschema$raw')
