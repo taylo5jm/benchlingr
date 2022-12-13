@@ -10,8 +10,8 @@ upload_assay_results(
   df,
   project_id,
   schema_id,
-  tenant = Sys.getenv("BENCHLING_TENANT"),
   id_or_name = "name",
+  tenant = Sys.getenv("BENCHLING_TENANT"),
   api_key = Sys.getenv("BENCHLING_API_KEY")
 )
 }
@@ -27,6 +27,10 @@ upload_assay_results(
 \item{schema_id}{Results schema ID (starts with "assaysch_").}
 
 \item{id_or_name}{Are the entity links identifiers or names?}
+
+\item{tenant}{URL for the Benchling tenant.}
+
+\item{api_key}{API key for the Benchling tenant.}
 }
 \description{
 Upload assay results to Benchling from a data frame

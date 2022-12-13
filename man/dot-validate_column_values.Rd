@@ -16,6 +16,10 @@
 )
 }
 \arguments{
+\item{errors}{Character vector of errors.}
+
+\item{values}{Values in the column.}
+
 \item{column_name}{Name of the column in the data frame to be uploaded to Benchling.}
 
 \item{benchling_type}{The Benchling "type" that the column corresponds to.}

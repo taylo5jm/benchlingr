@@ -48,6 +48,8 @@
 #' @param project_id Benchling project identifier.
 #' @param schema_id Results schema ID (starts with "assaysch_"). 
 #' @param id_or_name Are the entity links identifiers or names?
+#' @param tenant URL for the Benchling tenant.
+#' @param api_key API key for the Benchling tenant.
 #' @export
 #' @examples \dontrun{
 #' schema_id <- "assaysch_yKoqVsej"
@@ -57,8 +59,9 @@
 #' }
 
 upload_assay_results <- function(conn, client, df, project_id, schema_id, 
+                           id_or_name='name', 
                            tenant=Sys.getenv("BENCHLING_TENANT"),
-                           id_or_name='name', api_key=Sys.getenv("BENCHLING_API_KEY")) {
+                           api_key=Sys.getenv("BENCHLING_API_KEY")) {
   
   if (tenant == "") {
     .missing_tenant_error()
@@ -154,8 +157,8 @@ upload_assay_results <- function(conn, client, df, project_id, schema_id,
 #' input data frame exist in the inventory. If the column refers to a blob
 #' link field, then the function will assume the values are file paths and will
 #' check to see if the file exists on the local machine. 
-#' @param errors
-#' @param values
+#' @param errors Character vector of errors.
+#' @param values Values in the column. 
 #' @param column_name Name of the column in the data frame to be uploaded to Benchling.
 #' @param benchling_type The Benchling "type" that the column corresponds to.
 #' @param multi_select Boolean indicating whether or not the column corresponds
@@ -205,7 +208,7 @@ upload_assay_results <- function(conn, client, df, project_id, schema_id,
 
 .validate_column_types <- function(errors, values, column_name,
                                    benchling_type, multi_select) {
-  numeric_type_mapping <- c('integer' = 'numeric', 'float' = 'numeric')
+
   # Check characters
   if (benchling_type %in% 
       c('text', 'entity_link', 'dropdown', 'long_text', 
@@ -216,10 +219,15 @@ upload_assay_results <- function(conn, client, df, project_id, schema_id,
                   c(glue::glue('{column_name} must be a character type.')))
     }
     #   
-  } else if (benchling_type %in% names(numeric_type_mapping)) {
+  } else if (benchling_type == 'float') {
     is_numeric <- all(is.numeric(values))
     if (!is_numeric) {
       errors <- c(errors, glue::glue("{column_name} must be a numeric type."))
+    }
+  } else if (benchling_type == 'integer') {
+    is_integer <- all(is.integer(values))
+    if (!is_integer) {
+      errors <- c(errors, glue::glue("{column_name} must be an integer type."))
     }
   } else if (multi_select) {
     is_multiselect_list <- is.list(values)

@@ -11,3 +11,4 @@
 ^\.github$
 ^.csv$
 cran-comments.md
+^tests/testthat/*.csv
