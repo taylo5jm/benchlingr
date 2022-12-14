@@ -3,7 +3,10 @@ library(benchlingr)
 test_that('get_schema_fields successful', {
   schema_id <- 'assaysch_nIw4yAq8'
   schema_type <- 'assay-result'
-  field_definition <- get_schema_fields(schema_id, schema_type)
+  field_definition <- get_schema_fields(
+    schema_id, schema_type,
+    tenant="https://hemoshear-dev.benchling.com",
+    api_key=Sys.getenv("BENCHLING_DEV_API_KEY"))
   testthat::expect_equal(3, length(field_definition))
 })
 
@@ -16,8 +19,16 @@ test_that('Strict and loose verification of dataframe colnames. ', {
     'File1' = c('aaaa'),
     check.names = FALSE
   )
-  testthat::expect_true(verify_schema_fields(schema_id, schema_type, df))
-  testthat::expect_warning(verify_schema_fields(schema_id, schema_type, df, strict_check = TRUE))
+  testthat::expect_true(
+    verify_schema_fields(
+      schema_id, schema_type, df,
+      tenant="https://hemoshear-dev.benchling.com",
+      api_key=Sys.getenv("BENCHLING_DEV_API_KEY")))
+  testthat::expect_warning(
+    verify_schema_fields(
+      schema_id, schema_type, df, strict_check = TRUE,
+      tenant="https://hemoshear-dev.benchling.com",
+      api_key=Sys.getenv("BENCHLING_DEV_API_KEY")))
 })
 
 test_that('Strict and loose verification of dataframe colnames', {
@@ -29,8 +40,16 @@ test_that('Strict and loose verification of dataframe colnames', {
     'file' = c('aaaa'),
     check.names = FALSE
   )
-  testthat::expect_true(verify_schema_fields(schema_id, schema_type, df))
-  testthat::expect_true(verify_schema_fields(schema_id, schema_type, df, strict_check = TRUE))
+  testthat::expect_true(
+    verify_schema_fields(
+      schema_id, schema_type, df,
+      tenant="https://hemoshear-dev.benchling.com",
+      api_key=Sys.getenv("BENCHLING_DEV_API_KEY")))
+  testthat::expect_true(
+    verify_schema_fields(
+      schema_id, schema_type, df, strict_check = TRUE,
+      tenant="https://hemoshear-dev.benchling.com",
+      api_key=Sys.getenv("BENCHLING_DEV_API_KEY")))
 })
 
 test_that('Empty schema/df tests.', {
@@ -40,8 +59,19 @@ test_that('Empty schema/df tests.', {
   empty_df <- data.frame(
 
   )
-  testthat::expect_equal(0, length(get_schema_fields(schema_id = schema_id, schema_type = schema_type)))
-  testthat::expect_warning(verify_schema_fields(schema_id = schema_id, schema_type = schema_type, df = empty_df))
+  testthat::expect_equal(
+    0, 
+    length(
+      get_schema_fields(
+        schema_id = schema_id, schema_type = schema_type,
+        tenant="https://hemoshear-dev.benchling.com",
+        api_key=Sys.getenv("BENCHLING_DEV_API_KEY"))))
+  
+  testthat::expect_warning(
+    verify_schema_fields(
+      schema_id = schema_id, schema_type = schema_type, df = empty_df,
+      tenant="https://hemoshear-dev.benchling.com",
+      api_key=Sys.getenv("BENCHLING_DEV_API_KEY")))
 
   df <- data.frame(
     "plate" = c('davut'),
@@ -50,5 +80,9 @@ test_that('Empty schema/df tests.', {
     check.names = FALSE
   )
 
-  testthat::expect_warning(verify_schema_fields(schema_id = schema_id, schema_type = schema_type, df = df))
+  testthat::expect_warning(
+    verify_schema_fields(
+      schema_id = schema_id, schema_type = schema_type, df = df,
+      tenant="https://hemoshear-dev.benchling.com",
+      api_key=Sys.getenv("BENCHLING_DEV_API_KEY")))
 })
