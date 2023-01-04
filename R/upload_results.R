@@ -9,6 +9,7 @@
       res[[i]] <- df[i,] %>% as.list() %>%
         purrr::map(~ as.list(.) %>%
                      magrittr::set_names(., 'value'))
+      names(res[[i]]) <- colnames(df)
     }
     return(res)
   }
@@ -42,6 +43,7 @@
 #' @importFrom magrittr %<>%
 #' @include schema_utils.R
 #' @include error.R
+#' @include upload_files.R
 #' @param conn Database connection. 
 #' @param client Benchling API client. 
 #' @param df Data frame / tibble of results to be uploaded to Benchling. 
@@ -132,6 +134,14 @@ upload_assay_results <- function(conn, client, df, project_id, schema_id,
     length(errors) == 0,
     msg=paste0(errors, collapse='\n'))
   if (length(errors) == 0) {
+    # If all looks good, let's upload the files if we need to
+    if (any(colnames(df) %in% names(
+          type_map[which(type_map %in% 'blob_link')]))) {
+      df <- upload_files(
+        file=df, client=client, 
+        blob_link_cols=names(type_map[which(type_map %in% 'blob_link')]))
+    }
+    
     .upload_results(client, df,
                     project_id=project_id,
                     schema_id=schema_id)
@@ -144,7 +154,6 @@ upload_assay_results <- function(conn, client, df, project_id, schema_id,
   
   
 }
-
 
 
 

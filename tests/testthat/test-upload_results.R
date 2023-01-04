@@ -4,8 +4,9 @@ conn <- benchlingr::warehouse_connect("hemoshear-dev",
                           Sys.getenv("BENCHLING_DEV_WAREHOUSE_USERNAME"),
                           Sys.getenv("BENCHLING_DEV_WAREHOUSE_PASSWORD"))
 
-client <- benchlingr::benchling_api_auth(tenant="https://hemoshear-dev.benchling.com",
-                                         api_key = Sys.getenv("BENCHLING_DEV_API_KEY"))
+client <- benchlingr::benchling_api_auth(
+  tenant="https://hemoshear-dev.benchling.com",
+  api_key = Sys.getenv("BENCHLING_DEV_API_KEY"))
 
 
 
@@ -272,4 +273,21 @@ test_that("upload_assay_results will fail when an integer field
 }
 )
 
+
+
+test_that("upload_assay_results will work when a file needs to be uploaded.", {
+            res <- data.frame(
+              file='test-upload_results.R'
+            )
+            testthat::expect_equal(
+              length(benchlingr::upload_assay_results(
+                conn, client, df=res, project_id="src_ZRvTYOgM", 
+                schema_id="assaysch_eBsoKyRO", 
+                tenant="https://hemoshear-dev.benchling.com",
+                api_key=Sys.getenv("BENCHLING_DEV_API_KEY"),
+                id_or_name = "id")),
+              1
+            )
+          }
+)
 # DBI::dbGetQuery(conn, 'SELECT * FROM uploadresulttestschema$raw')

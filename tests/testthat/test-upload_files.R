@@ -4,6 +4,7 @@ client <- benchlingr::benchling_api_auth(
   tenant="https://hemoshear-dev.benchling.com",
   api_key = Sys.getenv("BENCHLING_DEV_API_KEY"))
 
+
 # upload_files.character ===============================================
 test_that("upload_files.character works for one file", {
   res <- benchlingr:::upload_files.character(
@@ -41,6 +42,15 @@ test_that("upload_files.character works for two files", {
     client=client)
   testthat::expect_length(res, 2)
 })
+
+# upload_files.data.frame ========================================
+test_that("upload_files.data.frame works for a data frame with one blob link
+          column", {
+          df <- data.frame(file = "test-upload_files.R")
+          res <- upload_files.data.frame(file=df, client=client, blob_link_cols="file")
+          testthat::expect_equal(nrow(res), 1)
+})
+
 
 # test_that("upload_files.character gives informative error when file is missing", 
 #           {

@@ -39,3 +39,38 @@ upload_files.list <- function(file, client, blob_link_cols=NULL) {
   return(res)
 }
 
+#' Upload files represented by one or more columns in a data frame containing
+#' file paths.
+#' @param file data.frame with one or more columns containing files 
+#' to be uploaded.
+#' @param blob_link_cols Character vector of column names containing files
+#' to be uploaded
+#' @keywords internal
+#' @examples \dontrun{
+#' client <- benchlingr::benchling_api_auth(
+#' tenant="https://hemoshear-dev.benchling.com",
+#' api_key = Sys.getenv("BENCHLING_DEV_API_KEY"))
+#' df <- data.frame(file = "upload_files.R")
+#' upload_files.data.frame(file=df, client=client, blob_link_cols="file")
+#' }
+
+upload_files.data.frame <- function(file, client, blob_link_cols=NULL) {
+  
+  for (blob_link_col in blob_link_cols) {
+    blobs <- upload_files(
+      file=file[[blob_link_col]],
+      client=client)
+    n_elements <- purrr::map_int(blobs, ~ length(.))
+    if (all(n_elements < 2)) {
+      blob_ids <- purrr::map(blobs, ~ .$id)
+    } else {
+      blob_ids <- vector("list", length=length(blobs))
+      for (b in 1:length(blobs)) {
+        for (j in 1:length(blobs[[b]]))
+          blob_ids[[b]] <- purrr::map(blobs[[b]], ~ .$id)
+      }
+    }
+    file[[blob_link_col]] <- blob_ids
+  }
+  return(file)
+}
