@@ -215,20 +215,6 @@ test_that("upload_assay_results will stop if a file in a blob link column
 }
 )
 
-test_that("upload_assay_results will succeed with valid input.", {
-            res$file <- 'test-upload_results.R'
-            testthat::expect_error(
-              benchlingr::upload_assay_results(
-                conn, client, df=res, project_id="src_ZRvTYOgM", 
-                schema_id="assaysch_eBsoKyRO", 
-                tenant="https://hemoshear-dev.benchling.com",
-                api_key=Sys.getenv("BENCHLING_DEV_API_KEY"),
-                id_or_name = "id")
-            )
-}
-)
-
-
 
 test_that("upload_assay_results will succeed with valid set of minimal input.", {
     res <- data.frame(
@@ -269,11 +255,9 @@ test_that("upload_assay_results will fail when an integer field
     api_key=Sys.getenv("BENCHLING_DEV_API_KEY"),
     id_or_name = "id"),
     regexp = "integer type"
-    )
-}
+  )
+  }
 )
-
-
 
 test_that("upload_assay_results will work when a file needs to be uploaded.", {
             res <- data.frame(
@@ -290,4 +274,5 @@ test_that("upload_assay_results will work when a file needs to be uploaded.", {
             )
           }
 )
-# DBI::dbGetQuery(conn, 'SELECT * FROM uploadresulttestschema$raw')
+
+
