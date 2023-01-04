@@ -8,7 +8,7 @@ vignette: >
 ---
 
 
-```{r}
+```{r, include=FALSE}
 has_credentials <- Sys.getenv("BENCHLING_DEV_WAREHOUSE_USERNAME")
 if (has_credentials == "") {
   has_credentials <- FALSE
@@ -29,8 +29,9 @@ library(benchlingr)
 library(magrittr)
 ```
 
+# Introduction
 
-Benchling R&D Cloud is a laboratory information management system with a [developer platform](https://docs.benchling.com/docs) consisting of a Postgres database, an application programming interface (API), an "Events" system that is built on top of the AWS EventBridge service, as well as a Python software development kit (SDK). `benchlingr` is an unofficial R package that aims to make the Benchling developer platform accessible to data scientists using R. 
+Benchling R&D Cloud is a laboratory information management system with a [developer platform](https://docs.benchling.com/docs) consisting of a read-only Postgres database, an application programming interface (API), an "Events" system that is built on top of the AWS EventBridge service, as well as a Python software development kit (SDK). `benchlingr` is an unofficial R package that allows one to easily connect tables in the Benchling data warehouse, download file attachments, extract unstructured tables from notebook entries, and upload assay results to the platform. 
 
 
 # Installation
@@ -41,11 +42,24 @@ Install the `benchlingr` package from GitHub using the `remotes` package.
 remotes::install_github("hemoshear/benchlingr")
 ```
 
-The `benchlingr` package also requires Python. We recommend using the [Anaconda distribution](https://www.anaconda.com/products/distribution)
+The `benchlingr` package also requires Python. You may consider using the [Anaconda distribution](https://www.anaconda.com/products/distribution), because the `reticulate` package will use `miniconda` by default.
+
+
+# Benchling Developer Platform Components
+
+The Benchling Developer Platform consists of several components. The first component is a RESTFUL API service, which can be used to read and write data to the Benchling platform. Benchling also supports a Python software development kit (SDK) for accessing the API via Python. When you need to write data to Benchling, use the API, which can be accessed through the Python SDK or by making calls to the API directly. 
+
+The second component of the platform is a read-only, Postgres database. 
+
+If you need to read data from Benchling, you can choose to use the API or the Postgres database. Since there is a slight delay between the time when data is submitted on the Benchling front-end and when the data is synced with the Postgres database, we recommend using the API if a delay cannot be tolerated. In our experience, the database is synced within a minute or so in most cases, however, if a large number of items are uploaded to the Benchling platform, Benchling claims a database sync may take up to 24 hours. The content of notebook entries and attached files must be retrieved from the API and is not available in the Postgres database. 
+
+If you can tolerate a small delay in data availability and you don't need to download a file or read a notebook entry, you have the option of using the Postgres database or the API. The choice of component you use will be largely determined by the software dependencies you want to include in your project, as well the skill sets and preferences of engineers working with your Benchling installation. We often try to utilize the Postgres database for reading data, because writing SQL is a convenient way for us to extract data from the platform.
+
+The last component of the platform is a connector to [AWS EventBridge](https://aws.amazon.com/eventbridge/), which is a platform for event-based applications. Benchling supports a limited number of [events](https://docs.benchling.com/docs/events-reference#v2-events-reference). Generally speaking, this component of the developer platform enables one to perform some computation on AWS after things happen on the Benchling platform, which may or may not involve the other components of the Benchling developer platform. 
 
 # Configuration
 
-The `benchlingr` package primarily utilizes the RESTFUL API service and Postgres database components of the Benchling developer platform. In order to use these components of the Benchling platform, one must acquire API keys and database credentials through the Benchling interface. This section will focus on how to make these credentials available to the `benchlingr` package. 
+The `benchlingr` package primarily utilizes the RESTFUL API service and Postgres database components of the Benchling developer platform.  In order to use these components of the Benchling platform, one must acquire API keys and database credentials through the Benchling interface. This section will focus on how to make these credentials available to the `benchlingr` package. 
 
 ## API
 
@@ -57,6 +71,37 @@ In order to access the Benchling API service on one's Benchling tenant, one must
 # Benchling API key
 BENCHLING_API_KEY=xxxxxxxxxxx
 ```
+
+
+## Python SDK
+
+The `benchlingr` R package uses the official Benchling Python SDK to access the Benchling API service. The Python dependencies will be installed automatically into a `miniconda` environment. One can also create new `conda` or `virtualenv` environments with the `config_sdk_env` helper function, which simply creates an environment and installs the `benchling-sdk` package in it. 
+
+```{r, eval=FALSE}
+config_sdk_env()
+```
+
+To create an interface to the Benchling API, use the `benchling_api_auth` function after you have set the `BENCHLING_API_KEY` environment variable as described in the Python SDK configuration section. 
+
+```{r, eval=has_credentials}
+client <- benchling_api_auth(
+  tenant="https://hemoshear-dev.benchling.com",
+  api_key=Sys.getenv("BENCHLING_DEV_API_KEY"))
+```
+
+The `benchling_api_auth` function returns the [facade object](https://benchling.com/sdk-docs/benchling_sdk.benchling.html) from the Benchling Python SDK that facilitates interaction with the API. Most of the attributes of the facade object are the [services in the Benchling API documentation](https://benchling.com/api/reference). 
+
+
+```{r, eval=has_credentials}
+head(names(client))
+```
+
+Each service will have multiple methods available. 
+
+```{r, eval=has_credentials}
+names(client$entries)
+```
+
 
 ## Data warehouse
 
@@ -72,15 +117,7 @@ BENCHLING_WAREHOUSE_USERNAME=yyyyyyyyyyy
 BENCHLING_WAREHOUSE_PASSWORD=xxxxxxxxxxx
 ```
 
-## Python SDK
 
-The `benchlingr` R package uses the official Benchling Python SDK to access the Benchling API service. The Python dependencies will be installed automatically into a `miniconda` environment. One can also create new `conda` or `virtualenv` environments with the `config_sdk_env` helper function, which simply creates an environment and installs the `benchling-sdk` package in it. 
-
-```{r, eval=FALSE}
-config_sdk_env()
-```
-
-See the [official Anaconda documentation](linkhere) for instructions on how to install Anaconda on your machine.
 
 # Fundamentals of the Benchling Data Warehouse
 
@@ -119,14 +156,12 @@ conn <- warehouse_connect(
 DBI::dbListTables(conn)[1:6]
 ```
 
-In general, the Postgres views are more convenient to work with, since the raw tables contain many Benchling identifiers intended for internal use. In our experience, however, there are some use cases where the raw tables should be accessed instead of the Postgres views. For example, when one needs to extract assay results submitted in notebook entries that have not been approved, one will need to use the "raw" tables to do so, since the Postgres views will not contain assay results from unreviewed notebooks. Refer to the [official Benchling documentation](https://docs.benchling.com/docs/warehouse-columns-rows-descriptions#the-benchling-warehouse-columns-descriptions) for more information about the differences between the raw tables and the Postgres views.  
+In general, the Postgres views are more convenient to work with, since the raw tables contain many Benchling identifiers intended for internal use. When one needs to extract assay results submitted in notebook entries that have not been approved, one will need to use the "raw" tables to do so, since the Postgres views will not contain assay results from unreviewed notebooks. Refer to the [official Benchling documentation](https://docs.benchling.com/docs/warehouse-columns-rows-descriptions#the-benchling-warehouse-columns-descriptions) for more information about the differences between the raw tables and the Postgres views.  
 
 
 ## Retrieving data from the warehouse  
 
-To retrieve data from a table in the data warehouse, one can use the `DBI::dbGetQuery` function. The data warehouse consists of several types of tables, each with a different set of base columns. 
-
-For example, here is the code one would use to retrieve all the notebook entries from the data warehouse. Take a moment to look at the results of this query, as well as the [descriptions of the columns in the official Benchling documentation](https://docs.benchling.com/docs/warehouse-columns-rows-descriptions). The 
+To retrieve data from a table in the data warehouse, one can use the `DBI::dbGetQuery` function. For example, here is the code one would use to retrieve all the notebook entries from the data warehouse. Take a moment to look at the results of this query, as well as the [descriptions of the columns in the official Benchling documentation](https://docs.benchling.com/docs/warehouse-columns-rows-descriptions). 
 
 - 
 
@@ -138,10 +173,11 @@ DBI::dbGetQuery(conn, "SELECT * FROM entry") %>%
 
 ### Custom entities
 
-The data warehouse for your tenant will come pre-loaded with tables relevant to any entity schemas that are universal to the Benchling system. For example, the `entry` schema is available on every Benchling installation with ELN functionality. Other tables are created when new schemas are defined in Benchling. When a custom entity or result schema is defined, Benchling creates a new set of tables in the database: one for the Postgres view and one for the raw data. For example, we defined a custom entity schema for representing analytes. 
+The data warehouse for your tenant will come pre-loaded with tables relevant to any entity schemas that are common to all Benchling installations. For example, the `entry` schema is available on every Benchling installation with ELN functionality. Other tables are created when new schemas are defined in Benchling. When a custom entity or result schema is defined, Benchling creates a new set of tables in the database: one for the Postgres view and one for the raw data. For example, we defined a custom entity schema for representing analytes. 
 
 ![Custom "Analyte" entity](img/analyte-screenshot.png){width=85%}
 ---
+
 
 When we defined the "Analyte" custom entity schema, Benchling created a table in the data warehouse called `analyte`. All the analyte entities we created can be retrieved with `DBI::dbGetQuery`. 
 
@@ -159,8 +195,19 @@ DBI::dbGetQuery(conn,
   head()
 ```
 
+Here is an example of an analyte entity with some of the key fields highlighted: `id`, `name$`, `registry_name$`, and `schema`. 
 
-`schema`, `id`, and `name$` are important fields present in every entity warehouse table. The `schema` field is the system name of the schema, which is necessary for some of the critical functionality in `benchlingr`. The `id` field is the Benchling identifier for the entity. The identifier for a custom entity will always start with `bfi_`, but other built-in Benchling entities will have specific prefixes in their identifiers. For example, `container` is a built-in Benchling entity schema and the identifiers for containers start with `con_`. Finally, `name$` is the name for the entity. Typically the name is human-friendly, but there are several ways an entity can be named depending on how the schema is configured. 
+![12C-Uric Acid analyte.](img/analyte_example.png){width=85%}
+
+`schema`, `id`, and `name$` are important fields present in every entity warehouse table. 
+
+The `id` is the identifier that Benchling uses to reference entities in the API and data warehouse. For example, suppose you have a results table where one of the fields is an entity link. Whenever results are retrieved from the data warehouse, this entity link is represented as a foreign key in the results table, which can be linked back to the primary key in the entity table. The identifier for a custom entity will always start with `bfi_`, but other built-in Benchling entities will have specific prefixes in their identifiers. For example, `container` is a built-in Benchling entity schema and the identifiers for containers start with `con_`.
+
+The `name` is the human-readable name of the entity. The creator of an entity schema has the ability to configure the ways an entity can be named. One naming option is to let the entity creator name the entity anything they want, as long as it is unique. Other naming options involve automatically generating a name based on the fields of the entity or simply incrementing a number. 
+
+The `registry_name$` is a secondary identifier for the entity that is always generated automatically on entity registration. When defining an entity schema, the entity creator gives the schema a prefix. The prefix is then concatenated with an incremented number to become the registry name. An entity can be configured so that one naming option makes the primary `name` field the same as the `registry_name$`. 
+
+The `schema` field is the system name of the schema, which is necessary for some of the critical functionality in `benchlingr`. `benchlingr` provides several functions for extracting tables from the warehouse, but it requires the `schema` field to look up the schema definitions (in the `schema` and `schema_field` tables) of tables in the database.
 
 In addition to `schema`, `id`, and `name$`, there are many other columns present in every entity table. Read more about the other columns in the [Benchling documentation](https://docs.benchling.com/docs/warehouse-columns-rows-descriptions#example-entity-table). 
 
@@ -171,15 +218,17 @@ Finally, the warehouse table for a custom entity will contain a column for every
 
 Similar to entities, every results schema in Benchling is represented as a table in the data warehouse. There are several differences between representations of results and entities worth mentioning. 
 
-First, results do not have names, but entities do. Second, both results and entities have identifiers, but entity identifiers tend to be more useful, since many operations involve finding results through entities linked to them, and not necessarily finding results directly via the identifier. 
+First, results do not have a `name` field, but entities do. The `name` is one of a few identifiers for an entity and the naming options for an entity are set at the schema-level. 
 
-Third, when entities are registered, they become available in the Postgres view in the data warehouse shortly after (Benchling always has a short delay for data to be exported to the warehouse). When results are submitted, they are *not* available in the Postgres view in the data warehouse, but they are available in the "raw" table. Results only become available in the Postgres view after the notebook entry is reviewed. For that reason, the "raw" tables for results typically need to be accessed more frequently than the "raw" tables for entities, especially if notebook entries are not always being reviewed before the data contained within must be accessed. 
+Second, both results and entities have an `id` field, but unlike entities, the `id` of a result does not appear as a foreign key in any other table. 
 
-Finally, results are linked to particular notebook entries in the data warehouse, but entities are not. In other words, a warehouse table for a results schema will have a column for a notebook entry identifier, but an entity table will not have a column for notebook entry identifier. 
+Third, unlike entities, results only become available in the Postgres view after the notebook entry is reviewed. For that reason, use the "raw" tables if you need to retrieve results from notebook entries that have yet to be reviewed. 
 
-Shown below is a screenshot of a results table in a notebook entry with a schema called "Simple Plate Analyte Mapping". This is a result schema with two fields: "Plate" and "Analytes". The "Plate" field is an integer type that serves as a loose identifier for an assay plate, and the "Analytes" field is a custom entity type "Analyte" that we discussed in the previous section. The "Analytes" field can also take on multiple values. 
+Finally, results are linked to particular notebook entries in the data warehouse, but entities are not. In other words, a warehouse table for a results schema will have a column for a notebook entry identifier, but an entity table will not have a column for notebook entry identifier.
 
-![Example of a results table in a notebook with two fields: "Plate" and "Analytes". The "Plate" field is an integer type and the "Analytes" field is a custom entity type called "Analyte" and multiple values are enabled. plate 1 corresponds to the Methylmalonic Acid isotopes and plate 2 corresponds to the Uric Acid isotopes.](img/simple_plate_analyte_mapping_results_example.png)
+Shown below is a screenshot of a results table in a notebook entry with a schema called "Simple Plate Analyte Mapping". This is a result schema with two fields: "Plate" and "Analytes". The "Plate" field is an integer type that serves as an identifier for an assay plate, and the "Analytes" field is a custom entity type "Analyte" that we discussed in the previous section. The "Analytes" field can also take on multiple values. 
+
+![Example of a results table in a notebook with two fields: "Plate" and "Analytes". The "Plate" field is an integer type and the "Analytes" field is a custom entity type called "Analyte" and multiple values are enabled. Plate 1 corresponds to the methylmalonic acid analytes and plate 2 corresponds to the uric acid analytes](img/simple_plate_analyte_mapping_results_example.png)
 
 To extract this data from the warehouse, use the `DBI::dbGetQuery` function. In this case, I use the identifier for the notebook entry to extract all results of the `simple_plate_analyte_mapping` schema. I'm looking in the "raw" table because the notebook entry with this table has not been reviewed yet. 
 
@@ -189,8 +238,7 @@ DBI::dbGetQuery(conn,
 ```
 
 
-Many of the columns in the "raw" tables should not be used in any context, such as `_pkey` and `_sync_key`, because they are internal identifiers for Benchling. It is important to also extract the `$archived$` column to see whether or not results are archived, as well as the `schema` column so that you may use `benchlingr` tools to pull information about entity fields in the results. 
-
+Many of the columns in the "raw" tables should not be used in any context, such as `_pkey` and `_sync_key`, because they are internal identifiers for Benchling. It is important to also extract the `archived$` column to see whether or not results are archived, as well as the `schema` column, since the `schema` column will be used to look up the schema definition in the Postgres database. 
 
 ```{r, eval=has_credentials}
 df <- DBI::dbGetQuery(conn, 
@@ -243,30 +291,6 @@ head(df)
 res <- replace_entity_id_with_name(conn, df)
 res <- expand_multiselect_column(conn, res, column="analytes", shape="wide")
 head(res)
-```
-
-
-# Accessing the Benchling API via the Python SDK in R. 
-
-To create an interface to the Benchling API, use the `benchling_api_auth` function after you have set the `BENCHLING_API_KEY` environment variable as described in the Python SDK configuration section. 
-
-```{r, eval=has_credentials}
-client <- benchling_api_auth(
-  tenant="https://hemoshear-dev.benchling.com",
-  api_key=Sys.getenv("BENCHLING_DEV_API_KEY"))
-```
-
-The `benchling_api_auth` function returns the [facade object](https://benchling.com/sdk-docs/benchling_sdk.benchling.html) from the Benchling Python SDK that facilitates interaction with the API. Most of the attributes of the facade object are the [services in the Benchling API documentation](https://benchling.com/api/reference). 
-
-
-```{r, eval=has_credentials}
-head(names(client))
-```
-
-Each service will have multiple methods available. 
-
-```{r, eval=has_credentials}
-names(client$entries)
 ```
 
 # Notebook Entries
@@ -355,7 +379,7 @@ The schema name for this example table is `simple_plate_analyte_mapping`, so we 
 
 ```{r, eval=has_credentials}
 d <- DBI::dbGetQuery(conn, 
-  "SELECT plate,analytes,file FROM simple_plate_analyte_mapping$raw 
+  "SELECT id,plate,analytes,file FROM simple_plate_analyte_mapping$raw 
   WHERE entry_id$ = 'etr_JYUlMiIs'")
 d
 ```
@@ -371,12 +395,18 @@ download_blobs(
   outdir='data')
 ```
 
-The `download_blobs_in_warehouse_table` function will download all files attached to a particular set of columns in a warehouse table. By default, it will try to download files from all blob columns unless a specific set is passed to the `column` argument. The files in each column are saved to a subdirectory within `outdir`. 
+The `download_blobs_in_warehouse_table` function will download all files attached to a particular set of columns in a warehouse table. By default, it will try to download files from all blob columns unless a specific set is passed to the `column` argument. The files in each column are saved to the directory specified in `outdir`.
 
 ```{r, eval=FALSE}
 download_blobs_in_warehouse_table(conn, d, column='file', outdir="data")
 ```
 
+Alternatively, one can use a column in the data frame to specify where the files should be saved using the `outdir_columns` argument.
+
+```{r, eval=FALSE}
+d$outdir <- file.path("data", d$id)
+download_blobs_in_warehouse_table(conn, d, column='file', outdir_columns="outdir")
+```
 
 
 ```{r, eval=FALSE, echo=FALSE}

@@ -6,7 +6,8 @@ Author: c(
     person("Justin", "Taylor", email = "justin.taylor.data.science@hemoshear.com", 
     role = "cre", comment = c(ORCID = "0000-0003-4590-0777")),
     person("Davut", "Uçar", email = "ucar@hemoshear.com", role = "aut"),
-    person("Steve", "Hoang", role = "aut"))
+    person("Steve", "Hoang", email = "hoang@hemoshear.com", role = "aut",
+    comment = c(ORCID = "0000-0002-4413-6036")))
 Maintainer: Justin Taylor <taylor@hemoshear.com>
 Description: Unofficial interface for accessing the 'Benchling' developer platform,
     including the RESTFUL API and data warehouse. This package allows R users to 
