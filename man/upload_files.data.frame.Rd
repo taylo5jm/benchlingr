@@ -18,4 +18,13 @@ to be uploaded}
 Upload files represented by one or more columns in a data frame containing
 file paths.
 }
+\examples{
+\dontrun{
+client <- benchlingr::benchling_api_auth(
+tenant="https://hemoshear-dev.benchling.com",
+api_key = Sys.getenv("BENCHLING_DEV_API_KEY"))
+df <- data.frame(file = "upload_files.R")
+upload_files.data.frame(file=df, client=client, blob_link_cols="file")
+}
+}
 \keyword{internal}

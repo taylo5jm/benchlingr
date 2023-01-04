@@ -37,6 +37,53 @@
 
 }
 
+#' @include vec2sql_tuple.R
+#' @importFrom magrittr %<>%
+#' @keywords internal
+.get_schema_field_metadata <- function(conn, schema_id) {
+    schema_def <- DBI::dbGetQuery(conn, glue::glue(
+      "SELECT schema_field.archived$,schema.name as schema_name,schema.id,
+        schema_field.name,schema_field.display_name,schema_field.type,
+        schema_field.is_multi,schema_field.is_required,schema_field.system_name,
+        schema_field.target_schema_id 
+        FROM schema INNER JOIN schema_field ON 
+        schema.id = schema_field.schema_id WHERE schema.id = '{`schema_id`}'"))
+    
+    if (nrow(schema_def) == 0) {
+      stop('Schema ID not found. Run `DBI::dbGetQuery(conn, "SELECT * FROM schema")`
+             to see all')
+    }
+    
+    # Create a lookup for the column types.
+    type_map <- as.character(schema_def$type)
+    names(type_map) <- as.character(schema_def$system_name)
+    
+    # Create a lookup for multi-select.
+    multi_select_map <- as.character(schema_def$is_multi)
+    names(multi_select_map) <- as.character(schema_def$system_name)
+    
+    # Find the warehouse table names for the entity_link and storage_link columns. 
+    connected_tables <- DBI::dbGetQuery(
+      conn, 
+      glue::glue(
+        "SELECT id as target_schema_id,schema_type,
+        system_name as warehouse_table_name FROM schema WHERE id IN 
+        {.vec2sql_tuple(unique(schema_def$target_schema_id))}"))
+    schema_def %<>% dplyr::left_join(connected_tables)
+    
+    # Create a lookup for the warehouse tables
+    target_schema_map <- as.character(schema_def$warehouse_table_name)
+    names(target_schema_map) <- as.character(schema_def$system_name)
+    
+    return(
+      list(
+        type_map = type_map,
+        target_schema_map = target_schema_map,
+        multi_select_map = multi_select_map
+      )
+    )
+}
+
 
 #' Upload assay results to Benchling from a data frame
 #' 
@@ -79,68 +126,49 @@ upload_assay_results <- function(conn, client, df, project_id, schema_id,
   #schema_def <- get_schema_fields(schema_id=schema_id, schema_type='assay-result',
   #                                tenant=tenant, api_key=api_key) %>%
   #  purrr::map_df(~ .)
-  
-  schema_def <- DBI::dbGetQuery(conn, glue::glue(
-    "SELECT schema_field.archived$,schema.name as schema_name,schema.id,
-    schema_field.name,schema_field.display_name,schema_field.type,
-    schema_field.is_multi,schema_field.is_required,schema_field.system_name,
-    schema_field.target_schema_id 
-    FROM schema INNER JOIN schema_field ON 
-    schema.id = schema_field.schema_id WHERE schema.id = '{`schema_id`}'"))
-  
-  if (nrow(schema_def) == 0) {
-    stop('Schema ID not found. Run `DBI::dbGetQuery(conn, "SELECT * FROM schema")`
-         to see all')
+  mappings <- .get_schema_field_metadata(conn=conn, schema_id=schema_id)
+  if (length(id_or_name) == 1) {
+    id_or_name <- rep(id_or_name, length(colnames(df)))
+    names(id_or_name) <- colnames(df)
   }
-  # Create a lookup for the column types.
-  type_map <- as.character(schema_def$type)
-  names(type_map) <- as.character(schema_def$system_name)
-  
-  # Create a lookup for multi-select.
-  multi_select_map <- as.character(schema_def$is_multi)
-  names(multi_select_map) <- as.character(schema_def$system_name)
-  
-  # Find the warehouse table names for the entity_link and storage_link columns. 
-  connected_tables <- DBI::dbGetQuery(
-    conn, 
-    glue::glue(
-    "SELECT id as target_schema_id,schema_type,
-    system_name as warehouse_table_name FROM schema WHERE id IN 
-    {.vec2sql_tuple(unique(schema_def$target_schema_id))}"))
-  schema_def %<>% dplyr::left_join(connected_tables)
-
-  # Create a lookup for the warehouse tables
-  target_schema_map <- as.character(schema_def$warehouse_table_name)
-  names(target_schema_map) <- as.character(schema_def$system_name)
   
   to_query <- c('entity_link', 'dropdown', 'storage_link')
 
   errors <- c()
   for (i in 1:length(colnames(df))) {
+    this_colname <- colnames(df)[i]
     errors <- .validate_column_types(
-      errors, df[,i], colnames(df)[i],
-      benchling_type=type_map[colnames(df)[i]], 
-      multi_select = multi_select_map[colnames(df)[i]])
+      errors, df[,i], this_colname,
+      benchling_type=mappings$type_map[this_colname], 
+      multi_select = mappings$multi_select_map[this_colname])
     errors <- .validate_column_values(
       conn=conn, errors=errors, values=df[,i], 
-      column_name=colnames(df)[i],
-      benchling_type=type_map[colnames(df)[i]], 
-      multi_select=multi_select_map[colnames(df)[i]],
-      id_or_name=id_or_name,
-      target_schema_id=target_schema_map[colnames(df)[i]])
+      column_name=this_colname,
+      benchling_type=mappings$type_map[this_colname], 
+      multi_select=mappings$multi_select_map[this_colname],
+      id_or_name=id_or_name[this_colname],
+      target_schema_id=mappings$target_schema_map[this_colname])
   }
   # Stop function execution and show all errors to the user. 
   assertthat::assert_that(
     length(errors) == 0,
     msg=paste0(errors, collapse='\n'))
   if (length(errors) == 0) {
+      blob_link_column_names <- names(
+        mappings$type_map[which(mappings$type_map %in% 'blob_link')])
     # If all looks good, let's upload the files if we need to
-    if (any(colnames(df) %in% names(
-          type_map[which(type_map %in% 'blob_link')]))) {
-      df <- upload_files(
-        file=df, client=client, 
-        blob_link_cols=names(type_map[which(type_map %in% 'blob_link')]))
-    }
+    if (any(colnames(df) %in% blob_link_column_names)) {
+      if (any(id_or_name[blob_link_column_names] == "name")) {
+        df <- upload_files(
+          file=df, client=client, 
+          blob_link_cols=blob_link_column_names)
+      } else {
+        # check to see if blobs currently exist. 
+        df <- df
+      }
+      
+    }  
+  
     
     .upload_results(client, df,
                     project_id=project_id,
@@ -290,28 +318,43 @@ upload_assay_results <- function(conn, client, df, project_id, schema_id,
 
 
 #' Verify that values in a blob link column refer to valid file paths on the 
-#' local machine.
+#' local machine or that identifiers already exist. 
 #' 
 #' @param errors Errors
 #' @param values Values in the column. 
 #' @param column_name Name of the column in the input data frame. 
+#' @param id_or_name "id" or "name". Use "id" if the blob already exists on 
+#' Benchling and you are submitting the ID for the blob. Use "name" if
+#' the file doesn't already exist on Benchling as a blob and you need to upload
+#' the file to Benchling.
 #' @keywords internal
 .validate_blob_link_column_values <- function(errors, values, column_name,
-                                              multi_select) {
+                                              multi_select, id_or_name) {
   # If multi-select then the column type will be a list
   if (multi_select) {
-    new_errors <- list()
-    for (i in 1:length(values)) {
-      new_errors <- purrr::map2(values[[i]], values[[i]], 
-                            ~ data.frame(exists =  file.exists(.x),
-                                         filename = .y))
+    # Check to see if files exist.
+    if (id_or_name == "name") {
+      new_errors <- list()
+      for (i in 1:length(values)) {
+        new_errors <- purrr::map2(
+          values[[i]], values[[i]], 
+          ~ data.frame(exists =  file.exists(.x),
+                       filename = .y))
+      }
+    } else { # Check to see if blob identifiers are valid
+      # id case here
     }
   }
-  else {
-    new_errors <- purrr::map2(
-      values, values, ~ data.frame(
-        exists =  file.exists(.x),
-        filename = .y))
+  else { 
+    # Check to see if files exist.
+    if (id_or_name == "name") {
+      new_errors <- purrr::map2(
+        values, values, ~ data.frame(
+          exists =  file.exists(.x),
+          filename = .y))
+    } else { # Check to see if blob identifiers are valid
+      # id case here
+    }
   }
   new_errors <- dplyr::bind_rows(new_errors) %>%
     dplyr::filter(!exists)
