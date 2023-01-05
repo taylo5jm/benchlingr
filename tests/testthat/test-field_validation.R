@@ -39,7 +39,7 @@ test_that(".validate_blob_link_column_values throws error when blob identifier
                 errors=c(), values='49176d96-42a2-44f2-ae33-d9', 
                 column_name="MyFileColumn", multi_select=FALSE,
                 id_or_name="id"),
-              "does not exist")
+              "One or more blob identifiers could not be found")
           }
 )
 
