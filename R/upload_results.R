@@ -342,7 +342,15 @@ upload_assay_results <- function(conn, client, df, project_id, schema_id,
                        filename = .y))
       }
     } else { # Check to see if blob identifiers are valid
-      # id case here
+      for (i in 1:length(values)) {
+        res <- tryCatch({
+            client$blobs$bulk_get(values[[i]])},
+          error = function(e) {
+            "One or more blob identifiers could not be found in Benchling."})
+        if (!is.list(res)) {
+          new_errors[[i]] <- res
+        }
+      }
     }
   }
   else { 
@@ -354,6 +362,13 @@ upload_assay_results <- function(conn, client, df, project_id, schema_id,
           filename = .y))
     } else { # Check to see if blob identifiers are valid
       # id case here
+      res <- tryCatch({
+        client$blobs$bulk_get(values)},
+        error = function(e) {
+          "One or more blob identifiers could not be found in Benchling."})
+      if (!is.list(res)) {
+        new_errors <- res
+      }
     }
   }
   new_errors <- dplyr::bind_rows(new_errors) %>%
