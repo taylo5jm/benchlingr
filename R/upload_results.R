@@ -222,8 +222,8 @@ upload_assay_results <- function(conn, client, df, project_id, schema_id,
   } else if (benchling_type == 'storage_link') {
     errors <- .validate_storage_link_column_values(errors, values, column_name)
   } else if (benchling_type == 'blob_link') {
-    errors <- .validate_blob_link_column_values(errors, values, column_name,
-                                                multi_select)
+    errors <- .validate_blob_link_column_values(
+      errors, values, column_name, multi_select, id_or_name=id_or_name)
     # upload the files
     # get the IDs
     # upload IDs with results. 
@@ -331,12 +331,12 @@ upload_assay_results <- function(conn, client, df, project_id, schema_id,
 .validate_blob_link_column_values <- function(errors, values, column_name,
                                               multi_select, id_or_name) {
   # If multi-select then the column type will be a list
+  new_errors <- list()
   if (multi_select) {
     # Check to see if files exist.
     if (id_or_name == "name") {
-      new_errors <- list()
       for (i in 1:length(values)) {
-        new_errors <- purrr::map2(
+        new_errors[[i]] <- purrr::map2(
           values[[i]], values[[i]], 
           ~ data.frame(exists =  file.exists(.x),
                        filename = .y))
