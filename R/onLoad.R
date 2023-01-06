@@ -1,5 +1,5 @@
 globalVariables(".")
-globalVariables("benchling_api_client")
+globalVariables("benchling_sdk_entrypoint")
 globalVariables("download_files")
 
 .onLoad <- function(libname, pkgname) {
