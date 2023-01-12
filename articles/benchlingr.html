@@ -285,9 +285,9 @@ view for a custom entity schema we defined, and the
 <span>  username <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Sys.getenv.html" class="external-link">Sys.getenv</a></span><span class="op">(</span><span class="st">"BENCHLING_DEV_WAREHOUSE_USERNAME"</span><span class="op">)</span>,</span>
 <span>  password <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Sys.getenv.html" class="external-link">Sys.getenv</a></span><span class="op">(</span><span class="st">"BENCHLING_DEV_WAREHOUSE_PASSWORD"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="fu">DBI</span><span class="fu">::</span><span class="fu"><a href="https://dbi.r-dbi.org/reference/dbListTables.html" class="external-link">dbListTables</a></span><span class="op">(</span><span class="va">conn</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">6</span><span class="op">]</span></span>
-<span><span class="co">#&gt; [1] "author"                  "data_table_record"      </span></span>
-<span><span class="co">#&gt; [3] "analyte"                 "assay_result_schema"    </span></span>
-<span><span class="co">#&gt; [5] "assay_result_schema$raw" "compound_examples"</span></span></code></pre></div>
+<span><span class="co">#&gt; [1] "analyte"                 "analyte$raw"            </span></span>
+<span><span class="co">#&gt; [3] "assay_result_schema"     "assay_result_schema$raw"</span></span>
+<span><span class="co">#&gt; [5] "author"                  "author$raw"</span></span></code></pre></div>
 <p>In general, the Postgres views are more convenient to work with,
 since the raw tables contain many Benchling identifiers intended for
 internal use. When one needs to extract assay results submitted in
