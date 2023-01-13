@@ -188,7 +188,7 @@
 #' the file doesn't already exist on Benchling as a blob and you need to upload
 #' the file to Benchling.
 #' @keywords internal
-.validate_blob_link_column_values <- function(errors, values, column_name,
+.validate_blob_link_column_values <- function(client, errors, values, column_name,
                                               multi_select, id_or_name) {
   # If multi-select then the column type will be a list
   new_errors <- list()
@@ -206,12 +206,12 @@
         res <- tryCatch({
             client$blobs$bulk_get(values[[i]])},
           error = function(e) {
-            return(e)
             "One or more blob identifiers could not be found in Benchling."})
         if (!is.list(res)) {
           new_errors[[i]] <- res
         }
       }
+      return(unlist(new_errors))
     }
   }
   else { 
@@ -247,7 +247,7 @@
         new_errors$filename, " does not exist on the local machine.")
       return(c(errors, new_errors))
     } else {
-      return(errors)
+      return(c())
     }
   } 
     

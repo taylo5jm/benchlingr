@@ -15,7 +15,7 @@ test_that(".validate_blob_link_column_values throws error when file does
           not exist on local machine", {
     testthat::expect_match(
     benchlingr:::.validate_blob_link_column_values(
-      errors=c(), values="filethatdoesnotexist.txt", 
+      client, errors=c(), values="filethatdoesnotexist.txt", 
       column_name="MyFileColumn", multi_select=FALSE,
       id_or_name="name"),
       "does not exist")
@@ -25,7 +25,7 @@ test_that(".validate_blob_link_column_values throws error when file does
 test_that(".validate_blob_link_column_values returns nothing when file exists.", {
             testthat::expect_equal(
               benchlingr:::.validate_blob_link_column_values(
-                errors=c(), values="test-upload_results.R", 
+                client, errors=c(), values="test-upload_results.R", 
                 column_name="MyFileColumn", multi_select=FALSE,
                 id_or_name="name"),
               c())
@@ -36,7 +36,7 @@ test_that(".validate_blob_link_column_values throws error when blob identifier
           does not exist", {
             testthat::expect_match(
               benchlingr:::.validate_blob_link_column_values(
-                errors=c(), values='49176d96-42a2-44f2-ae33-d9', 
+                client, errors=c(), values='49176d96-42a2-44f2-ae33-d9', 
                 column_name="MyFileColumn", multi_select=FALSE,
                 id_or_name="id"),
               "One or more blob identifiers could not be found")
@@ -47,14 +47,13 @@ test_that(".validate_blob_link_column_values returns nothing when
           blob identifier exists", {
             testthat::expect_equal(
               benchlingr:::.validate_blob_link_column_values(
-                errors=c(), values='49176d96-42a2-44f2-ae33-d97589601b62', 
+                client, errors=c(), values='49176d96-42a2-44f2-ae33-d97589601b62', 
                 column_name="MyFileColumn", multi_select=FALSE,
                 id_or_name="id"),
               c())
           }
 )
 # Dropdown validation -------------
-
 test_that(".validate_dropdown_column_values passes when all dropdown options
           exist.",
           {
