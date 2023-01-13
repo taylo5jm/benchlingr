@@ -83,7 +83,7 @@
     errors <- .validate_storage_link_column_values(errors, values, column_name)
   } else if (benchling_type == 'blob_link') {
     errors <- .validate_blob_link_column_values(
-      errors, values, column_name, multi_select, id_or_name=id_or_name)
+      client, errors, values, column_name, multi_select, id_or_name=id_or_name)
     # upload the files
     # get the IDs
     # upload IDs with results. 
