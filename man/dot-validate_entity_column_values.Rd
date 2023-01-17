@@ -11,7 +11,7 @@ identifiers (or names) that currently exist in the registry.}
   values,
   column_name,
   target_schema_id,
-  id_or_name
+  fk_type
 )
 }
 \description{

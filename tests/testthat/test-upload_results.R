@@ -19,27 +19,24 @@ res <- data.frame(
   file = 'test-upload_results.R',
   analyte="bfi_KsLU5uWV"
 )
-#benchlingr::upload_assay_results(conn, client, df=res, project_id=NULL, 
-#               schema_id="assaysch_eBsoKyRO", tenant="hemoshear-dev",
-#               api_key=Sys.getenv("BENCHLING_DEV_API_KEY"),
-#               id_or_name = "id")
 
-test_that("upload_assay_results will stop if a file in a blob link column
+
+test_that("create_assay_results will stop if a file in a blob link column
           does not exist on the local machine.", {
     res$file <- 'fakefile'
     testthat::expect_error(
-    benchlingr::upload_assay_results(
+    benchlingr::create_assay_results(
       conn, client, df=res, project_id="src_ZRvTYOgM", 
       schema_id="assaysch_eBsoKyRO",
       tenant="https://hemoshear-dev.benchling.com",
       api_key=Sys.getenv("BENCHLING_DEV_API_KEY"),
-      id_or_name = "id")
+      fk_type = "id")
     )
 }
 )
 
 
-test_that("upload_assay_results will succeed with valid set of minimal input.", {
+test_that("create_assay_results will succeed with valid set of minimal input.", {
     res <- data.frame(
       study_name = "Honeycomb",
       plate = as.integer(1),
@@ -49,17 +46,17 @@ test_that("upload_assay_results will succeed with valid set of minimal input.", 
       dna_sequence = "seq_Cuf0bmCm",
       analyte="bfi_KsLU5uWV"
     )
-    res <- benchlingr::upload_assay_results(
+    res <- benchlingr::create_assay_results(
       conn, client, df=res, project_id="src_ZRvTYOgM", 
       schema_id="assaysch_eBsoKyRO", 
       tenant="https://hemoshear-dev.benchling.com",
       api_key=Sys.getenv("BENCHLING_DEV_API_KEY"),
-      id_or_name = "id")
+      fk_type = "id")
     testthat::expect_equal(length(res), 1)
 }
 )
 
-test_that("upload_assay_results will fail when an integer field
+test_that("create_assay_results will fail when an integer field
           is represented as a numeric in R.", {
   res <- data.frame(
     study_name = "Honeycomb",
@@ -71,45 +68,45 @@ test_that("upload_assay_results will fail when an integer field
     analyte="bfi_KsLU5uWV"
   )
   testthat::expect_error(
-    benchlingr::upload_assay_results(
+    benchlingr::create_assay_results(
     conn, client, df=res, project_id="src_ZRvTYOgM", 
     schema_id="assaysch_eBsoKyRO", 
     tenant="https://hemoshear-dev.benchling.com",
     api_key=Sys.getenv("BENCHLING_DEV_API_KEY"),
-    id_or_name = "id"),
+    fk_type = "id"),
     regexp = "integer type"
   )
   }
 )
 
-test_that("upload_assay_results will work when a file needs to be uploaded.", {
+test_that("create_assay_results will work when a file needs to be uploaded.", {
             res <- data.frame(
               file='test-upload_results.R'
             )
             testthat::expect_equal(
-              length(benchlingr::upload_assay_results(
+              length(benchlingr::create_assay_results(
                 conn, client, df=res, project_id="src_ZRvTYOgM", 
                 schema_id="assaysch_eBsoKyRO", 
                 tenant="https://hemoshear-dev.benchling.com",
                 api_key=Sys.getenv("BENCHLING_DEV_API_KEY"),
-                id_or_name = "name")),
+                fk_type = "name")),
               1
             )
           }
 )
 
-test_that("upload_assay_results will work when a file 
+test_that("create_assay_results will work when a file 
           doesn't need to be uploaded.", {
   res <- data.frame(
     file='49176d96-42a2-44f2-ae33-d97589601b62'
   )
   testthat::expect_equal(
-    length(benchlingr::upload_assay_results(
+    length(benchlingr::create_assay_results(
       conn, client, df=res, project_id="src_ZRvTYOgM", 
       schema_id="assaysch_eBsoKyRO", 
       tenant="https://hemoshear-dev.benchling.com",
       api_key=Sys.getenv("BENCHLING_DEV_API_KEY"),
-      id_or_name = "id")),
+      fk_type = "id")),
     1
   )
 }

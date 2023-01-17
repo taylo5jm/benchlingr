@@ -17,7 +17,7 @@ test_that(".validate_blob_link_column_values throws error when file does
     benchlingr:::.validate_blob_link_column_values(
       client, errors=c(), values="filethatdoesnotexist.txt", 
       column_name="MyFileColumn", multi_select=FALSE,
-      id_or_name="name"),
+      fk_type="name"),
       "does not exist")
   }
   )
@@ -27,7 +27,7 @@ test_that(".validate_blob_link_column_values returns nothing when file exists.",
               benchlingr:::.validate_blob_link_column_values(
                 client, errors=c(), values="test-upload_results.R", 
                 column_name="MyFileColumn", multi_select=FALSE,
-                id_or_name="name"),
+                fk_type="name"),
               c())
           }
 )
@@ -38,7 +38,7 @@ test_that(".validate_blob_link_column_values throws error when blob identifier
               benchlingr:::.validate_blob_link_column_values(
                 client, errors=c(), values='49176d96-42a2-44f2-ae33-d9', 
                 column_name="MyFileColumn", multi_select=FALSE,
-                id_or_name="id"),
+                fk_type="id"),
               "One or more blob identifiers could not be found")
           }
 )
@@ -49,7 +49,7 @@ test_that(".validate_blob_link_column_values returns nothing when
               benchlingr:::.validate_blob_link_column_values(
                 client, errors=c(), values='49176d96-42a2-44f2-ae33-d97589601b62', 
                 column_name="MyFileColumn", multi_select=FALSE,
-                id_or_name="id"),
+                fk_type="id"),
               c())
           }
 )
@@ -89,7 +89,7 @@ test_that(".validate_entity_column_values throws error when not all IDs correspo
               errors=c(), values=c("bfi_9fKcrORv", "bfi_FakeID"), 
               column_name="MyAnalyteColumn",
               target_schema_id="analyte",
-              id_or_name="id"),
+              fk_type="id"),
             "Not all values in"
             )
           })
@@ -103,7 +103,7 @@ test_that(".validate_entity_column_values returns nothing when all IDs correspon
               errors=c(), values=c("bfi_9fKcrORv", "bfi_KsLU5uWV", "bfi_VVamxrKQ"), 
               column_name="MyAnalyteColumn",
               target_schema_id="analyte",
-              id_or_name="id"),
+              fk_type="id"),
             c()
             )
           })
@@ -116,7 +116,7 @@ test_that(".validate_entity_column_values throws error when not all names corres
               errors=c(), values=c("12C-Methylmalonic Acid", "FakeAnalyte"), 
               column_name="MyAnalyteColumn",
               target_schema_id="analyte",
-              id_or_name="name$"),
+              fk_type="name$"),
             "Not all values in"
             )
           })
@@ -130,7 +130,7 @@ test_that(".validate_entity_column_values returns nothing when all names corresp
               errors=c(), values=c("12C-Methylmalonic Acid", "13C-Methylmalonic Acid"), 
               column_name="MyAnalyteColumn",
               target_schema_id="analyte",
-              id_or_name="name$"),
+              fk_type="name$"),
             c()
             )
           })

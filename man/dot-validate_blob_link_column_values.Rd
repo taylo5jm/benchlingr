@@ -6,11 +6,12 @@
 local machine or that identifiers already exist.}
 \usage{
 .validate_blob_link_column_values(
+  client,
   errors,
   values,
   column_name,
   multi_select,
-  id_or_name
+  fk_type
 )
 }
 \arguments{
@@ -20,7 +21,7 @@ local machine or that identifiers already exist.}
 
 \item{column_name}{Name of the column in the input data frame.}
 
-\item{id_or_name}{"id" or "name". Use "id" if the blob already exists on 
+\item{fk_type}{"id" or "name". Use "id" if the blob already exists on 
 Benchling and you are submitting the ID for the blob. Use "name" if
 the file doesn't already exist on Benchling as a blob and you need to upload
 the file to Benchling.}

@@ -11,7 +11,7 @@
   column_name,
   benchling_type,
   multi_select,
-  id_or_name,
+  fk_type,
   target_schema_id
 )
 }
@@ -27,7 +27,7 @@
 \item{multi_select}{Boolean indicating whether or not the column corresponds
 to a multi-select field.}
 
-\item{id_or_name}{String "id" or "name$" which indicates whether the column
+\item{fk_type}{String "id" or "name$" which indicates whether the column
 represents the Benchling ID or name of the entities.}
 
 \item{target_schema_id}{The name of the warehouse table which corresponds

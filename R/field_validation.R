@@ -60,21 +60,21 @@
 #' @param benchling_type The Benchling "type" that the column corresponds to.
 #' @param multi_select Boolean indicating whether or not the column corresponds
 #' to a multi-select field.
-#' @param id_or_name String "id" or "name$" which indicates whether the column
+#' @param fk_type String "id" or "name$" which indicates whether the column
 #' represents the Benchling ID or name of the entities. 
 #' @param target_schema_id The name of the warehouse table which corresponds
 #' to the column. 
 #' @keywords internal
 
 .validate_column_values <- function(conn, errors, values, column_name, benchling_type,
-                                    multi_select, id_or_name,
+                                    multi_select, fk_type,
                                     target_schema_id) {
   # If the column is an entity_link, storage_link, or  dropdown,
   # then we need to check the values against the ones already registered. 
   if (benchling_type == 'entity_link') {
     errors <- .validate_entity_column_values(
       conn=conn, errors=errors, values=values, column_name=column_name,
-      id_or_name=id_or_name, target_schema_id=target_schema_id)
+      fk_type=fk_type, target_schema_id=target_schema_id)
   } else if (benchling_type == 'dropdown') {
     errors <- .validate_dropdown_column_values(
       conn=conn, errors=errors, values=values, column_name=column_name,
@@ -83,7 +83,7 @@
     errors <- .validate_storage_link_column_values(errors, values, column_name)
   } else if (benchling_type == 'blob_link') {
     errors <- .validate_blob_link_column_values(
-      client, errors, values, column_name, multi_select, id_or_name=id_or_name)
+      client, errors, values, column_name, multi_select, fk_type=fk_type)
     # upload the files
     # get the IDs
     # upload IDs with results. 
@@ -143,10 +143,10 @@
 #' @keywords internal
 .validate_entity_column_values <- function(conn, errors, values, column_name,
                                            target_schema_id,
-                                           id_or_name) {
+                                           fk_type) {
   registered_values <- DBI::dbGetQuery(
-    conn, glue::glue("SELECT {`id_or_name`} FROM {`target_schema_id`} WHERE 
-      {`id_or_name`} IN {.vec2sql_tuple(values)}"))
+    conn, glue::glue("SELECT {`fk_type`} FROM {`target_schema_id`} WHERE 
+      {`fk_type`} IN {.vec2sql_tuple(values)}"))
   if (!(all(unique(values) %in% registered_values[,1]))) {
     # Which ones?
     errors <- c(errors, glue::glue(
@@ -183,18 +183,18 @@
 #' @param errors Errors
 #' @param values Values in the column. 
 #' @param column_name Name of the column in the input data frame. 
-#' @param id_or_name "id" or "name". Use "id" if the blob already exists on 
+#' @param fk_type "id" or "name". Use "id" if the blob already exists on 
 #' Benchling and you are submitting the ID for the blob. Use "name" if
 #' the file doesn't already exist on Benchling as a blob and you need to upload
 #' the file to Benchling.
 #' @keywords internal
 .validate_blob_link_column_values <- function(client, errors, values, column_name,
-                                              multi_select, id_or_name) {
+                                              multi_select, fk_type) {
   # If multi-select then the column type will be a list
   new_errors <- list()
   if (multi_select) {
     # Check to see if files exist.
-    if (id_or_name == "name") {
+    if (fk_type == "name") {
       for (i in 1:length(values)) {
         new_errors[[i]] <- purrr::map2(
           values[[i]], values[[i]], 
@@ -216,7 +216,7 @@
   }
   else { 
     # Check to see if files exist.
-    if (id_or_name == "name") {
+    if (fk_type == "name") {
       new_errors <- purrr::map2(
         values, values, ~ data.frame(
           exists =  file.exists(.x),
@@ -239,7 +239,7 @@
       }
     }
   }
-  if (id_or_name == 'name') {
+  if (fk_type == 'name') {
     new_errors <- dplyr::bind_rows(new_errors) %>%
       dplyr::filter(!exists)
     if (nrow(new_errors) > 0) {
