@@ -1,10 +1,9 @@
-# benchling_api_client.py
+# benchling_sdk_entrypoint.py
 # Initialize a Benchling API client object.
 from benchling_sdk.benchling import Benchling
 from benchling_sdk.auth.api_key_auth import ApiKeyAuth
 
-
-def benchling_api_client(tenant, api_key):
+def benchling_sdk_entrypoint(tenant, api_key):
     """
     Initialize a Benchling API client object
     

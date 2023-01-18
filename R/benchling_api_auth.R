@@ -1,4 +1,4 @@
-# benchling_api_client.R
+# benchling_api_auth.R
 #' Create a Benchling API client that can be used to access the API via R. 
 #' 
 #' @include error.R
@@ -19,7 +19,7 @@ benchling_api_auth <- function(
     .missing_api_key_error()
   }
   reticulate::source_python(
-    system.file("python", "benchling_api_client.py", package = "benchlingr"))
-  return(benchling_api_client(tenant, api_key))
+    system.file("python", "benchling_sdk_entrypoint.py", package = "benchlingr"))
+  return(benchling_sdk_entrypoint(tenant, api_key))
 }
 
