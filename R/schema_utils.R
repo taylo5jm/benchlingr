@@ -109,15 +109,3 @@ verify_schema_fields <- function(schema_id, schema_type, df, strict_check = FALS
 
 
 }
-
-# schema_id <- 'assaysch_nIw4yAq8'
-# schema_type <- 'assay-result'
-# df <- data.frame(
-#   "plate" = c('davut'),
-#   "analytes" = c('0.2'),
-#   'file' = c('aaaa'),
-#   check.names = FALSE
-# )
-#
-# result <- verify_schema_fields(schema_id = schema_id, schema_type = schema_type, df = df)
-# print(result)

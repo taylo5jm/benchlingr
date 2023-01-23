@@ -49,6 +49,7 @@ Imports:
     snakecase,
     tidyr
 Collate: 
+    'assay_results_utils.R'
     'error.R'
     'benchling_api_auth.R'
     'config_sdk_env.R'
