@@ -1,3 +1,53 @@
+#' Get schema fields from the data warehouse.
+#' @param conn Database connection opened with benchlingr::warehouse_connect
+#' @param schema_id Schema identifier
+#' @include vec2sql_tuple.R
+#' @importFrom magrittr %<>%
+#' @keywords internal
+.get_schema_field_metadata <- function(conn, schema_id) {
+  schema_def <- DBI::dbGetQuery(conn, glue::glue(
+    "SELECT schema_field.archived$,schema.name as schema_name,schema.id,
+        schema_field.name,schema_field.display_name,schema_field.type,
+        schema_field.is_multi,schema_field.is_required,schema_field.system_name,
+        schema_field.target_schema_id 
+        FROM schema INNER JOIN schema_field ON 
+        schema.id = schema_field.schema_id WHERE schema.id = '{`schema_id`}'"))
+  
+  if (nrow(schema_def) == 0) {
+    stop('Schema ID not found. Run `DBI::dbGetQuery(conn, "SELECT * FROM schema")`
+             to see all')
+  }
+  
+  # Create a lookup for the column types.
+  type_map <- as.character(schema_def$type)
+  names(type_map) <- as.character(schema_def$system_name)
+  
+  # Create a lookup for multi-select.
+  multi_select_map <- as.character(schema_def$is_multi)
+  names(multi_select_map) <- as.character(schema_def$system_name)
+  
+  # Find the warehouse table names for the entity_link and storage_link columns. 
+  connected_tables <- DBI::dbGetQuery(
+    conn, 
+    glue::glue(
+      "SELECT id as target_schema_id,schema_type,
+        system_name as warehouse_table_name FROM schema WHERE id IN 
+        {.vec2sql_tuple(unique(schema_def$target_schema_id))}"))
+  schema_def %<>% dplyr::left_join(connected_tables)
+  
+  # Create a lookup for the warehouse tables
+  target_schema_map <- as.character(schema_def$warehouse_table_name)
+  names(target_schema_map) <- as.character(schema_def$system_name)
+  
+  return(
+    list(
+      type_map = type_map,
+      target_schema_map = target_schema_map,
+      multi_select_map = multi_select_map
+    )
+  )
+}
+
 #' Makes a direct API Call to Benchling Schema endpoints without benchling-sdk client.
 #' 
 #' @include error.R
