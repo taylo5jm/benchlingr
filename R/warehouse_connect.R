@@ -27,15 +27,22 @@ warehouse_connect <- function(tenant,
   username=Sys.getenv("BENCHLING_WAREHOUSE_USERNAME"),
   password=Sys.getenv("BENCHLING_WAREHOUSE_PASSWORD")) {
   
-  if (username == "") {
+  if (username == "" & password != "") {
     stop("Warehouse username cannot be an empty string. 
          Set the 'BENCHLING_WAREHOUSE_USERNAME' environment variable in your
          .Renviron file. Open the file for editing in R with the following command:
          usethis::edit_r_environ()")
   } 
-  if (password == "") {
+  if (username != "" & password == "") {
     stop("Warehouse password cannot be an empty string.
          Set the 'BENCHLING_WAREHOUSE_PASSWORD' environment variable in your
+         .Renviron file. Open the file for editing in R with the following command:
+         usethis::edit_r_environ()")
+  }
+  if (username == "" & password == "") {
+    stop("Both warehouse username and password cannot be empty strings.
+         Set the 'BENCHLING_WAREHOUSE_USERNAME' environment variable and 
+         'BENCHLING_WAREHOUSE_PASSWORD' environment variable in your
          .Renviron file. Open the file for editing in R with the following command:
          usethis::edit_r_environ()")
   }

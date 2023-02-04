@@ -1,11 +1,26 @@
+# warehouse_disconnect.R
+
+#' Disconnect from a Benchling data warehouse
+#' 
+#' Close an already opened connection to the data warehouse.
+#' @param conn A warehouse connection object of class PqConnection usually 
+#' returned by warehouse_connect()
+#' @export warehouse_disconnect
+#' @return TRUE, invisibly
+#' @examples 
+#' \dontrun{
+#' conn <- warehouse_connect("hemoshear-dev", 
+#'     username = Sys.getenv("BENCHLING_DEV_WAREHOUSE_USERNAME"),
+#'     password = Sys.getenv("BENCHLING_DEV_WAREHOUSE_PASSWORD"))
+#' warehouse_disconnect(conn)    
+#' }
+
 warehouse_disconnect <- function(conn){
+  if DBI::db
   if (class(conn) == "PqConnection") {
-    if (DBI::dbDisconnect(conn) == TRUE) {
-      return(TRUE)
-    } else {
-      return("Disconnect was not successful.")
-    }
+    DBI::dbDisconnect(conn)
   } else {
     stop("Input was not a PqConnection class object.")
   }
 }
+
