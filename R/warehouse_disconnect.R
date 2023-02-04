@@ -16,11 +16,14 @@
 #' }
 
 warehouse_disconnect <- function(conn){
-  if DBI::db
-  if (class(conn) == "PqConnection") {
-    DBI::dbDisconnect(conn)
+  if (DBI::dbIsValid(conn) == TRUE) {
+    if (class(conn) == "PqConnection") {
+      DBI::dbDisconnect(conn)
+    } else {
+      stop("Input was not a PqConnection class object.")
+    }
   } else {
-    stop("Input was not a PqConnection class object.")
+    stop("The input is no longer valid or has already been disconnected.")
   }
 }
 
