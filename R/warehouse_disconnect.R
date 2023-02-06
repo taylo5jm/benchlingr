@@ -19,6 +19,7 @@ warehouse_disconnect <- function(conn){
   if (DBI::dbIsValid(conn) == TRUE) {
     if (class(conn) == "PqConnection") {
       DBI::dbDisconnect(conn)
+      # return(TRUE)
     } else {
       stop("Input was not a PqConnection class object.")
     }
