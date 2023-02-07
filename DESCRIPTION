@@ -1,7 +1,7 @@
 Package: benchlingr
 Type: Package
 Title: Access the 'Benchling' RESTFUL API and data warehouse
-Version: 0.2.0
+Version: 0.3.0
 Author: c(
     person("Justin", "Taylor", email = "justin.taylor.data.science@hemoshear.com", 
     role = "cre", comment = c(ORCID = "0000-0003-4590-0777")),
@@ -49,6 +49,7 @@ Imports:
     snakecase,
     tidyr
 Collate: 
+    'assay_results_utils.R'
     'error.R'
     'benchling_api_auth.R'
     'config_sdk_env.R'
