@@ -7,8 +7,8 @@
 #' @param day Integer for the day in the notebook entry. See `find_entry_tables`.
 #' @param table_position Integer for the position of the table in the notebook entry list. 
 #' See `find_entry_tables`.
-#' @param table_name bool Determines how
-#' the name of the table in the notebook entry is included in the output.
+#' @param return_table_name bool Determines how the name of the table in the notebook 
+#' entry is included in the output.
 #' If `TRUE` is selected, the table name will be added as a new column
 #' to the data frame. If `FALSE`, then the table name will be ignored. 
 #' @return Data frame representing the unstructured table in the notebook
@@ -24,7 +24,7 @@
 #' }
 
 read_entry_table <- function(entry, day, table_position,
-                             table_name=TRUE) {
+                             return_table_name=TRUE) {
   if (!is.numeric(day) & !is.numeric(table_position)) {
     stop("'day' and 'table_position' should be integers that represent the day and location of the unstructured table in the notebook entry. 
          Use 'find_entry_tables(entry)' to locate the unstructured tables in the notebook entry.")
@@ -69,12 +69,11 @@ read_entry_table <- function(entry, day, table_position,
     colnames(res) <- columns
   }
   # Add the table name as a column
-  if (table_name) {
-    res$table_name <- a_table$table$name
+  if (return_table_name) {
+    res$return_table_name <- a_table$table$name
   }
   res
 }
-
 
 #' Read all unstructured tables in a notebook entry. 
 #' 
@@ -86,7 +85,7 @@ read_entry_table <- function(entry, day, table_position,
 #' @param day Integer for the day in the notebook entry. See `find_entry_tables`.
 #' @param table_position Integer for the position of the table in the notebook entry list. 
 #' See `find_entry_tables`.
-#' @param table_name If table_name is TRUE, then the names of the tables
+#' @param return_table_name If return_table_name is TRUE, then the names of the tables
 #' in the notebook entry will be returned as names in the output list. 
 #' @param verbose If verbose, then the function will alert the user
 #' if no tables can be found for some days in the notebook. 
@@ -101,7 +100,7 @@ read_entry_table <- function(entry, day, table_position,
 #' @export
 
 read_entry_tables <- function(entry, day=NULL, table_position=NULL,
-                              table_name=TRUE, verbose=FALSE) {
+                              return_table_name=TRUE, verbose=FALSE) {
   if (is.null(day) & is.null(table_position)) {
     table_indices <- find_entry_tables(entry)
     res <- list(); k <- 1;
@@ -110,16 +109,16 @@ read_entry_tables <- function(entry, day=NULL, table_position=NULL,
         for (j in 1:length(table_indices[[i]])) {
           res[[k]] <- read_entry_table(entry, day=i, 
                                        table_position=table_indices[[i]][j],
-                                       table_name=table_name)
+                                       return_table_name=return_table_name)
           k <- k + 1
         }
-        # If table_name is TRUE, then make the table names the names of the list
+        # If return_table_name is TRUE, then make the table names the names of the list
         # itself and remove them from the original data frames. 
-        if (table_name) {
-          names(res) <- purrr::map(res, ~ unique(.$table_name)) %>%
+        if (return_table_name) {
+          names(res) <- purrr::map(res, ~ unique(.$return_table_name)) %>%
             unlist
           for (i in 1:length(res)) {
-            res[[i]]$table_name <- NULL
+            res[[i]]$return_table_name <- NULL
           }
         }
         
@@ -131,7 +130,7 @@ read_entry_tables <- function(entry, day=NULL, table_position=NULL,
     }
   } else {
     res <- read_entry_table(entry, day=day, table_position=table_position,
-                     table_name=table_name)
+                     return_table_name=return_table_name)
   }
   res 
 }
