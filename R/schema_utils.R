@@ -2,7 +2,7 @@
 #' 
 #' @include error.R
 #' @param schema_id provided schema id
-#' @param schema_type schema type name as it shown on benhcling API endpoints 
+#' @param schema_type schema type name as it shown on benchling API endpoints 
 #' with or without `-schemas` ending. See \url{https://benchling.com/api/reference#/Schemas}.
 #' @param tenant is tenant name in the form "https://your-organization.benchling.com".
 #' Default value is the `BENCHLING_TENANT` environment variable. 

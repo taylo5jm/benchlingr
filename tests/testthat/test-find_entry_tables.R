@@ -10,3 +10,8 @@ test_that("find_entry_tables works", {
   expect_equal(tables[[1]][1], 2)
   expect_equal(length(tables[[2]]), 0) # second day should be empty. 
 })
+
+test_that("check if find_entry_tables gives a warning when no unstructured tables
+          are found in the notebook entry",{
+            expect_error(find_entry_tables(entry),) # function should give a warning.
+})
