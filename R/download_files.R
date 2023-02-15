@@ -50,7 +50,7 @@ download_blobs <- function(client, file_map, outdir,
 
 #' Download blobs contained within a warehouse table. 
 #' 
-#' @include util.R
+#' @include util.R schema_utils.R
 #' @importFrom magrittr %>%
 #' @param client A Benchling API client object. 
 #' @param df Data frame retrieved from the Benchling data warehouse.
@@ -81,7 +81,7 @@ download_blobs_in_warehouse_table <- function(client, df, columns=NULL,
                                               outdir=NULL, outdir_column=NULL) {
   is_schema_in_dataframe(df)
   
-  blob_link_columns <- benchlingr::get_schema_fields(schema_id = schema_field.schema_id, 
+  blob_link_columns <- get_schema_fields(schema_id = schema_field.schema_id, 
                                          schema_type = 'blob_link', 
                                          tenant=Sys.getenv("BENCHLING_TENANT"),
                                          api_key=Sys.getenv("BENCHLING_API_KEY")) %>%
