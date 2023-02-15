@@ -1,51 +1,24 @@
-read_entry_table <- function(entry, day, table_position, table_name,
-                             return_table_name=TRUE) {
-  if (!is.numeric(day) & !is.numeric(table_position)) {
-    stop("'day' and 'table_position' should be integers that represent the day and location of the unstructured table in the notebook entry. 
-         Use 'find_entry_tables(entry)' to locate the unstructured tables in the notebook entry.")
-  }
-  
-  a_table <- entry$days[[day]]$notes[[table_position]]
-  
-  direct_from_api <- FALSE
-  if ((class(a_table)[1] == "benchling_api_client.v2.stable.models.table_note_part.TableNotePart")) {
-    if (is.character(a_table$table$column_labels)) {
-      columns <- snakecase::to_snake_case(a_table$table$column_labels)
-    } else { # in this case, the column_labels slot is a list of NULLs.
-      columns <- NA
-    }
-    direct_from_api <- TRUE
-  } else {
-    columns <- tryCatch({
-      snakecase::to_snake_case(a_table[[1]][[1]])},
-      error = function(e) {NA})
-  }
-  
-  .extract_rows <- function(rows, from_api) {
-    .extract_row <- function(row) {
-      if (class(row[[1]])[1] == "benchling_api_client.v2.stable.models.entry_table_row.EntryTableRow") {
-        purrr::map(row, ~ lapply(.$cells, function(x) (x['text'])) %>%
-                     unlist)
-      } else {
-        purrr::map(row, ~ .)
-      }
-    }
-    if (from_api) {
-      .extract_row(rows)
+library(magrittr)
+
+client <- benchlingr::benchling_api_auth(tenant="https://hemoshear-dev.benchling.com",
+                                         api_key=Sys.getenv("BENCHLING_DEV_API_KEY"))
+entry <- client$entries$get_entry_by_id("etr_T3WZTyAe")
+
+list_of_tables <- list()
+for (i in 1:length(entry$days)) {
+  list_of_tables[[i]] <- list()
+  names(list_of_tables)[[i]] <- entry$days[[i]]$date
+  counter <- 0
+  for (j in 1:length(entry$days[[i]]$notes)) {
+    if (entry$days[[i]]$notes[[j]]$type$value == "table") {
+      counter <- counter + 1
+      list_of_tables[[i]][[counter]] <- entry$days[[i]]$notes[[j]]
     } else {
-      purrr::map(rows, ~ .[[1]] %>% unlist)
+      next
     }
   }
-  res <- a_table$table$rows %>%
-    .extract_rows(., direct_from_api) %>%
-    do.call('rbind', .) %>% 
-    as.data.frame()
-  if (!all(is.na(columns))) {
-    colnames(res) <- columns
+  if (length(list_of_tables[[i]]) == 0) {
+    list_of_tables[[i]] <- NA
   }
-  # Add the table name as a column
-  if (return_table_name) {
-    res$return_table_name <- a_table$table$name
-  }
-  res
 }
+
