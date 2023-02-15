@@ -16,19 +16,15 @@
 #' }
 
 warehouse_disconnect <- function(conn) {
-  if (inherits(conn,"DBIConnection") == FALSE) { # Checks to see if the input is not a DBIConnection object
-    stop("Input is not a database connection object.")
-  } else if (inherits(conn,"DBIConnection") == TRUE) {
     if (class(conn) != "PqConnection") { # Checks to see if the input's class is PqConnection
       stop("Input is not a PqConnection class object.")
-    } else if (class(conn) == "PqConnection") {
-      if (DBI::dbIsValid(conn) == FALSE) { # Checks to see if the input is still valid
-        stop("The input is no longer valid or has already been disconnected.")
-      } else if (DBI::dbIsValid(conn) == TRUE) {
-          DBI::dbDisconnect(conn) # returns true invisibly
-      }
+    } 
+    if (!DBI::dbIsValid(conn)) { # Checks to see if the input is still valid
+        warning("The input is no longer valid or has already been disconnected.")
+      } else {
+        DBI::dbDisconnect(conn) # returns true invisibly
     }
-  }
 }
+
 
 
