@@ -2,8 +2,8 @@
 
 # test case 1 - verifying that a disconnect was successful
 conn1 <- warehouse_connect(tenant = "hemoshear-dev", 
-                           username = Sys.getenv("BENCHLING_WAREHOUSE_USERNAME"),
-                           password = Sys.getenv("BENCHLING_WAREHOUSE_PASSWORD"))
+                           username = Sys.getenv("BENCHLING_DEV_WAREHOUSE_USERNAME"),
+                           password = Sys.getenv("BENCHLING_DEV_WAREHOUSE_PASSWORD"))
 test_that("Verify that a disconnect was successful when the user 
           provides a valid PqConnection-class object.", {
             expect_true(warehouse_disconnect(conn1))
