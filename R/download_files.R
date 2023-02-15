@@ -53,6 +53,7 @@ download_blobs <- function(client, file_map, outdir,
 #' @include util.R
 #' @importFrom magrittr %>%
 #' @param client A Benchling API client object. 
+#' @param conn PqConnection object.
 #' @param df Data frame retrieved from the Benchling data warehouse.
 #' Must have the `schema` column included.
 #' @param columns Character vector of column names in the table to download 
@@ -77,7 +78,7 @@ download_blobs <- function(client, file_map, outdir,
 #' download_blobs_in_warehouse_table(conn, res, outdir='temp_data_dir/')
 #' }
 
-download_blobs_in_warehouse_table <- function(client, df, columns=NULL, 
+download_blobs_in_warehouse_table <- function(client,conn,  df, columns=NULL, 
                                               outdir=NULL, outdir_column=NULL) {
   is_schema_in_dataframe(df)
   blob_link_columns <- DBI::dbGetQuery(conn, glue::glue(
