@@ -50,7 +50,7 @@ download_blobs <- function(client, file_map, outdir,
 
 #' Download blobs contained within a warehouse table. 
 #' 
-#' @include util.R schema_utils.R
+#' @include util.R
 #' @importFrom magrittr %>%
 #' @param client A Benchling API client object. 
 #' @param df Data frame retrieved from the Benchling data warehouse.
@@ -80,13 +80,12 @@ download_blobs <- function(client, file_map, outdir,
 download_blobs_in_warehouse_table <- function(client, df, columns=NULL, 
                                               outdir=NULL, outdir_column=NULL) {
   is_schema_in_dataframe(df)
-  
-  blob_link_columns <- get_schema_fields(schema_id = schema_field.schema_id, 
-                                         schema_type = 'blob_link', 
-                                         tenant=Sys.getenv("BENCHLING_TENANT"),
-                                         api_key=Sys.getenv("BENCHLING_API_KEY")) %>%
+  blob_link_columns <- DBI::dbGetQuery(conn, glue::glue(
+    "SELECT schema_field.name FROM schema 
+    INNER JOIN schema_field ON schema.id = schema_field.schema_id 
+    WHERE schema.system_name = {shQuote(unique(df$schema))} AND 
+    schema_field.type = 'blob_link'")) %>%
     .[,1]
-  
   assertthat::assert_that(length(blob_link_columns) > 0,
                           msg="There are no blob link fields in this schema.")
   if (is.null(outdir) & is.null(outdir_column)) {
