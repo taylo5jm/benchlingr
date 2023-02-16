@@ -23,15 +23,84 @@
 #' a_table <- read_entry_table(entry, day=1, table_position=2)
 #' }
 
-read_entry_table <- function(entry, day, table_position,
+read_entry_table <- function(entry, day, table_position, table_name,
                              return_table_name=TRUE) {
-  if (!is.numeric(day) & !is.numeric(table_position)) {
-    stop("'day' and 'table_position' should be integers that represent the day and location of the unstructured table in the notebook entry. 
-         Use 'find_entry_tables(entry)' to locate the unstructured tables in the notebook entry.")
+  
+  entry_tables <- list()
+  counter1 <- 0
+  table_check <- list()
+  for (i in 1:length(entry$days)) {
+    entry_tables[[i]] <- list()
+    for (j in 1:length(entry$days[[i]]$notes)) {
+      entry_tables[[i]][[j]] <- entry$days[[i]]$notes[[j]]
+      if (entry$days[[i]]$notes[[j]]$type$value == "table") {
+        counter1 <- counter1 + 1
+        table_check[[counter1]] <- entry$days[[i]]$notes[[j]]
+      }
+    }
   }
   
-  a_table <- entry$days[[day]]$notes[[table_position]]
-
+  if (length(table_check) == 0) {
+    stop("Entry is empty and contains no tables.")
+  }
+  
+  if (table_name != "" | !is.na(table_name) | !is.null(table_name)) {
+    a_table <- "empty"
+    entry_table_name_list <- list()
+    counter2 <- 0
+    for (i in 1:length(entry_tables)) {
+      for (j in 1:length(entry_tables[[i]])) {
+        if (entry_tables[[i]][[j]]$type$value == "table") {
+          counter2 <- counter2 + 1
+          entry_table_name_list[[counter2]] <- entry_tables[[i]][[j]]$table$name
+          if (entry_tables[[i]][[j]]$table$name == table_name) {
+            a_table <- entry_tables[[i]][[j]]
+          } else {
+            next
+          }
+        } else {
+          next
+        }
+      }
+    }
+    
+    if (!(table_name %in% entry_table_name_list)) {
+      stop(paste0(paste(c("Name for table could not be found. If possible try to find actual table name from the following list of tables found in the entry:", entry_table_name_list), collapse=" "),"."))
+    }
+    
+    if (is.numeric(day) & is.numeric(table_position)) {
+      warning("'day' and 'table_position' arguments will be ignored in favor of 'table_name.'")
+    }
+    
+    if (is.numeric(day) & !is.numeric(table_position)) {
+      warning("'day' argument will be ignored in favor of 'table_name.' Also 'table_position' should either be written as an integer as it designates the location of the unstructured table in the notebook entry or kept blank along with 'day.'")
+    }
+    
+    if (!is.numeric(day) & is.numeric(table_position)) {
+      warning("'table_position' argument will be ignored in favor of 'table_name.' Also 'day' should either be written as an integer as it designates the day of the unstructured table in the notebook entry or kept blank along with 'day.'")
+    }
+    
+    if ((!is.numeric(day) & !is.na(day) & !is.null(day) & day != "") & 
+        (!is.numeric(table_position) & !is.na(table_position) & !is.null(table_position) & 
+         table_position != "")) {
+      warning("'day' and 'table_position' arguments will be ignored in favor of 'table_name.' Also 'day' and 'table_position' should either be integers as they represent the day and location of the unstructured table in the notebook entry or be rendered blank.")
+    }
+  } else {
+    if (!is.numeric(day) & is.numeric(table_position)) {
+      stop("'day' should be an integer that represents the day of the unstructured table in the notebook entry. 
+           Either use 'find_entry_tables(entry)' to locate the unstructured tables in the notebook entry or specify a name for 'table_name' and make 'day' and 'table_position' blank either by NULL, NA or by writing them as empty strings.")
+    }
+    if (is.numeric(day) & !is.numeric(table_position)) {
+      stop("'table_position' should be an integer that represents the location of the unstructured table in the notebook entry. 
+           Either use 'find_entry_tables(entry)' to locate the unstructured tables in the notebook entry or specify a name for 'table_name' and make 'day' and 'table_position' blank either by NULL, NA or by writing them as empty strings.")
+    }
+    if (!is.numeric(day) & !is.numeric(table_position)) {
+      stop("'day' and 'table_position' should be integers that represent the day and location of the unstructured table in the notebook entry. 
+           Either use 'find_entry_tables(entry)' to locate the unstructured tables in the notebook entry or specify a name for 'table_name' and make 'day' and 'table_position' blank either by NULL, NA or by writing them as empty strings.")
+    }
+    a_table <- entry_tables[[day]][[table_position]]
+  }
+  
   direct_from_api <- FALSE
   if ((class(a_table)[1] == "benchling_api_client.v2.stable.models.table_note_part.TableNotePart")) {
     if (is.character(a_table$table$column_labels)) {
@@ -99,7 +168,7 @@ read_entry_table <- function(entry, day, table_position,
 #' }
 #' @export
 
-read_entry_tables <- function(entry, day=NULL, table_position=NULL,
+read_entry_tables <- function(entry, day=NULL, table_position=NULL, table_name=NULL,
                               return_table_name=TRUE, verbose=FALSE) {
   if (is.null(day) & is.null(table_position)) {
     table_indices <- find_entry_tables(entry)
@@ -129,8 +198,9 @@ read_entry_tables <- function(entry, day=NULL, table_position=NULL,
       }
     }
   } else {
-    res <- read_entry_table(entry, day=day, table_position=table_position,
-                     return_table_name=return_table_name)
+    res <- read_entry_table(entry, day=day, table_position=table_position, 
+                            table_name=table_name,
+                            return_table_name=return_table_name)
   }
   res 
 }
