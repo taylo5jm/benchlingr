@@ -1,19 +1,20 @@
 #' Makes a direct API Call to Benchling Assay Result Archive endpoint
-#' endpoint: https://benchling.com/api/reference#/Assay%20Results/archiveAssayResults
+#' 
+#' https://benchling.com/api/reference#/Assay%20Results/archiveAssayResults
 #' @param tenant tenant name
 #' @param api_key api key
 #' @param assay_result_ids is vector type assay result ids. This function supports archiving multiple
 #' items in one function call
 #' @param reason the reason of the archiving operation. "Made in error" is default but you can change as you wish
 #' based on supported reasons on Benchling
-#' @export
 #' @examples \dontrun{
 #' assay_result_ids <- assay_result_ids=c("908df834-220e-4b59-975b-c21bbbb8191a")
 #' reason = "Made in error"
 #' }
 #'
-#' @returns assay_result_ids
-#'
+#' @return assay_result_ids
+#' @export
+#' 
 archive_assay_results <- function(tenant = Sys.getenv("BENCHLING_TENANT"),
                                   api_key = Sys.getenv("BENCHLING_API_KEY"),
                                   assay_result_ids = NULL,
@@ -51,17 +52,18 @@ archive_assay_results <- function(tenant = Sys.getenv("BENCHLING_TENANT"),
 }
 
 #' Makes a direct API Call to Benchling Assay Result Unarchive endpoint
-#' endpoint: https://benchling.com/api/reference#/Assay%20Results/unarchiveAssayResults
+#' 
+#' https://benchling.com/api/reference#/Assay%20Results/unarchiveAssayResults
 #' @param tenant tenant name
 #' @param api_key api key
 #' @param assay_result_ids is vector type assay result ids. This function supports archiving multiple
 #' items in one function call
-#' @export
 #' @examples \dontrun{
 #' assay_result_ids <- assay_result_ids=c("908df834-220e-4b59-975b-c21bbbb8191a")
 #' }
-#' @returns assay_result_ids
-#'
+#' @return assay_result_ids
+#' @export
+
 unarchive_assay_results <- function(tenant = Sys.getenv("BENCHLING_TENANT"),
                                     api_key = Sys.getenv("BENCHLING_API_KEY"),
                                     assay_result_ids = NULL) {
@@ -96,17 +98,21 @@ unarchive_assay_results <- function(tenant = Sys.getenv("BENCHLING_TENANT"),
   return(result)
 
 }
-#' Makes a direct API Call to Benchling Get Assay Result
-#' endpoint: https://benchling.com/api/reference#/Assay%20Results/getAssayResult
+
+
+#' Makes a direct API Call to Benchling Get Assay Result endpoint.
+#' 
+#' https://benchling.com/api/reference#/Assay%20Results/getAssayResult
 #' @param tenant tenant name
 #' @param api_key api key
 #' @param assay_result_id is the id of the assay result.
-#' @export
-#'@examples \dontrun{
+#' @examples 
+#' \dontrun{
 #' assay_result_id <- '908df834-220e-4b59-975b-c21bbbb8191a'
-#'}
-#'@returns assay result details
-#'
+#' }
+#' @return assay result details
+#' @export
+
 get_assay_result <- function(tenant = Sys.getenv("BENCHLING_TENANT"),
                              api_key = Sys.getenv("BENCHLING_API_KEY"),
                              assay_result_id = '') {
