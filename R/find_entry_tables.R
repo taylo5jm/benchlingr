@@ -20,6 +20,7 @@
 #' benchlingr::find_entry_tables(json)
 #' }
 #' @export
+
 find_entry_tables <- function(json, min_rows=NULL) {
   .find_tables <- function(json, min_rows=NULL) {
     tables <- which(purrr::map_lgl(json$notes, ~ 'table' %in% names(.)))
