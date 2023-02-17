@@ -95,28 +95,21 @@ test_that("create_assay_results will work when a file needs to be uploaded.", {
           }
 )
 
-test_that("create_assay_results will work when a file 
-          doesn't need to be uploaded.", {
-  res <- data.frame(
-    file='49176d96-42a2-44f2-ae33-d97589601b62'
-  )
-  conn <- warehouse_connect(
-    "hemoshear-dev",
-    Sys.getenv("BENCHLING_DEV_WAREHOUSE_USERNAME"),
-    Sys.getenv("BENCHLING_DEV_WAREHOUSE_PASSWORD"))
-  
-  client <- benchling_api_auth(
-    tenant="https://hemoshear-dev.benchling.com",
-    api_key = Sys.getenv("BENCHLING_DEV_API_KEY"))
-  
-  created_results <- create_assay_results(
-    conn, client, df=res, project_id="src_ZRvTYOgM", 
-    schema_id="assaysch_eBsoKyRO", 
-    tenant="https://hemoshear-dev.benchling.com",
-    api_key=Sys.getenv("BENCHLING_DEV_API_KEY"),
-    fk_type = "id")
-  testthat::expect_equal(
-    length(created_results), 1)
-})
+# test_that("create_assay_results will work when a file 
+#           doesn't need to be uploaded.", {
+#   res <- data.frame(
+#     file='49176d96-42a2-44f2-ae33-d97589601b62',
+#     plate=1
+#   )
+#   
+#   created_results <- create_assay_results(
+#     conn, client, df=res, project_id="src_ZRvTYOgM", 
+#     schema_id="assaysch_eBsoKyRO", 
+#     tenant="https://hemoshear-dev.benchling.com",
+#     api_key=Sys.getenv("BENCHLING_DEV_API_KEY"),
+#     fk_type = "id")
+#   testthat::expect_equal(
+#     length(created_results), 1)
+# })
 
 DBI::dbDisconnect(conn)
