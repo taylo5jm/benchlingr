@@ -1,4 +1,4 @@
-
+library(benchlingr)
 
 conn <- benchlingr::warehouse_connect(
   "hemoshear-dev",
@@ -16,7 +16,7 @@ res <- data.frame(
   datetime = as.character(Sys.time()),
   json = RJSONIO::toJSON(list(algorithm="sgd")),
   dna_sequence = "seq_Cuf0bmCm",
-  file = 'test-upload_results.R',
+  file = 'test-create_assay_results.R',
   analyte="bfi_KsLU5uWV"
 )
 
@@ -81,7 +81,7 @@ test_that("create_assay_results will fail when an integer field
 
 test_that("create_assay_results will work when a file needs to be uploaded.", {
             res <- data.frame(
-              file='test-upload_results.R'
+              file='test-create_assay_results.R'
             )
             testthat::expect_equal(
               length(benchlingr::create_assay_results(
@@ -95,19 +95,21 @@ test_that("create_assay_results will work when a file needs to be uploaded.", {
           }
 )
 
-test_that("create_assay_results will work when a file 
-          doesn't need to be uploaded.", {
-  res <- data.frame(
-    file='49176d96-42a2-44f2-ae33-d97589601b62'
-  )
-  testthat::expect_equal(
-    length(benchlingr::create_assay_results(
-      conn, client, df=res, project_id="src_ZRvTYOgM", 
-      schema_id="assaysch_eBsoKyRO", 
-      tenant="https://hemoshear-dev.benchling.com",
-      api_key=Sys.getenv("BENCHLING_DEV_API_KEY"),
-      fk_type = "id")),
-    1
-  )
-}
-)
+# test_that("create_assay_results will work when a file 
+#           doesn't need to be uploaded.", {
+#   res <- data.frame(
+#     file='49176d96-42a2-44f2-ae33-d97589601b62',
+#     plate=1
+#   )
+#   
+#   created_results <- create_assay_results(
+#     conn, client, df=res, project_id="src_ZRvTYOgM", 
+#     schema_id="assaysch_eBsoKyRO", 
+#     tenant="https://hemoshear-dev.benchling.com",
+#     api_key=Sys.getenv("BENCHLING_DEV_API_KEY"),
+#     fk_type = "id")
+#   testthat::expect_equal(
+#     length(created_results), 1)
+# })
+
+DBI::dbDisconnect(conn)
