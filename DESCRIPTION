@@ -53,6 +53,7 @@ Collate:
     'error.R'
     'benchling_api_auth.R'
     'config_sdk_env.R'
+    'dropdown.R'
     'vec2sql_tuple.R'
     'field_validation.R'
     'upload_files.R'
