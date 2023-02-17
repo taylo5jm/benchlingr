@@ -24,7 +24,7 @@ test_that('Strict and loose verification of dataframe colnames. ', {
       schema_id, schema_type, df,
       tenant="https://hemoshear-dev.benchling.com",
       api_key=Sys.getenv("BENCHLING_DEV_API_KEY")))
-  testthat::expect_warning(
+  testthat::expect_error(
     verify_schema_fields(
       schema_id, schema_type, df, strict_check = TRUE,
       tenant="https://hemoshear-dev.benchling.com",
@@ -67,7 +67,7 @@ test_that('Empty schema/df tests.', {
         tenant="https://hemoshear-dev.benchling.com",
         api_key=Sys.getenv("BENCHLING_DEV_API_KEY"))))
   
-  testthat::expect_warning(
+  testthat::expect_error(
     verify_schema_fields(
       schema_id = schema_id, schema_type = schema_type, df = empty_df,
       tenant="https://hemoshear-dev.benchling.com",
@@ -80,7 +80,7 @@ test_that('Empty schema/df tests.', {
     check.names = FALSE
   )
 
-  testthat::expect_warning(
+  testthat::expect_error(
     verify_schema_fields(
       schema_id = schema_id, schema_type = schema_type, df = df,
       tenant="https://hemoshear-dev.benchling.com",
