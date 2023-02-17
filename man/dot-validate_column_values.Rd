@@ -6,6 +6,7 @@
 \usage{
 .validate_column_values(
   conn,
+  client,
   errors,
   values,
   column_name,
@@ -16,6 +17,10 @@
 )
 }
 \arguments{
+\item{conn}{Database connection typically opened with `warehouse_connect`.}
+
+\item{client}{A Benchling SDK object typically created with `benchling_api_auth`.}
+
 \item{errors}{Character vector of errors.}
 
 \item{values}{Values in the column.}

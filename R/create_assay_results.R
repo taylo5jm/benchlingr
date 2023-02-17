@@ -96,7 +96,7 @@ create_assay_results <- function(conn, client, df, project_id, schema_id,
       benchling_type=mappings$type_map[this_colname], 
       multi_select = mappings$multi_select_map[this_colname])
     errors <- .validate_column_values(
-      conn=conn, errors=errors, values=df[,i], 
+      client=client, conn=conn, errors=errors, values=df[,i], 
       column_name=this_colname,
       benchling_type=mappings$type_map[this_colname], 
       multi_select=mappings$multi_select_map[this_colname],
@@ -189,35 +189,4 @@ get_results_schema_ids <- function(conn) {
   return(DBI::dbGetQuery(
     conn, 
     "SELECT id,name FROM schema WHERE schema_type = 'assay_result'"))
-}
-
-#' Get the options in a dropdown menu
-#' 
-#' 
-#' @importFrom magrittr %>%
-#' @param conn Database connection opened with `warehouse_connect`.
-#' @param dropdown_id Schema ID for the dropdown.
-#' @return character vector of dropdown menu options 
-#' @export
-
-get_dropdown_options <- function(conn, id) {
-  return(DBI::dbGetQuery(
-    conn, 
-      glue::glue("SELECT dropdown_option.name FROM dropdown INNER JOIN 
-      dropdown_option ON dropdown.id = dropdown_option.dropdown_id 
-                 WHERE dropdown.id = '{id}'")) %>%
-      .[,1] %>%
-      as.character())
-}
-
-
-#' Get metadata for a dropdown menu
-#' 
-#' @param conn Database connection opened with `warehouse_connect`.
-#' @param name Schema name for the dropdown
-#' @export
-#' 
-get_dropdown <- function(conn, name) {
-  return(DBI::dbGetQuery(
-    conn, glue::glue("SELECT dropdown WHERE name = '{name}'")))
 }
