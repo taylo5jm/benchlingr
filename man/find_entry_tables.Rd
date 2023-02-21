@@ -4,10 +4,10 @@
 \alias{find_entry_tables}
 \title{Find unstructured tables (not registry or results) in a notebook entry.}
 \usage{
-find_entry_tables(json, min_rows = NULL)
+find_entry_tables(entry, min_rows = NULL)
 }
 \arguments{
-\item{json}{JSON response from GET /entry/{entry_id}. *** Link the appropriate
+\item{entry}{entry response from GET /entry/{entry_id}. *** Link the appropriate
 Benchling API endpoint here.}
 
 \item{min_rows}{Keep tables with this number of rows or more.}
@@ -27,7 +27,7 @@ from other API endpoints / data warehouse tables.
 client <- benchlingr::benchling_api_auth(
     tenant="https://hemoshear-dev.benchling.com",
     api_key = Sys.getenv("BENCHLING_DEV_API_KEY"))
-json <- client$entries$get_entry_by_id("etr_T3WZTyAe")
-benchlingr::find_entry_tables(json)
+entry <- client$entries$get_entry_by_id("etr_T3WZTyAe")
+benchlingr::find_entry_tables(entry)
 }
 }

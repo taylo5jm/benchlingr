@@ -18,9 +18,9 @@ Close an already opened connection to the data warehouse.
 }
 \examples{
 \dontrun{
-conn <- warehouse_connect("hemoshear-dev", 
-    username = Sys.getenv("BENCHLING_DEV_WAREHOUSE_USERNAME"),
-    password = Sys.getenv("BENCHLING_DEV_WAREHOUSE_PASSWORD"))
+conn <- warehouse_connect(tenant = "hemoshear-dev", 
+    username = Sys.getenv("BENCHLING_WAREHOUSE_USERNAME"),
+    password = Sys.getenv("BENCHLING_WAREHOUSE_PASSWORD"))
 warehouse_disconnect(conn)    
 }
 }
