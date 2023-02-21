@@ -17,33 +17,35 @@
 #' to make queries against the Postgres database for the specified tenant.
 #' @examples \dontrun{
 #' conn <- warehouse_connect("hemoshear-dev", 
-#'     username = Sys.getenv("BENCHLING_DEV_WAREHOUSE_USERNAME"),
-#'     password = Sys.getenv("BENCHLING_DEV_WAREHOUSE_PASSWORD"))
+#'     username = Sys.getenv("BENCHLING_WAREHOUSE_USERNAME"),
+#'     password = Sys.getenv("BENCHLING_WAREHOUSE_PASSWORD"))
 #' # It is good practice to close the connection after finishing your queries. 
 #' DBI::dbDisconnect(conn)
 #' }
-#' 
+
 warehouse_connect <- function(tenant, 
   username=Sys.getenv("BENCHLING_WAREHOUSE_USERNAME"),
   password=Sys.getenv("BENCHLING_WAREHOUSE_PASSWORD")) {
-  
-  if (username == "") {
-    stop("Warehouse username cannot be an empty string. 
-         Set the 'BENCHLING_WAREHOUSE_USERNAME' environment variable in your
-         .Renviron file. Open the file for editing in R with the following command:
-         usethis::edit_r_environ()")
-  } 
-  if (password == "") {
-    stop("Warehouse password cannot be an empty string.
-         Set the 'BENCHLING_WAREHOUSE_PASSWORD' environment variable in your
-         .Renviron file. Open the file for editing in R with the following command:
-         usethis::edit_r_environ()")
+  if (DBI::dbCanConnect(RPostgres::Postgres(), dbname="warehouse",
+                        host=paste0("postgres-warehouse.", tenant, ".benchling.com"),
+                        port=5432, user=username, password=password) == TRUE) {
+    conn <- DBI::dbConnect(RPostgres::Postgres(), dbname="warehouse",
+                           host=paste0("postgres-warehouse.", tenant, ".benchling.com"),
+                           port=5432, user=username, password=password)
+    return(conn)
+  } else {
+    if (username != "" & password != "") {
+      stop(paste0('Could not translate host name "postgres-warehouse.',
+                  tenant,'.benchling.com" to address: nodename nor servname provided, or not known.'))
+    }
+    if (username == "" & password != "") {
+      stop('Warehouse username cannot be an empty string. Set the "BENCHLING_WAREHOUSE_USERNAME" environment variable in your .Renviron file. Open the file for editing in R with the following command: usethis::edit_r_environ().')
+    }
+    if (username != "" & password == "") {
+      stop('Warehouse password cannot be an empty string. Set the "BENCHLING_WAREHOUSE_PASSWORD" environment variable in your .Renviron file. Open the file for editing in R with the following command: usethis::edit_r_environ().')
+    }
+    if (username == "" & password == "") {
+      stop('Both warehouse username and password cannot be empty strings. Set the "BENCHLING_WAREHOUSE_USERNAME" environment variable and "BENCHLING_WAREHOUSE_PASSWORD" environment variable in your .Renviron file. Open the file for editing in R with the following command: usethis::edit_r_environ().')
+    }
   }
-  
-  conn <- DBI::dbConnect(
-    RPostgres::Postgres(), dbname="warehouse", 
-    host=paste0("postgres-warehouse.", tenant, ".benchling.com"),
-    port=5432, user=username, password=password)
-  
-  conn
 }

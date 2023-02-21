@@ -76,7 +76,7 @@ create_assay_results <- function(conn, client, df, project_id, schema_id,
     api_key=api_key)
 
   # Stop if not
-  # 3. Check to see if the types of the columns in the data frame match the types of the fields in the schema.
+  # 2. Check to see if the types of the columns in the data frame match the types of the fields in the schema.
   #schema_def <- get_schema_fields(schema_id=schema_id, schema_type='assay-result',
   #                                tenant=tenant, api_key=api_key) %>%
   #  purrr::map_df(~ .)

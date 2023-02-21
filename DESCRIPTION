@@ -20,9 +20,10 @@ LazyData: true
 URL: https://github.com/hemoshear/benchlingr,
     https://upgraded-succotash-8df2b926.pages.github.io/
 BugReports: https://github.com/hemoshear/benchlingr
-RoxygenNote: 7.2.1
+RoxygenNote: 7.2.3
 Suggests: 
     knitr,
+    RSQLite,
     rmarkdown,
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
@@ -68,7 +69,9 @@ Collate:
     'list_schemas_in_entry.R'
     'map_entity_field_names_to_warehouse_tables.R'
     'onLoad.R'
+    'read_entry_table.R'
     'read_entry_tables.R'
     'read_plate_diagrams.R'
     'replace_entity_id_with_name.R'
     'warehouse_connect.R'
+    'warehouse_disconnect.R'

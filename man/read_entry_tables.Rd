@@ -8,7 +8,8 @@ read_entry_tables(
   entry,
   day = NULL,
   table_position = NULL,
-  table_name = TRUE,
+  table_name = NULL,
+  return_table_name = TRUE,
   verbose = FALSE
 )
 }
@@ -20,7 +21,10 @@ read_entry_tables(
 \item{table_position}{Integer for the position of the table in the notebook entry list. 
 See `find_entry_tables`.}
 
-\item{table_name}{If table_name is TRUE, then the names of the tables
+\item{table_name}{A specific table can be read by name with the `table_name` argument.
+If `table_name` is provided, then `day` and `table_position` are ignored.}
+
+\item{return_table_name}{If return_return_table_name is TRUE, then the names of the tables
 in the notebook entry will be returned as names in the output list.}
 
 \item{verbose}{If verbose, then the function will alert the user
@@ -39,6 +43,6 @@ returning a list of data frames.
 client <- benchling_api_auth(tenant="https://hemoshear.benchling.com")
 client$entries$get_entry_by_id
 entry <- get_entry(id = "etr")
-tables <- read_tables(entry)
+tables <- read_entry_tables(entry)
 }
 }
