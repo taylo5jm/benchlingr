@@ -25,7 +25,7 @@ test_that(".validate_blob_link_column_values throws error when file does
 test_that(".validate_blob_link_column_values returns nothing when file exists.", {
             testthat::expect_equal(
               benchlingr:::.validate_blob_link_column_values(
-                client, errors=c(), values="test-upload_results.R", 
+                client, errors=c(), values="test-create_assay_results.R", 
                 column_name="MyFileColumn", multi_select=FALSE,
                 fk_type="name"),
               c())

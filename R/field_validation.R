@@ -54,6 +54,8 @@
 #' input data frame exist in the inventory. If the column refers to a blob
 #' link field, then the function will assume the values are file paths and will
 #' check to see if the file exists on the local machine. 
+#' @param conn Database connection typically opened with `warehouse_connect`.
+#' @param client A Benchling SDK object typically created with `benchling_api_auth`.
 #' @param errors Character vector of errors.
 #' @param values Values in the column. 
 #' @param column_name Name of the column in the data frame to be uploaded to Benchling.
@@ -66,7 +68,7 @@
 #' to the column. 
 #' @keywords internal
 
-.validate_column_values <- function(conn, errors, values, column_name, benchling_type,
+.validate_column_values <- function(conn, client, errors, values, column_name, benchling_type,
                                     multi_select, fk_type,
                                     target_schema_id) {
   # If the column is an entity_link, storage_link, or  dropdown,
@@ -78,7 +80,7 @@
   } else if (benchling_type == 'dropdown') {
     errors <- .validate_dropdown_column_values(
       conn=conn, errors=errors, values=values, column_name=column_name,
-      dropdown_id=dropdown_id)
+      dropdown_id=target_schema_id)
   } else if (benchling_type == 'storage_link') {
     errors <- .validate_storage_link_column_values(errors, values, column_name)
   } else if (benchling_type == 'blob_link') {
@@ -157,10 +159,11 @@
 }
 
 #' Verify that values in dropdown column are valid options in the dropdown schema. 
+#' @include dropdown.R
 #' @keywords internal
 .validate_dropdown_column_values <- function(conn, errors, values, column_name,
                                              dropdown_id) {
-  valid_options <- get_dropdown_options(conn, dropdown_id)
+  valid_options <- get_dropdown_options(conn, schema_id=dropdown_id)
   invalid <- setdiff(values, valid_options)
   if (length(invalid) > 0) {
     errors <- c(errors, 
