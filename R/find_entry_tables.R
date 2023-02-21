@@ -54,12 +54,12 @@ find_entry_tables <- function(entry, min_rows=NULL) {
     }
   }
   
-  if (length(res) == 0) {
-    res <- "No tables were found in entry provided."
+  if (all(purrr::map_lgl(res, ~ length(.) == 0))) {
+    res <- NA
     warning("No tables were found in entry provided.")
   }
   
-  res
+  return(res)
 }
 
 
