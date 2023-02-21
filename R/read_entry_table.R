@@ -23,14 +23,28 @@
 #' a_table <- read_entry_table(entry, day=1, table_position=2)
 #' }
 
-read_entry_table <- function(entry, day, table_position, table_name,
+read_entry_table <- function(entry, day=NULL, table_position=NULL, table_name=NULL,
                              return_table_name=TRUE) {
-  if (!is.numeric(day) & !is.numeric(table_position)) {
-    stop("'day' and 'table_position' should be integers that represent the day and location of the unstructured table in the notebook entry. 
-         Use 'find_entry_tables(entry)' to locate the unstructured tables in the notebook entry.")
-  }
+
+  if (is.null(table_name)) {
+    a_table <- entry$days[[day]]$notes[[table_position]]
+  } 
   
-  a_table <- entry$days[[day]]$notes[[table_position]]
+  if (!is.null(table_name)) {
+    for (i in 1:length(entry$days)) {
+      for (j in 1:length(entry$days[[i]]$notes)) {
+        if (entry$days[[i]]$notes[[j]]$type$value == "table") {
+          if (entry$days[[i]]$notes[[j]]$table$name == table_name) {
+            a_table <- entry$days[[i]]$notes[[j]]
+          } else {
+            next
+          }
+        } else {
+          next
+        }
+      }
+    }
+  }
   
   direct_from_api <- FALSE
   if ((class(a_table)[1] == "benchling_api_client.v2.stable.models.table_note_part.TableNotePart")) {
@@ -74,3 +88,4 @@ read_entry_table <- function(entry, day, table_position, table_name,
   }
   res
 }
+

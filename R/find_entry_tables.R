@@ -22,6 +22,15 @@
 #' @export
 
 find_entry_tables <- function(entry, min_rows=NULL) {
+  if (missing(entry)) {
+    stop("Entry input is missing.")
+  }
+  
+  if (length(class(entry)) != 2 | class(entry)[1] != "benchling_api_client.v2.stable.models.entry.Entry" |
+      class(entry)[2] != "python.builtin.object") {
+    stop("Entry input is invalid.")
+  }
+  
   .find_tables <- function(entry, min_rows=NULL) {
     tables <- which(purrr::map_lgl(entry$notes, ~ 'table' %in% names(.)))
     table_lengths <- purrr::map_dbl(entry$notes[tables], 
@@ -29,8 +38,28 @@ find_entry_tables <- function(entry, min_rows=NULL) {
     if (!is.null(min_rows)) {
       tables <- tables[which(table_lengths >= min_rows)]
     }
+    
     return(tables)
   }
+  
   res <- purrr::map(entry$days, ~ .find_tables(., min_rows=min_rows))
+  for (i in 1:length(res)) {
+    names(res)[[i]] <- i
+    if (!identical(res[[i]], integer(0))) {
+      for (j in 1:length(res[[i]])) {
+        names(res[[i]])[j] <- entry$days[[i]]$notes[[res[[i]][j]]]$table$name
+      } 
+    } else {
+      next
+    }
+  }
+  
+  if (length(res) == 0) {
+    res <- "No tables were found in entry provided."
+    warning("No tables were found in entry provided.")
+  }
+  
   res
 }
+
+

@@ -20,44 +20,122 @@
 #' client <- benchling_api_auth(tenant="https://hemoshear.benchling.com")
 #' client$entries$get_entry_by_id
 #' entry <- get_entry(id = "etr")
-#' tables <- read_tables(entry)
+#' tables <- read_entry_tables(entry)
 #' }
 #' @export
 
 read_entry_tables <- function(entry, day=NULL, table_position=NULL, 
-                              table_name = NULL, return_table_name=TRUE, 
+                              table_name=NULL, return_table_name=TRUE, 
                               verbose=FALSE) {
-  if (is.null(day) & is.null(table_position)) {
-    table_indices <- find_entry_tables(entry)
-    res <- list(); k <- 1;
+  if (missing(entry) | missing(day) | missing(table_position) | missing(table_name)) {
+    if (missing(entry)) {
+      missing_entry_message <- "'entry' input is missing. "
+    } else {
+      missing_entry_message <- ""
+    }
+    if (missing(day)) {
+      missing_day_message <- "'day' input is missing. "
+    } else {
+      missing_day_message <- ""
+    }
+    if (missing(table_position)) {
+      missing_table_position_message <- "'table_position' input is missing. "
+    } else {
+      missing_table_position_message <- ""
+    }
+    if (missing(table_name)) {
+      missing_table_name_message <- "'table_name' input is missing. "
+    } else {
+      missing_table_name_message <- ""
+    }
+    stop(paste0(missing_entry_message, 
+                missing_day_message,
+                missing_table_position_message,
+                missing_table_name_message))
+  }
+  
+  if (length(class(entry)) != 2 | class(entry)[1] != "benchling_api_client.v2.stable.models.entry.Entry" |
+      class(entry)[2] != "python.builtin.object") {
+    stop("'entry' input is invalid.")
+  }
+  
+  if (is.character(table_name) & is.numeric(day) & is.numeric(table_position)) {
+    warning("'day' and 'table_position' will be ignored in favor of 'table_name'.")
+  }
+  
+  if (is.character(table_name) & is.numeric(day) & !is.numeric(table_position)) {
+    warning("'day' will be ignored in favor of 'table_name'.")
+  }
+  
+  if (is.character(table_name) & !is.numeric(day) & is.numeric(table_position)) {
+    warning("''table_position' will be ignored in favor of 'table_name'.")
+  }
+  
+  table_indices <- find_entry_tables(entry)
+  
+  if (!is.null(table_name)) {
+    table_name_check <- FALSE
+    
     for (i in 1:length(table_indices)) {
-      if (length(table_indices[[i]]) > 0) {
-        for (j in 1:length(table_indices[[i]])) {
-          res[[k]] <- read_entry_table(entry, day=i, 
-                                       table_position=table_indices[[i]][j],
-                                       return_table_name=return_table_name)
-          k <- k + 1
-        }
-        # If return_table_name is TRUE, then make the table names the names of the list
-        # itself and remove them from the original data frames. 
-        if (return_table_name) {
-          names(res) <- purrr::map(res, ~ unique(.$return_table_name)) %>%
-            unlist
-          for (i in 1:length(res)) {
-            res[[i]]$return_table_name <- NULL
-          }
-        }
-        
+      if (table_name %in% names(table_indices[[i]])) {
+        table_name_check <- TRUE
       } else {
-        if (verbose) {
-          cat(glue::glue("No tables found for day {`i`}\n"))
+        next
+      }
+    }
+    
+    if (table_name_check == FALSE) {
+      stop("Input for 'table_name' does not exist in notebook entry.")
+    } else {
+      res <- read_entry_table(entry=entry, day=NULL, table_position=NULL,table_name=table_name,
+                              return_table_name=return_table_name) 
+    }
+    
+  } else {
+    if (!is.null(day) & !is.null(table_position)) {
+      if (day %in% names(table_indices)) {
+        if (!(table_position %in% table_indices[[day]])) {
+          stop("Input for 'table_position' does not exist in notebook entry.")
+        } 
+      } else {
+        stop("Input for 'day' does not exist in notebook entry.")
+      }
+      
+      res <- read_entry_table(entry, day=day, table_position=table_position,table_name=NULL,
+                              return_table_name=return_table_name)
+      
+    } else {
+      res <- list(); k <- 1;
+      
+      for (i in 1:length(table_indices)) {
+        if (length(table_indices[[i]]) > 0) {
+          for (j in 1:length(table_indices[[i]])) {
+            res[[k]] <- read_entry_table(entry, day=i, 
+                                         table_position=table_indices[[i]][j],
+                                         table_name=NULL,
+                                         return_table_name=return_table_name)
+            k <- k + 1
+          }
+          
+          # If return_table_name is TRUE, then make the table names the names of the list
+          # itself and remove them from the original data frames. 
+          if (return_table_name) {
+            names(res) <- purrr::map(res, ~ unique(.$return_table_name)) %>%
+              unlist
+            for (i in 1:length(res)) {
+              res[[i]]$return_table_name <- NULL
+            }
+          }
+          
+        } else {
+          if (verbose) {
+            cat(glue::glue("No tables found for day {`i`}\n"))
+          }
         }
       }
     }
-  } else {
-    res <- read_entry_table(entry, day=day, table_position=table_position,
-                            return_table_name=return_table_name)
   }
+  
   res 
 }
 
