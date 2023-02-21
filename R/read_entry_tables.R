@@ -27,49 +27,20 @@
 read_entry_tables <- function(entry, day=NULL, table_position=NULL, 
                               table_name=NULL, return_table_name=TRUE, 
                               verbose=FALSE) {
-  if (missing(entry) | missing(day) | missing(table_position) | missing(table_name)) {
-    if (missing(entry)) {
-      missing_entry_message <- "'entry' input is missing. "
-    } else {
-      missing_entry_message <- ""
-    }
-    if (missing(day)) {
-      missing_day_message <- "'day' input is missing. "
-    } else {
-      missing_day_message <- ""
-    }
-    if (missing(table_position)) {
-      missing_table_position_message <- "'table_position' input is missing. "
-    } else {
-      missing_table_position_message <- ""
-    }
-    if (missing(table_name)) {
-      missing_table_name_message <- "'table_name' input is missing. "
-    } else {
-      missing_table_name_message <- ""
-    }
-    stop(paste0(missing_entry_message, 
-                missing_day_message,
-                missing_table_position_message,
-                missing_table_name_message))
+  if (missing(entry)) {
+    stop("'entry' input is missing. 
+    See ?benchlingr::get_entry. ")
   }
   
-  if (length(class(entry)) != 2 | class(entry)[1] != "benchling_api_client.v2.stable.models.entry.Entry" |
-      class(entry)[2] != "python.builtin.object") {
-    stop("'entry' input is invalid.")
+  if (!all(class(entry) %in% c("benchling_api_client.v2.stable.models.entry.Entry", 
+                            "python.builtin.object"))) {
+    stop("'entry' input is invalid. See ?benchlingr::get_entry.")
   }
   
-  if (is.character(table_name) & is.numeric(day) & is.numeric(table_position)) {
+  if (is.character(table_name) & (!is.null(day) | !is.null(table_position))) {
     warning("'day' and 'table_position' will be ignored in favor of 'table_name'.")
   }
   
-  if (is.character(table_name) & is.numeric(day) & !is.numeric(table_position)) {
-    warning("'day' will be ignored in favor of 'table_name'.")
-  }
-  
-  if (is.character(table_name) & !is.numeric(day) & is.numeric(table_position)) {
-    warning("''table_position' will be ignored in favor of 'table_name'.")
-  }
   
   table_indices <- find_entry_tables(entry)
   
