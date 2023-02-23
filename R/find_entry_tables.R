@@ -23,12 +23,12 @@
 
 find_entry_tables <- function(entry, min_rows=NULL) {
   if (missing(entry)) {
-    stop("Entry input is missing.")
-  }
+    stop("'entry' input is missing. See ?benchlingr::get_entry.")
+  } 
   
-  if (length(class(entry)) != 2 | class(entry)[1] != "benchling_api_client.v2.stable.models.entry.Entry" |
-      class(entry)[2] != "python.builtin.object") {
-    stop("Entry input is invalid.")
+  if (!all(class(entry) %in% c("benchling_api_client.v2.stable.models.entry.Entry", 
+                               "python.builtin.object"))) {
+    stop("'entry' input is invalid. See ?benchlingr::get_entry.")
   }
   
   .find_tables <- function(entry, min_rows=NULL) {
@@ -55,8 +55,8 @@ find_entry_tables <- function(entry, min_rows=NULL) {
   }
   
   if (length(res) == 0) {
-    res <- "No tables were found in entry provided."
-    warning("No tables were found in entry provided.")
+    res <- NA
+    warning("No tables were found in notebook entry.")
   }
   
   res

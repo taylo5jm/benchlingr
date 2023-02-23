@@ -30,12 +30,15 @@ read_entry_tables <- function(entry, day=NULL, table_position=NULL,
   if (missing(entry)) {
     stop("'entry' input is missing. See ?benchlingr::get_entry.")
   } 
+  
   if (missing(day) | is.na(day) | day == "") {
     day <- NULL
   }
+  
   if (missing(table_position) | is.na(table_position) | table_position == "") {
     table_position <- NULL
   }
+  
   if (missing(table_name) | is.na(table_name) | table_name == "") {
     table_name <- NULL
   }
@@ -56,6 +59,10 @@ read_entry_tables <- function(entry, day=NULL, table_position=NULL,
   }
   
   table_indices <- find_entry_tables(entry)
+  
+  if (is.na(table_indices)) {
+    stop("No tables were found in notebook entry.")
+  }
   
   if (!is.null(table_name)) {
     if (!is.character(table_name)) {
