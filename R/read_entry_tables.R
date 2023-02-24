@@ -10,7 +10,7 @@
 #' @param day Integer for the day in the notebook entry. See `find_entry_tables`.
 #' @param table_position Integer for the position of the table in the notebook entry list. 
 #' See `find_entry_tables`.
-#' @param return_return_table_name If return_return_table_name is TRUE, then the names of the tables
+#' @param return_table_name If return_table_name is TRUE, then the names of the tables
 #' in the notebook entry will be returned as names in the output list. 
 #' @param verbose If verbose, then the function will alert the user
 #' if no tables can be found for some days in the notebook. 
@@ -31,16 +31,34 @@ read_entry_tables <- function(entry, day=NULL, table_position=NULL,
     stop("'entry' input is missing. See ?benchlingr::get_entry.")
   } 
   
-  if (missing(day) | is.na(day) | day == "") {
+  if (missing(day)) {
     day <- NULL
+  } else {
+    if (!missing(day) & !is.null(day)) {
+      if (is.na(day) | day == "") {
+        day <- NULL
+      }
+    }
   }
   
-  if (missing(table_position) | is.na(table_position) | table_position == "") {
+  if (missing(table_position)) {
     table_position <- NULL
+  } else {
+    if (!missing(table_position) & !is.null(table_position)) {
+      if (is.na(table_position) | table_position == "") {
+        table_position <- NULL
+      }
+    }
   }
   
-  if (missing(table_name) | is.na(table_name) | table_name == "") {
+  if (missing(table_name)) {
     table_name <- NULL
+  } else {
+    if (!missing(table_name) & !is.null(table_name)) {
+      if (is.na(table_name) | table_name == "") {
+        table_name <- NULL
+      }
+    }
   }
   
   if (!all(class(entry) %in% c("benchling_api_client.v2.stable.models.entry.Entry", 
@@ -60,8 +78,10 @@ read_entry_tables <- function(entry, day=NULL, table_position=NULL,
   
   table_indices <- find_entry_tables(entry)
   
-  if (is.na(table_indices)) {
-    stop("No tables were found in notebook entry.")
+  if (length(table_indices) == 1) {
+    if (is.na(table_indices)) {
+      stop("No tables were found in notebook entry.")
+    }
   }
   
   if (!is.null(table_name)) {
@@ -125,12 +145,12 @@ read_entry_tables <- function(entry, day=NULL, table_position=NULL,
         stop("'day' input is invalid.")
       }
       
-      if (day %in% names(table_indices)) {
+      if (!(day %in% names(table_indices))) {
         stop("'day' input does not exist in notebook entry.")
       }
       
       if (identical(table_indices[[day]],integer(0))) {
-        stop(glue::glue("No tables found for {day} in notebook entry."))
+        stop(glue::glue("No tables were found for {day} in notebook entry."))
       }
       
       res <- list()
@@ -150,8 +170,9 @@ read_entry_tables <- function(entry, day=NULL, table_position=NULL,
           res[[i]]$return_table_name <- NULL
         }
       }
-      
-    } (is.null(day) & is.null(table_position)) {
+    } 
+    
+    if (is.null(day) & is.null(table_position)) {
       res <- list(); k <- 1;
       
       for (i in 1:length(table_indices)) {
@@ -176,13 +197,12 @@ read_entry_tables <- function(entry, day=NULL, table_position=NULL,
           
         } else {
           if (verbose) {
-            cat(glue::glue("No tables found for day {`i`}\n"))
+            cat(glue::glue("No tables were found for day {`i`}\n"))
           }
         }
       }
     }
   }
-  
   res 
 }
 

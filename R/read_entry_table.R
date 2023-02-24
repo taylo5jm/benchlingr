@@ -7,7 +7,7 @@
 #' @param day Integer for the day in the notebook entry. See `find_entry_tables`.
 #' @param table_position Integer for the position of the table in the notebook entry list. 
 #' See `find_entry_tables`.
-#' @param return_return_table_name bool Determines how the name of the table in the notebook 
+#' @param return_table_name bool Determines how the name of the table in the notebook 
 #' entry is included in the output.
 #' If `TRUE` is selected, the table name will be added as a new column
 #' to the data frame. If `FALSE`, then the table name will be ignored. 
