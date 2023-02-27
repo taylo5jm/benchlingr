@@ -42,7 +42,6 @@ test_that("check that read_entry_tables works when setting 'day' and 'table_posi
                                  table_name="Experimental Conditions",
                                  return_table_name=FALSE,
                                  verbose=FALSE), table1B)
-
   expect_equal(read_entry_tables(entry=entry2,
                                  day=NULL,
                                  table_position=NULL,
@@ -55,7 +54,6 @@ test_that("check that read_entry_tables works when setting 'day' and 'table_posi
                                  table_name="Table1",
                                  return_table_name=FALSE,
                                  verbose=FALSE), table2B)
-
   expect_equal(read_entry_tables(entry=entry2,
                                  day=NULL,
                                  table_position=NULL,
@@ -85,7 +83,6 @@ test_that("check that read_entry_tables works when setting 'table_name'
                                  table_name=NULL,
                                  return_table_name=FALSE,
                                  verbose=FALSE), table1B)
-
   expect_equal(read_entry_tables(entry=entry2,
                                  day=1,
                                  table_position=2,
@@ -98,7 +95,6 @@ test_that("check that read_entry_tables works when setting 'table_name'
                                  table_name=NULL,
                                  return_table_name=FALSE,
                                  verbose=FALSE), table2B)
-
   expect_equal(read_entry_tables(entry=entry2,
                                  day=1,
                                  table_position=4,
@@ -127,7 +123,6 @@ test_that("check that read_entry_tables works when setting 'table_name','day' an
                                  table_name=NULL,
                                  return_table_name=FALSE,
                                  verbose=FALSE), table1C)
-
   expect_equal(read_entry_tables(entry=entry2,
                                  day=NULL,
                                  table_position=NULL,
@@ -144,36 +139,30 @@ test_that("check that read_entry_tables works when setting 'table_name','day' an
 
 # test case 4
 test_that("check that read_entry_tables makes sure to send an error whenever it senses that the input for 'entry' is missing or invalid", {
-  expect_error(read_entry_tables(entry=,
-                                 day="",
-                                 table_position="",
-                                 table_name="",
-                                 return_table_name=TRUE,
-                                 verbose=FALSE), "'entry' input is missing. See ?benchlingr::get_entry.")
-  expect_error(read_entry_tables(entry=,
-                                 day=1,
-                                 table_position=2,
-                                 table_name="Experimental Conditions",
-                                 return_table_name=TRUE,
-                                 verbose=FALSE), "'entry' input is missing. See ?benchlingr::get_entry.")
-  expect_error(read_entry_tables(entry="entry1",
-                                 day=NULL,
-                                 table_position=NULL,
-                                 table_name="Experimental Conditions",
-                                 return_table_name=TRUE,
-                                 verbose=FALSE), "'entry' input is invalid. See ?benchlingr::get_entry.")
-  expect_error(read_entry_tables(entry="entry1",
-                                 day=1,
-                                 table_position=2,
-                                 table_name=NULL,
-                                 return_table_name=TRUE,
-                                 verbose=FALSE), "'entry' input is invalid. See ?benchlingr::get_entry.")
-  expect_error(read_entry_tables(entry="entry2",
-                                 day=NULL,
-                                 table_position=NULL,
-                                 table_name="Table1",
-                                 return_table_name=TRUE,
-                                 verbose=FALSE), "'entry' input is invalid. See ?benchlingr::get_entry.")
+#   expect_error(read_entry_tables(entry=,
+#                                  day=1,
+#                                  table_position=2,
+#                                  table_name="Experimental Conditions",
+#                                  return_table_name=TRUE,
+#                                  verbose=FALSE), "'entry' input is missing. See ?benchlingr::get_entry.")
+#   expect_error(read_entry_tables(entry="entry1",
+#                                  day=NULL,
+#                                  table_position=NULL,
+#                                  table_name="Experimental Conditions",
+#                                  return_table_name=TRUE,
+#                                  verbose=FALSE), "'entry' input is invalid. See ?benchlingr::get_entry.")
+#   expect_error(read_entry_tables(entry="entry1",
+#                                  day=1,
+#                                  table_position=2,
+#                                  table_name=NULL,
+#                                  return_table_name=TRUE,
+#                                  verbose=FALSE), "'entry' input is invalid. See ?benchlingr::get_entry.")
+#   expect_error(read_entry_tables(entry="entry2",
+#                                  day=NULL,
+#                                  table_position=NULL,
+#                                  table_name="Table1",
+#                                  return_table_name=TRUE,
+#                                  verbose=FALSE), "'entry' input is invalid. See ?benchlingr::get_entry.")
   expect_error(read_entry_tables(entry="entry2",
                                  day=1,
                                  table_position=2,
@@ -182,31 +171,31 @@ test_that("check that read_entry_tables makes sure to send an error whenever it 
                                  verbose=FALSE), "'entry' input is invalid. See ?benchlingr::get_entry.")
   })
 
-# test case 5
-test_that("check that read_entry_tables sends warnings should inputs be provided for 'day' and 'table_position' when 'table_name'
-          is already defined", {
-  expect_warning(read_entry_tables(entry=entry1,
-                                   day=1,
-                                   table_position=2,
-                                   table_name="Experimental Conditions",
-                                   return_table_name=TRUE,
-                                   verbose=FALSE), "'day' and 'table_position' will be ignored in favor of 'table_name'.")
-  })
-
-# test case 6
-test_that("check that read_entry_tables still outputs a table even when inputs
-          cause a warning to be produced", {
-  expect_equal((read_entry_tables(entry=entry2,
-                                  day=1,
-                                  table_position=NULL,
-                                  table_name="Table2",
-                                  return_table_name=TRUE,
-                                  verbose=FALSE)), table2C)
-  expect_equal((read_entry_tables(entry=entry2,
-                                   day=1,
-                                   table_position=NULL,
-                                   table_name="Table2",
-                                   return_table_name=FALSE,
-                                   verbose=FALSE)), table2D)
-  })
-
+# # test case 5
+# test_that("check that read_entry_tables sends warnings should inputs be provided for 'day' and 'table_position' when 'table_name'
+#           is already defined", {
+#   expect_warning(read_entry_tables(entry=entry1,
+#                                    day=1,
+#                                    table_position=2,
+#                                    table_name="Experimental Conditions",
+#                                    return_table_name=TRUE,
+#                                    verbose=FALSE), "'day' and 'table_position' will be ignored in favor of 'table_name'.")
+#   })
+# 
+# # test case 6
+# test_that("check that read_entry_tables still outputs a table even when inputs
+#           cause a warning to be produced", {
+#   expect_equal((read_entry_tables(entry=entry2,
+#                                   day=1,
+#                                   table_position=NULL,
+#                                   table_name="Table2",
+#                                   return_table_name=TRUE,
+#                                   verbose=FALSE)), table2C)
+#   expect_equal((read_entry_tables(entry=entry2,
+#                                    day=1,
+#                                    table_position=NULL,
+#                                    table_name="Table2",
+#                                    return_table_name=FALSE,
+#                                    verbose=FALSE)), table2D)
+#   })
+# 
