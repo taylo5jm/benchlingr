@@ -58,7 +58,6 @@ find_entry_tables <- function(entry, min_rows=NULL) {
     res <- NA
     warning("No tables were found in notebook entry.")
   }
-  
   res
 }
 

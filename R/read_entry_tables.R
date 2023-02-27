@@ -28,8 +28,8 @@ read_entry_tables <- function(entry, day=NULL, table_position=NULL,
                               table_name=NULL, return_table_name=TRUE, 
                               verbose=FALSE) {
   if (missing(entry)) {
-    stop("'entry' input is missing. See ?benchlingr::get_entry.")
-  } 
+    stop("'entry' input is missing.") # See ?benchlingr::get_entry.
+  }
   
   if (missing(day)) {
     day <- NULL
@@ -63,7 +63,7 @@ read_entry_tables <- function(entry, day=NULL, table_position=NULL,
   
   if (!all(class(entry) %in% c("benchling_api_client.v2.stable.models.entry.Entry", 
                                "python.builtin.object"))) {
-    stop("'entry' input is invalid. See ?benchlingr::get_entry.")
+    stop("'entry' input is invalid.") # See ?benchlingr::get_entry.
   }
   
   if (is.character(table_name) & (!is.null(day) | !is.null(table_position))) {
