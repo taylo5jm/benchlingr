@@ -1,7 +1,7 @@
 Package: benchlingr
 Type: Package
 Title: Access the 'Benchling' RESTFUL API and data warehouse
-Version: 0.2.0
+Version: 0.3.0
 Author: c(
     person("Justin", "Taylor", email = "justin.taylor.data.science@hemoshear.com", 
     role = "cre", comment = c(ORCID = "0000-0003-4590-0777")),
@@ -20,7 +20,7 @@ LazyData: true
 URL: https://github.com/hemoshear/benchlingr,
     https://upgraded-succotash-8df2b926.pages.github.io/
 BugReports: https://github.com/hemoshear/benchlingr
-RoxygenNote: 7.2.1
+RoxygenNote: 7.2.3
 Suggests: 
     knitr,
     rmarkdown,
@@ -49,6 +49,7 @@ Imports:
     snakecase,
     tidyr
 Collate: 
+    'assay_results_utils.R'
     'error.R'
     'benchling_api_auth.R'
     'config_sdk_env.R'
@@ -63,10 +64,13 @@ Collate:
     'find_entry_tables.R'
     'list_entity_columns.R'
     'get_entity_table.R'
+    'infer_entity_type.R'
     'list_schemas_in_entry.R'
     'map_entity_field_names_to_warehouse_tables.R'
     'onLoad.R'
+    'read_entry_table.R'
     'read_entry_tables.R'
     'read_plate_diagrams.R'
     'replace_entity_id_with_name.R'
     'warehouse_connect.R'
+    'warehouse_disconnect.R'

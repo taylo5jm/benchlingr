@@ -16,7 +16,7 @@ download_blobs_in_warehouse_table(
 \arguments{
 \item{client}{A Benchling API client object.}
 
-\item{conn}{A warehouse connection opened with `warehouse_connect`.}
+\item{conn}{PqConnection object.}
 
 \item{df}{Data frame retrieved from the Benchling data warehouse.
 Must have the `schema` column included.}
