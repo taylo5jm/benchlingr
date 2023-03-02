@@ -2,7 +2,7 @@
 library(testthat)
 library(benchlingr)
 client <- benchlingr::benchling_api_auth(tenant="https://hemoshear-dev.benchling.com",
-                                          api_key=Sys.getenv("BENCHLING_DEV_API_KEY"))
+                                         api_key=Sys.getenv("BENCHLING_DEV_API_KEY"))
 entry1 <- client$entries$get_entry_by_id("etr_T3WZTyAe")
 
 table1A <- data.frame(sample_id = c("1","2","3","4","5","6"), 
@@ -29,87 +29,87 @@ names(table2F) <- c("Table1","Table2")
 # test case 1
 test_that("check that read_entry_tables works when setting 'day' and 'table_position' 
           as NULL and defining 'table_name'", {
-  expect_equal(read_entry_tables(entry=entry1,
-                                 day=NULL,
-                                 table_position=NULL,
-                                 table_name="Experimental Conditions",
-                                 return_table_name=TRUE,
-                                 verbose=FALSE), table1A)
-  expect_equal(read_entry_tables(entry=entry1,
-                                 day=NULL,
-                                 table_position=NULL,
-                                 table_name="Experimental Conditions",
-                                 return_table_name=FALSE,
-                                 verbose=FALSE), table1B)
-  
-  expect_equal(read_entry_tables(entry=entry2,
-                                 day=NULL,
-                                 table_position=NULL,
-                                 table_name="Table1",
-                                 return_table_name=TRUE,
-                                 verbose=FALSE), table2A)
-  expect_equal(read_entry_tables(entry=entry2,
-                                 day=NULL,
-                                 table_position=NULL,
-                                 table_name="Table1",
-                                 return_table_name=FALSE,
-                                 verbose=FALSE), table2B)
-  
-  expect_equal(read_entry_tables(entry=entry2,
-                                 day=NULL,
-                                 table_position=NULL,
-                                 table_name="Table2",
-                                 return_table_name=TRUE,
-                                 verbose=FALSE), table2C)
-  expect_equal(read_entry_tables(entry=entry2,
-                                 day=NULL,
-                                 table_position=NULL,
-                                 table_name="Table2",
-                                 return_table_name=FALSE,
-                                 verbose=FALSE), table2D)
-})
+            expect_equal(read_entry_tables(entry=entry1,
+                                           day=NULL,
+                                           table_position=NULL,
+                                           table_name="Experimental Conditions",
+                                           return_table_name=TRUE,
+                                           verbose=FALSE), table1A)
+            expect_equal(read_entry_tables(entry=entry1,
+                                           day=NULL,
+                                           table_position=NULL,
+                                           table_name="Experimental Conditions",
+                                           return_table_name=FALSE,
+                                           verbose=FALSE), table1B)
+            
+            expect_equal(read_entry_tables(entry=entry2,
+                                           day=NULL,
+                                           table_position=NULL,
+                                           table_name="Table1",
+                                           return_table_name=TRUE,
+                                           verbose=FALSE), table2A)
+            expect_equal(read_entry_tables(entry=entry2,
+                                           day=NULL,
+                                           table_position=NULL,
+                                           table_name="Table1",
+                                           return_table_name=FALSE,
+                                           verbose=FALSE), table2B)
+            
+            expect_equal(read_entry_tables(entry=entry2,
+                                           day=NULL,
+                                           table_position=NULL,
+                                           table_name="Table2",
+                                           return_table_name=TRUE,
+                                           verbose=FALSE), table2C)
+            expect_equal(read_entry_tables(entry=entry2,
+                                           day=NULL,
+                                           table_position=NULL,
+                                           table_name="Table2",
+                                           return_table_name=FALSE,
+                                           verbose=FALSE), table2D)
+          })
 
 # test case 2
 test_that("check that read_entry_tables works when setting 'table_name' 
           as NULL and defining 'day' and 'table_position'", {
-  expect_equal(read_entry_tables(entry=entry1,
-                                 day=1,
-                                 table_position=2,
-                                 table_name=NULL,
-                                 return_table_name=TRUE,
-                                 verbose=FALSE), table1A)
-  expect_equal(read_entry_tables(entry=entry1,
-                                 day=1,
-                                 table_position=2,
-                                 table_name=NULL,
-                                 return_table_name=FALSE,
-                                 verbose=FALSE), table1B)
-  
-  expect_equal(read_entry_tables(entry=entry2,
-                                 day=1,
-                                 table_position=2,
-                                 table_name=NULL,
-                                 return_table_name=TRUE,
-                                 verbose=FALSE), table2A)
-  expect_equal(read_entry_tables(entry=entry2,
-                                 day=1,
-                                 table_position=2,
-                                 table_name=NULL,
-                                 return_table_name=FALSE,
-                                 verbose=FALSE), table2B)
-  
-  expect_equal(read_entry_tables(entry=entry2,
-                                 day=1,
-                                 table_position=4,
-                                 table_name=NULL,
-                                 return_table_name=TRUE,
-                                 verbose=FALSE), table2C)
-  expect_equal(read_entry_tables(entry=entry2,
-                                 day=1,
-                                 table_position=4,
-                                 table_name=NULL,
-                                 return_table_name=FALSE,
-                                 verbose=FALSE), table2D)
+            expect_equal(read_entry_tables(entry=entry1,
+                                           day=1,
+                                           table_position=2,
+                                           table_name=NULL,
+                                           return_table_name=TRUE,
+                                           verbose=FALSE), table1A)
+            expect_equal(read_entry_tables(entry=entry1,
+                                           day=1,
+                                           table_position=2,
+                                           table_name=NULL,
+                                           return_table_name=FALSE,
+                                           verbose=FALSE), table1B)
+            
+            expect_equal(read_entry_tables(entry=entry2,
+                                           day=1,
+                                           table_position=2,
+                                           table_name=NULL,
+                                           return_table_name=TRUE,
+                                           verbose=FALSE), table2A)
+            expect_equal(read_entry_tables(entry=entry2,
+                                           day=1,
+                                           table_position=2,
+                                           table_name=NULL,
+                                           return_table_name=FALSE,
+                                           verbose=FALSE), table2B)
+            
+            expect_equal(read_entry_tables(entry=entry2,
+                                           day=1,
+                                           table_position=4,
+                                           table_name=NULL,
+                                           return_table_name=TRUE,
+                                           verbose=FALSE), table2C)
+            expect_equal(read_entry_tables(entry=entry2,
+                                           day=1,
+                                           table_position=4,
+                                           table_name=NULL,
+                                           return_table_name=FALSE,
+                                           verbose=FALSE), table2D)
           })
 
 # test case 3
@@ -139,7 +139,7 @@ test_that("check that read_entry_tables works when setting 'table_name','day' an
                                  table_name=NULL,
                                  return_table_name=FALSE,
                                  verbose=FALSE), table2E)
-  })
+})
 
 # test case 4
 missing_entry_message <- "'entry' input is missing."
@@ -148,14 +148,14 @@ missing_table_position_message <- "'table_position' input is missing. "
 missing_table_name_message <- "'table_name' input is missing. "
 
 test_that("check that read_entry_tables makes sure to send an error whenever it senses a missing input or argument", {
-
+  
   expect_error(read_entry_tables(entry=,
                                  day=1,
                                  table_position=2,
                                  table_name="Experimental Conditions",
                                  return_table_name=TRUE,
                                  verbose=FALSE), paste0(missing_entry_message))
-  })
+})
 
 # test case 5
 test_that("check that read_entry_tables makes sure to send an error whenever it senses that the input for 'entry' is invalid", {
@@ -184,40 +184,39 @@ test_that("check that read_entry_tables makes sure to send an error whenever it 
                                  table_name=NULL,
                                  return_table_name=TRUE,
                                  verbose=FALSE), "'entry' input is invalid.")
-  })
+})
 
 # test case 6
 test_that("check that read_entry_tables sends warnings should inputs be provided for 'day' and 'table_position' when 'table_name'
           is already defined", {
-  expect_warning(read_entry_tables(entry=entry1,
-                                   day=1,
-                                   table_position=2,
-                                   table_name="Experimental Conditions",
-                                   return_table_name=TRUE,
-                                   verbose=FALSE), "will be ignored in favor of 'table_name'.")
-  expect_warning(read_entry_tables(entry=entry1,
-                                   day=NULL,
-                                   table_position=2,
-                                   table_name="Experimental Conditions",
-                                   return_table_name=TRUE,
-                                   verbose=FALSE), "will be ignored in favor of 'table_name'.")
-  expect_warning(read_entry_tables(entry=entry1,
-                                   day=1,
-                                   table_position=NULL,
-                                   table_name="Experimental Conditions",
-                                   return_table_name=TRUE,
-                                   verbose=FALSE), "will be ignored in favor of 'table_name'.")
-  })
+            expect_warning(read_entry_tables(entry=entry1,
+                                             day=1,
+                                             table_position=2,
+                                             table_name="Experimental Conditions",
+                                             return_table_name=TRUE,
+                                             verbose=FALSE), "will be ignored in favor of 'table_name'.")
+            expect_warning(read_entry_tables(entry=entry1,
+                                             day=NULL,
+                                             table_position=2,
+                                             table_name="Experimental Conditions",
+                                             return_table_name=TRUE,
+                                             verbose=FALSE), "will be ignored in favor of 'table_name'.")
+            expect_warning(read_entry_tables(entry=entry1,
+                                             day=1,
+                                             table_position=NULL,
+                                             table_name="Experimental Conditions",
+                                             return_table_name=TRUE,
+                                             verbose=FALSE), "will be ignored in favor of 'table_name'.")
+          })
 
 # test case 7
 test_that("check that read_entry_tables still outputs a table even when inputs 
           cause a warning to be produced", {
-  expect_warning(test_case_7_result <- read_entry_tables(entry=entry2,
-                                   day=1,
-                                   table_position=NULL,
-                                   table_name="Table2",
-                                   return_table_name=FALSE,
-                                   verbose=FALSE), "will be ignored in favor of 'table_name'.")
-  expect_equal(test_case_7_result, table2D)
-  })
-
+            expect_warning(test_case_7_result <- read_entry_tables(entry=entry2,
+                                                                   day=1,
+                                                                   table_position=NULL,
+                                                                   table_name="Table2",
+                                                                   return_table_name=FALSE,
+                                                                   verbose=FALSE), "will be ignored in favor of 'table_name'.")
+            expect_equal(test_case_7_result, table2D)
+          })

@@ -40,9 +40,14 @@ returning a list of data frames.
 }
 \examples{
 \dontrun{
-client <- benchling_api_auth(tenant="https://hemoshear.benchling.com")
-client$entries$get_entry_by_id
-entry <- get_entry(id = "etr")
-tables <- read_entry_tables(entry)
+client <- benchlingr::benchling_api_auth(
+    tenant="https://hemoshear-dev.benchling.com",
+    api_key = Sys.getenv("BENCHLING_DEV_API_KEY"))
+entry <- client$entries$get_entry_by_id("etr_IWLMFYhR")
+
+entry <- client$entries$get_entry_by_id("etr_T3WZTyAe")
+tables <- read_entry_tables(entry, table_name='Experimental Conditions')
+entry <- client$entries$get_entry_by_id("etr_aTa6eDWA")
+tables <- read_entry_tables(entry, table_name=c("TableA", "TableB"))
 }
 }

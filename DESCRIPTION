@@ -66,6 +66,7 @@ Collate:
     'find_entry_tables.R'
     'list_entity_columns.R'
     'get_entity_table.R'
+    'infer_entity_type.R'
     'list_schemas_in_entry.R'
     'map_entity_field_names_to_warehouse_tables.R'
     'onLoad.R'
