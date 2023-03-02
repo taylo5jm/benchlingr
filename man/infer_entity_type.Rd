@@ -7,17 +7,17 @@
 infer_entity_type(entity_id)
 }
 \arguments{
-\item{entity_id}{Either a character vector or list that contains the entities that we 
-are trying to find the schema types for. All entities in the list or character vector 
-must be character strings.}
+\item{entity_id}{Either a character vector or list that contains the entities. 
+All entities in the list or character vector must be character strings.}
 }
 \value{
-A named character vector, where the names are the identifiers or elements from entity_id
-and the values are the schema types.
+A named list, where the names are the identifiers or elements from entity_id
+and the values are the schema types, single API endpoint and bulk-get API endpoints.
 }
 \description{
 infer_entity_type.R takes either a character vector or list of character strings and 
-for each element tries to infer the schema type using string-matching techniques.
+for each element tries to infer the schema type, API endpoint and bulk-get API endpoints 
+using string-matching techniques.
 }
 \examples{
 \dontrun{

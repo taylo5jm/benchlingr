@@ -24,7 +24,7 @@ See `find_entry_tables`.}
 \item{return_table_name}{If return_table_name is TRUE, then the names of the tables
 in the notebook entry will be returned as names in the output list.}
 
-\item{verbose}{If verbose, then the function will alert the user
+\item{verbose}{If verbose is TRUE, then the function will alert the user
 if no tables can be found for some days in the notebook.}
 }
 \value{

@@ -12,7 +12,7 @@
 #' See `find_entry_tables`.
 #' @param return_table_name If return_table_name is TRUE, then the names of the tables
 #' in the notebook entry will be returned as names in the output list. 
-#' @param verbose If verbose, then the function will alert the user
+#' @param verbose If verbose is TRUE, then the function will alert the user
 #' if no tables can be found for some days in the notebook. 
 #' @return List of data frames representing the unstructured tables in
 #' the notebook entry.
