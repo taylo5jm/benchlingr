@@ -32,7 +32,13 @@
     res <- purrr::map2(
       days, positions, ~ read_entry_table(
         entry=entry, day=.x, table_position=.y,
-        return_table_name=return_table_name))
+        return_table_name=T))
+    names(res) <- purrr::map(res, ~ unique(.$return_table_name))
+    if (!return_table_name) {
+      for (i in 1:length(res)) {
+        res[[i]]$return_table_name <- NULL
+      }
+    }
     return(res)
 }
     
@@ -45,7 +51,7 @@
       }
       stop("'table_position' input cannot be defined as an integer while 'day' input is defined as NULL. Either provide a numeric input for 'day' or provide a properly defined input for 'table_name.'")
     }
-    if (!(day %in% names(table_indices))) {
+    if (!(day %in% names(table_indices)) & !(day %in% 1:length(table_indices))) {
       stop("'day' input does not exist in notebook entry.")
     }
     if (!(table_position %in% table_indices[[day]])) {
@@ -54,12 +60,18 @@
     res <- purrr::map(
       table_position, ~ read_entry_table(
         entry, day=day, table_position=.,
-        return_table_name=return_table_name))
+        return_table_name=T))
+    names(res) <- purrr::map(res, ~ unique(.$return_table_name))
+    if (!return_table_name) {
+      for (i in 1:length(res)) {
+        res[[i]]$return_table_name <- NULL
+      }
+    }
     return(res)
 }
   
 #' @keywords internal
-.read_all_entry_tables <- function(entry, table_indices, return_table_name) {
+.read_all_entry_tables <- function(entry, table_indices, return_table_name, verbose) {
   
     res <- list(); k <- 1;
     for (i in 1:length(table_indices)) {
@@ -67,7 +79,6 @@
         for (j in 1:length(table_indices[[i]])) {
           res[[k]] <- read_entry_table(entry, day=i, 
                                        table_position=table_indices[[i]][j],
-                                       table_name=NULL,
                                        return_table_name=return_table_name)
           k <- k + 1
         }
@@ -154,11 +165,13 @@ read_entry_tables <- function(entry, day=NULL, table_position=NULL,
   } else if (!is.null(day) & !is.null(table_position)) {
     res <- .read_entry_table_by_location(
         entry, day=day, table_position = table_position, 
+        table_indices = table_indices,
         return_table_name=return_table_name)
   } else if (is.null(day) & is.null(table_position)) {
     res <- .read_all_entry_tables(
-      entry, table_indices, 
-      return_table_name=return_table_name)
+      entry, table_indices=table_indices, 
+      return_table_name=return_table_name,
+      verbose=verbose)
   }
   res 
 }

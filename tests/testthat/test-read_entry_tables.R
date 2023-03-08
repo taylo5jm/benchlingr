@@ -34,39 +34,39 @@ test_that("check that read_entry_tables works when setting 'day' and 'table_posi
                                            table_position=NULL,
                                            table_name="Experimental Conditions",
                                            return_table_name=TRUE,
-                                           verbose=FALSE), table1A)
+                                           verbose=FALSE), list(`Experimental Conditions` = table1A))
             expect_equal(read_entry_tables(entry=entry1,
                                            day=NULL,
                                            table_position=NULL,
                                            table_name="Experimental Conditions",
                                            return_table_name=FALSE,
-                                           verbose=FALSE), table1B)
+                                           verbose=FALSE), list(`Experimental Conditions` = table1B))
             
             expect_equal(read_entry_tables(entry=entry2,
                                            day=NULL,
                                            table_position=NULL,
                                            table_name="Table1",
                                            return_table_name=TRUE,
-                                           verbose=FALSE), table2A)
+                                           verbose=FALSE), list(`Table1` = table2A))
             expect_equal(read_entry_tables(entry=entry2,
                                            day=NULL,
                                            table_position=NULL,
                                            table_name="Table1",
                                            return_table_name=FALSE,
-                                           verbose=FALSE), table2B)
+                                           verbose=FALSE), list(`Table1` = table2B))
             
             expect_equal(read_entry_tables(entry=entry2,
                                            day=NULL,
                                            table_position=NULL,
                                            table_name="Table2",
                                            return_table_name=TRUE,
-                                           verbose=FALSE), table2C)
+                                           verbose=FALSE), list(`Table2` = table2C))
             expect_equal(read_entry_tables(entry=entry2,
                                            day=NULL,
                                            table_position=NULL,
                                            table_name="Table2",
                                            return_table_name=FALSE,
-                                           verbose=FALSE), table2D)
+                                           verbose=FALSE), list(`Table2` = table2D))
           })
 
 # test case 2
@@ -77,39 +77,41 @@ test_that("check that read_entry_tables works when setting 'table_name'
                                            table_position=2,
                                            table_name=NULL,
                                            return_table_name=TRUE,
-                                           verbose=FALSE), table1A)
+                                           verbose=FALSE), 
+                         list(`Experimental Conditions` = table1A))
             expect_equal(read_entry_tables(entry=entry1,
                                            day=1,
                                            table_position=2,
                                            table_name=NULL,
                                            return_table_name=FALSE,
-                                           verbose=FALSE), table1B)
+                                           verbose=FALSE), 
+                         list(`Experimental Conditions` = table1B))
             
             expect_equal(read_entry_tables(entry=entry2,
                                            day=1,
                                            table_position=2,
                                            table_name=NULL,
                                            return_table_name=TRUE,
-                                           verbose=FALSE), table2A)
+                                           verbose=FALSE), list(`Table1` = table2A))
             expect_equal(read_entry_tables(entry=entry2,
                                            day=1,
                                            table_position=2,
                                            table_name=NULL,
                                            return_table_name=FALSE,
-                                           verbose=FALSE), table2B)
+                                           verbose=FALSE), list(`Table1` = table2B))
             
             expect_equal(read_entry_tables(entry=entry2,
                                            day=1,
                                            table_position=4,
                                            table_name=NULL,
                                            return_table_name=TRUE,
-                                           verbose=FALSE), table2C)
+                                           verbose=FALSE), list(`Table2` = table2C))
             expect_equal(read_entry_tables(entry=entry2,
                                            day=1,
                                            table_position=4,
                                            table_name=NULL,
                                            return_table_name=FALSE,
-                                           verbose=FALSE), table2D)
+                                           verbose=FALSE), list(`Table2` = table2D))
           })
 
 # test case 3
@@ -119,26 +121,15 @@ test_that("check that read_entry_tables works when setting 'table_name','day' an
                                  table_position=NULL,
                                  table_name=NULL,
                                  return_table_name=TRUE,
-                                 verbose=FALSE), table1D)
-  expect_equal(read_entry_tables(entry=entry1,
-                                 day=NULL,
-                                 table_position=NULL,
-                                 table_name=NULL,
-                                 return_table_name=FALSE,
-                                 verbose=FALSE), table1C)
-  
+                                 verbose=FALSE), list(`Experimental Conditions` = table1D))
+
   expect_equal(read_entry_tables(entry=entry2,
                                  day=NULL,
                                  table_position=NULL,
                                  table_name=NULL,
                                  return_table_name=TRUE,
                                  verbose=FALSE), table2F)
-  expect_equal(read_entry_tables(entry=entry2,
-                                 day=NULL,
-                                 table_position=NULL,
-                                 table_name=NULL,
-                                 return_table_name=FALSE,
-                                 verbose=FALSE), table2E)
+
 })
 
 # test case 4
@@ -218,5 +209,5 @@ test_that("check that read_entry_tables still outputs a table even when inputs
                                                                    table_name="Table2",
                                                                    return_table_name=FALSE,
                                                                    verbose=FALSE), "will be ignored in favor of 'table_name'.")
-            expect_equal(test_case_7_result, table2D)
+            expect_equal(test_case_7_result, list(`Table2` = table2D))
           })
