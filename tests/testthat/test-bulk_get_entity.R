@@ -17,19 +17,19 @@ test_that("Verify that bulk_get_entity.R works in providing the correct response
 
 # test case 2
 test_that("Verify that bulk_get_entity.R works in generating a proper list of entities while at the same time generates the right warnings for any entity identifiers that cannot be matched", {
-  expect_identical(as.numeric(length(bulk_get_entity(entity_id=c("seq_Cuf0omCm", "bfi_9fKcrORv"), benchling_api_key=api_key))), 2)
-  expect_identical(as.numeric(length(bulk_get_entity(entity_id=list("seq_Cuf0omCm", "bfi_9fKcrORv"), benchling_api_key=api_key)[[1]])), 3)
-  expect_identical(as.numeric(length(bulk_get_entity(entity_id=c("seq_Cuf0omCm", "bfi_9fKcrORv"), benchling_api_key=api_key)[[2]])), 3)
-  expect_identical(as.character(class(bulk_get_entity(entity_id=list("seq_Cuf0omCm", "bfi_9fKcrORv"), benchling_api_key=api_key))), "list")
-  expect_identical(as.character(class(bulk_get_entity(entity_id=c("seq_Cuf0omCm", "bfi_9fKcrORv"), benchling_api_key=api_key)[[1]])), "list")
-  expect_identical(as.character(class(bulk_get_entity(entity_id=list("seq_Cuf0omCm", "bfi_9fKcrORv"), benchling_api_key=api_key)[[2]])), "list")
-  expect_identical(as.character((bulk_get_entity(entity_id=c("seq_Cuf0omCm", "bfi_9fKcrORv"), benchling_api_key=api_key))[[2]][[2]][[1]][[1]][["name"]]), "12C-Methylmalonic Acid")
-  expect_identical(as.character((bulk_get_entity(entity_id=c("seq_Cuf0omCm", "bfi_9fKcrORv"), benchling_api_key=api_key))[[2]][["Entity Name"]]), "12C-Methylmalonic Acid")
+  expect_length(bulk_get_entity(entity_id=c("seq_Cuf0omCm", "bfi_9fKcrORv"), benchling_api_key=api_key), 2)
+  expect_length((bulk_get_entity(entity_id=list("seq_Cuf0omCm", "bfi_9fKcrORv"), benchling_api_key=api_key))[[1]], 3)
+  expect_length((bulk_get_entity(entity_id=c("seq_Cuf0omCm", "bfi_9fKcrORv"), benchling_api_key=api_key))[[2]], 3)
+  expect_match(as.character(class(bulk_get_entity(entity_id=list("seq_Cuf0omCm", "bfi_9fKcrORv"), benchling_api_key=api_key))), "list")
+  expect_match(as.character(class(bulk_get_entity(entity_id=c("seq_Cuf0omCm", "bfi_9fKcrORv"), benchling_api_key=api_key)[[1]])), "list")
+  expect_match(as.character(class(bulk_get_entity(entity_id=list("seq_Cuf0omCm", "bfi_9fKcrORv"), benchling_api_key=api_key)[[2]])), "list")
+  expect_match(as.character((bulk_get_entity(entity_id=c("seq_Cuf0omCm", "bfi_9fKcrORv"), benchling_api_key=api_key))[[2]][[2]][[1]][[1]][["name"]]), "12C-Methylmalonic Acid")
+  expect_match(as.character((bulk_get_entity(entity_id=c("seq_Cuf0omCm", "bfi_9fKcrORv"), benchling_api_key=api_key))[[2]][["Entity Name"]]), "12C-Methylmalonic Acid")
   expect_warning(bulk_get_entity(entity_id=list("seq_Cuf0omCm", "test_02erf%6", "bfi_9fKcrORv"), benchling_api_key=api_key), 
                  "Entity schema for test_02erf%6 is unknown and labeled as NA. Single-Get API endpoint for test_02erf%6 is unknown and labeled as NA. BulkGet API endpoints for test_02erf%6 are unknown and labeled as NA.")
   expect_warning(bulk_get_entity(entity_id=list("seq_Cuf0bmCm", "test_02erf%6", "bfi_9fKcrORv"), benchling_api_key=api_key), 
                  "'entity_id' contains an unknown identifier. test_02erf%6 cannot be matched with any listed identifier.")
-  expect_identical(as.numeric(length(bulk_get_entity(entity_id=c("seq_Cuf0bmCm", "bfi_9fKcrORv", "etr_191Oksd", "ent_lo4wksd"), benchling_api_key=api_key))), 4)
-  expect_identical(as.character((bulk_get_entity(entity_id=c("seq_Cuf0bmCm", "bfi_9fKcrORv", "etr_191Oksd", "ent_lo4wksd"), benchling_api_key=api_key))[[1]][[2]][[1]][[1]][["name"]]), "CYP1A1")
-  expect_identical(as.character((bulk_get_entity(entity_id=c("seq_Cuf0bmCm", "bfi_9fKcrORv", "etr_191Oksd", "ent_lo4wksd"), benchling_api_key=api_key))[[1]][["Entity Name"]]), "CYP1A1")
+  expect_length((bulk_get_entity(entity_id=c("seq_Cuf0bmCm", "bfi_9fKcrORv", "etr_191Oksd", "ent_lo4wksd"), benchling_api_key=api_key)), 4)
+  expect_match(as.character((bulk_get_entity(entity_id=c("seq_Cuf0bmCm", "bfi_9fKcrORv", "etr_191Oksd", "ent_lo4wksd"), benchling_api_key=api_key))[[1]][[2]][[1]][[1]][["name"]]), "CYP1A1")
+  expect_match(as.character((bulk_get_entity(entity_id=c("seq_Cuf0bmCm", "bfi_9fKcrORv", "etr_191Oksd", "ent_lo4wksd"), benchling_api_key=api_key))[[1]][["Entity Name"]]), "CYP1A1")
   })
