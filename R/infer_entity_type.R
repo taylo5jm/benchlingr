@@ -1,30 +1,29 @@
 # infer_entity_type.R
 
-get_api_endpoints <- function() {
-  entity_list <- list("bat" = c("batch", "https://hemoshear-dev.benchling.com/api/v2/batches/ENTITY_ID_VARIABLE",
-                                "https://hemoshear-dev.benchling.com/api/v2/batches:bulk-get?batchIds=ENTITY_ID_VARIABLE"), 
-                      "bfi" = c("custom_entity", "https://hemoshear-dev.benchling.com/api/v2/custom-entities/ENTITY_ID_VARIABLE",
-                                "https://hemoshear-dev.benchling.com/api/v2/custom-entities:bulk-get?customEntityIds=ENTITY_ID_VARIABLE"),
-                      "box" = c("box", "https://hemoshear-dev.benchling.com/api/v2/boxes/ENTITY_ID_VARIABLE",
-                                "https://hemoshear-dev.benchling.com/api/v2/boxes:bulk-get?boxIds=ENTITY_ID_VARIABLE"),
-                      "con" = c("container", "https://hemoshear-dev.benchling.com/api/v2/containers/ENTITY_ID_VARIABLE",
-                                "https://hemoshear-dev.benchling.com/api/v2/containers:bulk-get?containerIds=ENTITY_ID_VARIABLE"),
-                      "container_batch" = c("container_content", "https://hemoshear-dev.benchling.com/api/v2/containers/ENTITY_ID_VARIABLE/contents/ENTITY_ID_VARIABLE", NA),
-                      "ent" = c("user", "https://hemoshear-dev.benchling.com/api/v2/users/ENTITY_ID_VARIABLE", NA),
-                      "etr" = c("entry", "https://hemoshear-dev.benchling.com/api/v2/entries/ENTITY_ID_VARIABLE",
-                                "https://hemoshear-dev.benchling.com/api/v2/entries:bulk-get?entryIds=ENTITY_ID_VARIABLE"),
-                      "loc" = c("location", "https://hemoshear-dev.benchling.com/api/v2/locations/ENTITY_ID_VARIABLE",
-                                "https://hemoshear-dev.benchling.com/api/v2/locations:bulk-get?locationIds=ENTITY_ID_VARIABLE"),
-                      "mxt"= c("mixture", "https://hemoshear-dev.benchling.com/api/v2/mixtures/ENTITY_ID_VARIABLE", NA),
-                      "plt" = c("plate", "https://hemoshear-dev.benchling.com/api/v2/plates/ENTITY_ID_VARIABLE",
-                                "https://hemoshear-dev.benchling.com/api/v2/plates:bulk-get?plateIds=ENTITY_ID_VARIABLE"),
-                      "prtn" = c("aa_sequence", "https://hemoshear-dev.benchling.com/api/v2/aa-sequences/ENTITY_ID_VARIABLE",
-                                 "https://hemoshear-dev.benchling.com/api/v2/aa-sequences:bulk-get?aaSequenceIds=ENTITY_ID_VARIABLE"),
-                      "sfs" = c("dropdown", "https://hemoshear-dev.benchling.com/api/v2/dropdowns/ENTITY_ID_VARIABLE", NA),
-                      "sfso" = c("dropdown_option", "https://hemoshear-dev.benchling.com/api/v2/dropdowns/ENTITY_ID_VARIABLE", NA), 
-                      "seq" = c("dna_sequence", "https://hemoshear-dev.benchling.com/api/v2/dna-sequences/ENTITY_ID_VARIABLE",
-                                "https://hemoshear-dev.benchling.com/api/v2/dna-sequences:bulk-get?dnaSequenceIds=ENTITY_ID_VARIABLE"))
-  entity_list
+list_api_endpoints <- function() {
+  list("bat" = c("batch", "https://hemoshear-dev.benchling.com/api/v2/batches/",
+                                "https://hemoshear-dev.benchling.com/api/v2/batches:bulk-get?batchIds="), 
+                      "bfi" = c("custom_entity", "https://hemoshear-dev.benchling.com/api/v2/custom-entities/",
+                                "https://hemoshear-dev.benchling.com/api/v2/custom-entities:bulk-get?customEntityIds="),
+                      "box" = c("box", "https://hemoshear-dev.benchling.com/api/v2/boxes/",
+                                "https://hemoshear-dev.benchling.com/api/v2/boxes:bulk-get?boxIds="),
+                      "con" = c("container", "https://hemoshear-dev.benchling.com/api/v2/containers/",
+                                "https://hemoshear-dev.benchling.com/api/v2/containers:bulk-get?containerIds="),
+                      "container_batch" = c("container_content", "https://hemoshear-dev.benchling.com/api/v2/containers//contents/", NA),
+                      "ent" = c("user", "https://hemoshear-dev.benchling.com/api/v2/users/", NA),
+                      "etr" = c("entry", "https://hemoshear-dev.benchling.com/api/v2/entries/",
+                                "https://hemoshear-dev.benchling.com/api/v2/entries:bulk-get?entryIds="),
+                      "loc" = c("location", "https://hemoshear-dev.benchling.com/api/v2/locations/",
+                                "https://hemoshear-dev.benchling.com/api/v2/locations:bulk-get?locationIds="),
+                      "mxt"= c("mixture", "https://hemoshear-dev.benchling.com/api/v2/mixtures/", NA),
+                      "plt" = c("plate", "https://hemoshear-dev.benchling.com/api/v2/plates/",
+                                "https://hemoshear-dev.benchling.com/api/v2/plates:bulk-get?plateIds="),
+                      "prtn" = c("aa_sequence", "https://hemoshear-dev.benchling.com/api/v2/aa-sequences/",
+                                 "https://hemoshear-dev.benchling.com/api/v2/aa-sequences:bulk-get?aaSequenceIds="),
+                      "sfs" = c("dropdown", "https://hemoshear-dev.benchling.com/api/v2/dropdowns/", NA),
+                      "sfso" = c("dropdown_option", "https://hemoshear-dev.benchling.com/api/v2/dropdowns/", NA), 
+                      "seq" = c("dna_sequence", "https://hemoshear-dev.benchling.com/api/v2/dna-sequences/",
+                                "https://hemoshear-dev.benchling.com/api/v2/dna-sequences:bulk-get?dnaSequenceIds="))
 }
 # Get the single get API endpoint
 # gsub("ENTITY_ID_VARIABLE", entity_id, entity_list[[substr(entity_id, 1, unlist(gregexpr('_', entity_id))[1]-1)]][2])
@@ -48,7 +47,7 @@ get_api_endpoints <- function() {
 #' and the values are the schema types, single API endpoint and bulk-get API endpoints.
 #' @examples \dontrun{
 #' entity_id <- c("seq_Cuf0bmCm", "bfi_Q1PMlXkf")
-#' res <- infer_entity_type(entity_id)
+#' res <- .infer_entity_type(entity_id)
 #' }
 #' @export
 #' @keywords internal
@@ -76,7 +75,7 @@ get_api_endpoints <- function() {
       # warning(glue::glue("'entity_id' contains an unknown identifier. {entity_id} cannot be matched with any listed identifier."))
     }
   }
-
+  entity_list <- list_api_endpoints()
   for (i in 1:length(entity_id)){
     if (unlist(gregexpr('_', entity_id[[i]]))[1] < 4) {
       if (verbose) {
