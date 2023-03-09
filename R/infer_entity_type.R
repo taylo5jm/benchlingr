@@ -16,8 +16,9 @@
 #' res <- infer_entity_type(entity_id)
 #' }
 #' @export
+#' @keywords internal
 
-infer_entity_type <- function(entity_id, verbose=F) {
+.infer_entity_type <- function(entity_id, verbose=F) {
   if (missing(entity_id)) {
     stop("'entity_id' input is missing.")
   }
@@ -75,13 +76,12 @@ infer_entity_type <- function(entity_id, verbose=F) {
         warning(glue::glue("'entity_id' contains an unknown identifier. {entity_id[i]} cannot be matched with any listed identifier."))
       }
       res[[i]] <- c(NA,NA,NA)
-      names(res[[i]]) <- obj_names
-      names(res)[[i]] <- entity_id[[i]]
     } else {
       res[[i]] <- .entity_lookup(entity_id=entity_id[[i]], entity_list=entity_list)
-      names(res[[i]]) <- obj_names
-      names(res)[[i]] <- entity_id[[i]]
     }
+    names(res[[i]]) <- obj_names
+    names(res)[[i]] <- entity_id[[i]]
+    
   }
   return(res)
 }
