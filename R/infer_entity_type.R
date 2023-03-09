@@ -1,37 +1,6 @@
 # infer_entity_type.R
 
-#' Infer the entity types of elements contained in a vector or list
-#' 
-#' infer_entity_type.R takes either a character vector or list of character strings and 
-#' for each element tries to infer the schema type, single-get API Endpoint URL format and bulk-get 
-#' API endpoints URL format using string-matching techniques.
-#' 
-#' @param entity_id Either a character vector or list that contains the entities. 
-#' All entities in the list or character vector must be character strings.
-#' @param verbose Messages
-#' @return A named list, where the names are the identifiers or elements from entity_id
-#' and the values are the schema types, single API endpoint and bulk-get API endpoints.
-#' @examples \dontrun{
-#' entity_id <- c("seq_Cuf0bmCm", "bfi_Q1PMlXkf")
-#' res <- infer_entity_type(entity_id)
-#' }
-#' @export
-#' @keywords internal
-
-.infer_entity_type <- function(entity_id, verbose=F) {
-  if (missing(entity_id)) {
-    stop("'entity_id' input is missing.")
-  }
-  if (is.null(entity_id) | length(entity_id) == 0) {
-    stop("'entity_id' input is invalid.")
-  } 
-  if ((any(purrr::map(entity_id, ~ length(.) != 1) == TRUE)) | 
-      (any(purrr::map(entity_id, ~ !is.character(.)) == TRUE)) |
-      (any(purrr::map(entity_id, ~ is.na(.)) == TRUE)) |
-      ("" %in% entity_id)) {
-    stop("'entity_id' contains an invalid identifier. Must be a list of vector of characters.")
-  }
-  res <- list()
+get_api_endpoints <- function() {
   entity_list <- list("bat" = c("batch", "https://hemoshear-dev.benchling.com/api/v2/batches/ENTITY_ID_VARIABLE",
                                 "https://hemoshear-dev.benchling.com/api/v2/batches:bulk-get?batchIds=ENTITY_ID_VARIABLE"), 
                       "bfi" = c("custom_entity", "https://hemoshear-dev.benchling.com/api/v2/custom-entities/ENTITY_ID_VARIABLE",
@@ -55,31 +24,68 @@
                       "sfso" = c("dropdown_option", "https://hemoshear-dev.benchling.com/api/v2/dropdowns/ENTITY_ID_VARIABLE", NA), 
                       "seq" = c("dna_sequence", "https://hemoshear-dev.benchling.com/api/v2/dna-sequences/ENTITY_ID_VARIABLE",
                                 "https://hemoshear-dev.benchling.com/api/v2/dna-sequences:bulk-get?dnaSequenceIds=ENTITY_ID_VARIABLE"))
+  entity_list
+}
+# Get the single get API endpoint
+# gsub("ENTITY_ID_VARIABLE", entity_id, entity_list[[substr(entity_id, 1, unlist(gregexpr('_', entity_id))[1]-1)]][2])
+# Get the bulk get API endpoint
+# gsub("ENTITY_ID_VARIABLE", entity_id, entity_list[[substr(entity_id, 1, unlist(gregexpr('_', entity_id))[1]-1)]][3])
+
+# "Single-Get API Endpoint Request URL",
+# "Bulk-Get API Endpoints Request URL"
+
+
+#' Infer the entity types of elements contained in a vector or list
+#' 
+#' infer_entity_type.R takes either a character vector or list of character strings and 
+#' for each element tries to infer the schema type, single-get API Endpoint URL format and bulk-get 
+#' API endpoints URL format using string-matching techniques.
+#' 
+#' @param entity_id Either a character vector or list that contains the entities. 
+#' All entities in the list or character vector must be character strings.
+#' @param verbose Messages
+#' @return A named list, where the names are the identifiers or elements from entity_id
+#' and the values are the schema types, single API endpoint and bulk-get API endpoints.
+#' @examples \dontrun{
+#' entity_id <- c("seq_Cuf0bmCm", "bfi_Q1PMlXkf")
+#' res <- infer_entity_type(entity_id)
+#' }
+#' @export
+#' @keywords internal
+
+.infer_entity_type <- function(entity_id, verbose=F) {
+  if (missing(entity_id)) {
+    stop("'entity_id' input is missing.")
+  }
+  if (is.null(entity_id) | length(entity_id) == 0) {
+    stop("'entity_id' input is invalid. Must be a 1-D list or character vector")
+  } 
+  if ((any(purrr::map(entity_id, ~ length(.) != 1) == TRUE)) | 
+      (any(purrr::map(entity_id, ~ !is.character(.)) == TRUE)) |
+      (any(purrr::map(entity_id, ~ is.na(.)) == TRUE)) |
+      ("" %in% entity_id)) {
+    stop("'entity_id' contains an invalid identifier. Must be a 1-D list or character vector.")
+  }
+  res <- list()
+
   .entity_lookup <- function(entity_id, entity_list) {
     if (substr(entity_id, 1, unlist(gregexpr('_', entity_id))[1]-1) %in% names(entity_list)) {
-      output <- c(entity_list[[substr(entity_id, 1, unlist(gregexpr('_', entity_id))[1]-1)]][1],
-                  gsub("ENTITY_ID_VARIABLE", entity_id, entity_list[[substr(entity_id, 1, unlist(gregexpr('_', entity_id))[1]-1)]][2]),
-                  gsub("ENTITY_ID_VARIABLE", entity_id, entity_list[[substr(entity_id, 1, unlist(gregexpr('_', entity_id))[1]-1)]][3]))
+      entity_list[[substr(entity_id, 1, unlist(gregexpr('_', entity_id))[1]-1)]][1]
     } else {
-      output <- c(NA,NA,NA)
+      NA
       # warning(glue::glue("'entity_id' contains an unknown identifier. {entity_id} cannot be matched with any listed identifier."))
     }
-    return(output)
   }
-  obj_names <- c("Entity Schema", 
-                 "Single-Get API Endpoint Request URL",
-                 "Bulk-Get API Endpoints Request URL")
 
   for (i in 1:length(entity_id)){
     if (unlist(gregexpr('_', entity_id[[i]]))[1] < 4) {
       if (verbose) {
         warning(glue::glue("'entity_id' contains an unknown identifier. {entity_id[i]} cannot be matched with any listed identifier."))
       }
-      res[[i]] <- c(NA,NA,NA)
+      res[[i]] <- c(NA)
     } else {
       res[[i]] <- .entity_lookup(entity_id=entity_id[[i]], entity_list=entity_list)
     }
-    names(res[[i]]) <- obj_names
     names(res)[[i]] <- entity_id[[i]]
     
   }
