@@ -65,39 +65,20 @@ infer_entity_type <- function(entity_id) {
     stop("'entity_id' contains an invalid identifier.")
   }
   res <- list()
-  if (is.list(entity_id)) {
-    for (i in 1:length(entity_id)) {
-      if (unlist(gregexpr('_', entity_id[[i]][1]))[1] < 4) {
-        warning(glue::glue("'entity_id' contains an unknown identifier. {entity_id[[i]]} cannot be matched with any listed identifier."))
-        res[[i]] <- c(NA,NA,NA)
-        names(res[[i]])[1] <- "Entity Schema"
-        names(res[[i]])[2] <- "Single-Get API Endpoint Request URL"
-        names(res[[i]])[3] <- "Bulk-Get API Endpoints Request URL"
-        names(res)[[i]] <- entity_id[[i]]
-      } else {
-        res[[i]] <- .entity_lookup(entity_id=entity_id[[i]], entity_list=entity_list)
-        names(res[[i]])[1] <- "Entity Schema"
-        names(res[[i]])[2] <- "Single-Get API Endpoint Request URL"
-        names(res[[i]])[3] <- "Bulk-Get API Endpoints Request URL"
-        names(res)[[i]] <- entity_id[[i]]
-      }
-    }
-  } else {
-    for (i in 1:length(entity_id)){
-      if (unlist(gregexpr('_', entity_id[i]))[1] < 4) {
-        warning(glue::glue("'entity_id' contains an unknown identifier. {entity_id[i]} cannot be matched with any listed identifier."))
-        res[[i]] <- c(NA,NA,NA)
-        names(res[[i]])[1] <- "Entity Schema"
-        names(res[[i]])[2] <- "Single-Get API Endpoint Request URL"
-        names(res[[i]])[3] <- "Bulk-Get API Endpoints Request URL"
-        names(res)[[i]] <- entity_id[i]
-      } else {
-        res[[i]] <- .entity_lookup(entity_id=entity_id[i], entity_list=entity_list)
-        names(res[[i]])[1] <- "Entity Schema"
-        names(res[[i]])[2] <- "Single-Get API Endpoint Request URL"
-        names(res[[i]])[3] <- "Bulk-Get API Endpoints Request URL"
-        names(res)[[i]] <- entity_id[i]
-      }
+  for (i in 1:length(entity_id)) {
+    if (unlist(gregexpr('_', entity_id[[i]]))[1] < 4) {
+      warning(glue::glue("'entity_id' contains an unknown identifier. {entity_id[[i]]} cannot be matched with any listed identifier."))
+      res[[i]] <- c(NA,NA,NA)
+      names(res[[i]])[1] <- "Entity Schema"
+      names(res[[i]])[2] <- "Single-Get API Endpoint Request URL"
+      names(res[[i]])[3] <- "Bulk-Get API Endpoints Request URL"
+      names(res)[[i]] <- entity_id[[i]]
+    } else {
+      res[[i]] <- .entity_lookup(entity_id=entity_id[[i]], entity_list=entity_list)
+      names(res[[i]])[1] <- "Entity Schema"
+      names(res[[i]])[2] <- "Single-Get API Endpoint Request URL"
+      names(res[[i]])[3] <- "Bulk-Get API Endpoints Request URL"
+      names(res)[[i]] <- entity_id[[i]]
     }
   }
   return(res)

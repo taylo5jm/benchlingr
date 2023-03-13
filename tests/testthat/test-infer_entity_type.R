@@ -5,11 +5,17 @@ test_that("Verify that infer_entity_type.R provides the correct response when en
   expect_error(infer_entity_type(), "'entity_id' input is missing.")
   expect_error(infer_entity_type(NULL), "'entity_id' input is invalid.")
   expect_error(infer_entity_type(NA), "'entity_id' contains an invalid identifier.")
+  expect_error(infer_entity_type(integer(0)), "'entity_id' contains an invalid identifier.")
+  })
+  
+# test case 2 
+test_that({
   expect_error(infer_entity_type(list(124,"seq_Cuf0bmCm", "bfi_Q13AlXkf")), "'entity_id' contains an invalid identifier.")
   expect_error(infer_entity_type(list("seq_Cuf0bmCm", NA, "bfi_Q13AlXkf")), "'entity_id' contains an invalid identifier.")
   })
 
-# test case 2
+
+# test case 3
 test_that("Verify that infer_entity_type.R works in creating a proper character vector while providing warnings for any elements listed in 'entity_id' that cannot be matched", {
   expect_equal(infer_entity_type(c("seq_Cuf0bmCm", "bfi_Q13AlXkf")), list("seq_Cuf0bmCm" = c("Entity Schema"="dna_sequence", "Single-Get API Endpoint Request URL"="https://hemoshear-dev.benchling.com/api/v2/dna-sequences/seq_Cuf0bmCm",
                                                                                              "Bulk-Get API Endpoints Request URL"="https://hemoshear-dev.benchling.com/api/v2/dna-sequences:bulk-get?dnaSequenceIds=seq_Cuf0bmCm"),
