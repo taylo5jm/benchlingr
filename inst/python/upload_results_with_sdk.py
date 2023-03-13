@@ -22,7 +22,6 @@ def upload_results_with_sdk(client: Benchling, results: list) -> list:
     created_results = []
     for result_chunk in chunked_list:
         for result in result_chunk:
-            print(result)
             # Use a context manager to commit results in a transaction. Will automatically
             # rollback on error. Otherwise commits the transaction on exit
             # with client.assay_results.transaction_manager() as results_manager:
@@ -41,7 +40,6 @@ def upload_results_with_sdk(client: Benchling, results: list) -> list:
             # Check to see if my ID was created
             # transaction_result = client.assay_results.get_by_id(created_result.id)
         client.assay_results.create(created_results)
-
     return created_results
 
 

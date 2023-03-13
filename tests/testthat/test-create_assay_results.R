@@ -107,6 +107,22 @@ test_that("create_assay_results will work when a file
     tenant="https://hemoshear-dev.benchling.com",
     api_key=Sys.getenv("BENCHLING_DEV_API_KEY"),
     fk_type = "id")
+  print(created_results)
+  testthat::expect_equal(
+    length(created_results), 1)
+})
+
+test_that("create_assay_results will work when a file
+          doesn't need to be uploaded.", {
+  res <- data.frame(plate = seq(1, 1001))
+
+  created_results <- create_assay_results(
+    conn, client, df=res, project_id="src_ZRvTYOgM",
+    schema_id="assaysch_eBsoKyRO",
+    tenant="https://hemoshear-dev.benchling.com",
+    api_key=Sys.getenv("BENCHLING_DEV_API_KEY"),
+    fk_type = "id")
+  print(created_results)
   testthat::expect_equal(
     length(created_results), 1)
 })
