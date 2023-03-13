@@ -9,16 +9,11 @@
       schema_id = schema_id,
       fields = created_fields[i])
   }
-
-  .upload_results_with_python_sdk <- function(results) {
-    reticulate::source_python(
-      system.file(
-        "python", "upload_results_with_sdk.py",
-        package = "benchlingr"))
-    res <- upload_results_with_sdk(client, results)
-    return(res)
-  }
-
+  reticulate::source_python(
+    system.file(
+      "python", "upload_results_with_sdk.py",
+      package = "benchlingr"))
+  return(upload_results_with_sdk(client, created_results))
 }
 
 
