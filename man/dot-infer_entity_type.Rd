@@ -24,7 +24,7 @@ API endpoints URL format using string-matching techniques.
 \examples{
 \dontrun{
 entity_id <- c("seq_Cuf0bmCm", "bfi_Q1PMlXkf")
-res <- infer_entity_type(entity_id)
+res <- .infer_entity_type(entity_id)
 }
 }
 \keyword{internal}
