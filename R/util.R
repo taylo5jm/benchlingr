@@ -36,12 +36,13 @@ is_schema_in_dataframe <- function(df) {
 
 #' Raise exception if the `schema` column is not in the data frame.
 #'  Dataframe validation
+#' @param conn Data warehouse connection typically opened by `warehouse_connect`.
+#' @param client API facade object
 #' @param df data.frame with table from the data warehouse.
 #' @return error list
-#' @export
 #' @keywords internal
 
-validate_data_frame <- function (df, fk_type='name', mappings){
+.validate_data_frame <- function (conn, client, df, fk_type='name', mappings){
     errors <- c()
   # print(df)
   for (i in 1:length(colnames(df))) {

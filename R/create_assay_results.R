@@ -24,6 +24,7 @@
 #' @include error.R
 #' @include upload_files.R
 #' @include field_validation.R
+#' @include util.R
 #' @param conn Database connection. 
 #' @param client Benchling API client. 
 #' @param df Data frame / tibble of results to be uploaded to Benchling. 
@@ -66,7 +67,8 @@ create_assay_results <- function(conn, client, df, project_id, schema_id,
   }
 
   to_query <- c('entity_link', 'dropdown', 'storage_link')
-  errors <- validate_data_frame(df, fk_type, mappings)
+  errors <- .validate_data_frame(
+    conn=conn, client=client, df=df, fk_type=fk_type, mappings=mappings)
 
   if (length(errors) == 0) {
     blob_link_column_names <- names(
