@@ -2,6 +2,7 @@ import unittest
 from unittest.mock import patch
 from inst.python.benchling_sdk_entrypoint import benchling_sdk_entrypoint
 
+
 class TestBenchlingSdkEntrypoint(unittest.TestCase):
 
     @patch('inst.python.benchling_sdk_entrypoint.Benchling')

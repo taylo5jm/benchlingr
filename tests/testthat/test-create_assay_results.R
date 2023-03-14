@@ -112,8 +112,7 @@ test_that("create_assay_results will work when a file
     length(created_results), 1)
 })
 
-test_that("create_assay_results will work when a file
-          doesn't need to be uploaded.", {
+test_that("create_assay_results with more than 100 results.", {
   res <- data.frame(plate = seq.int(1, 110))
 
   created_results <- create_assay_results(
