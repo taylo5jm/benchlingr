@@ -111,5 +111,5 @@ bulk_get_entity <- function(entity_id, benchling_api_key=Sys.getenv("BENCHLING_A
 
 
 
-x <- httr::content(httr::GET("https://hemoshear-dev.benchling.com/api/v2/custom-entities?pageSize=50&sort=name",
+x <- httr::content(httr::GET("https://hemoshear-dev.benchling.com/api/v2/custom-entities/bfi_Ur5DfvGJ%2Cbfi_Q13AlXkf%2Cbfi_VVamxrKQ%2Cbfi_KsLU5uWV",
                              httr::authenticate(Sys.getenv("BENCHLING_DEV_API_KEY"), '')))
