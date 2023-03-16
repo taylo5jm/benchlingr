@@ -25,7 +25,6 @@ infer_entity_type <- function(entity_id) {
                                 "https://hemoshear-dev.benchling.com/api/v2/boxes:bulk-get?boxIds=ENTITY_ID_VARIABLE"),
                       "con" = c("container", "https://hemoshear-dev.benchling.com/api/v2/containers/ENTITY_ID_VARIABLE",
                                 "https://hemoshear-dev.benchling.com/api/v2/containers:bulk-get?containerIds=ENTITY_ID_VARIABLE"),
-                      "container_batch" = c("container_content", "https://hemoshear-dev.benchling.com/api/v2/containers/ENTITY_ID_VARIABLE/contents/ENTITY_ID_VARIABLE", NA),
                       "ent" = c("user", "https://hemoshear-dev.benchling.com/api/v2/users/ENTITY_ID_VARIABLE", NA),
                       "etr" = c("entry", "https://hemoshear-dev.benchling.com/api/v2/entries/ENTITY_ID_VARIABLE",
                                 "https://hemoshear-dev.benchling.com/api/v2/entries:bulk-get?entryIds=ENTITY_ID_VARIABLE"),
