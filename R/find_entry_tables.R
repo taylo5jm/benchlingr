@@ -17,6 +17,7 @@
 #'     tenant="https://hemoshear-dev.benchling.com",
 #'     api_key = Sys.getenv("BENCHLING_DEV_API_KEY"))
 #' entry <- client$entries$get_entry_by_id("etr_T3WZTyAe")
+#' entry <- client$entries$get_entry_by_id("etr_IWLMFYhR")
 #' benchlingr::find_entry_tables(entry)
 #' }
 #' @export
@@ -38,27 +39,18 @@ find_entry_tables <- function(entry, min_rows=NULL) {
     if (!is.null(min_rows)) {
       tables <- tables[which(table_lengths >= min_rows)]
     }
-    
+    names(tables) <- purrr::map_chr(tables, ~ entry$notes[[.]]$table$name)
     return(tables)
   }
   
   res <- purrr::map(entry$days, ~ .find_tables(., min_rows=min_rows))
-  for (i in 1:length(res)) {
-    names(res)[[i]] <- i
-    if (!identical(res[[i]], integer(0))) {
-      for (j in 1:length(res[[i]])) {
-        names(res[[i]])[j] <- entry$days[[i]]$notes[[res[[i]][j]]]$table$name
-      } 
-    } else {
-      next
-    }
+  if (all(purrr::map_lgl(res, ~ length(.) == 0))) {
+    res <- NA
+    warning("No tables were found in the notebook entry provided.")
   }
   
-  if (length(res) == 0) {
-    res <- NA
-    warning("No tables were found in notebook entry.")
-  }
-  res
+  return(res)
+
 }
 
 

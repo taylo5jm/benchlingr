@@ -12,10 +12,12 @@
 #' and the values are the schema types, single API endpoint and bulk-get API endpoints.
 #' @examples \dontrun{
 #' entity_id <- c("seq_Cuf0bmCm", "bfi_Q1PMlXkf")
-#' res <- infer_entity_type(entity_id)
+#' res <- .infer_entity_type(entity_id)
 #' }
 #' @export
+#' @keywords internal
 
+<<<<<<< HEAD
 infer_entity_type <- function(entity_id) {
   entity_list <- list("bat" = c("batch", 
                                 "https://hemoshear-dev.benchling.com/api/v2/batches?pageSize=50&sort=name&ids=ENTITY_ID_VARIABLE",
@@ -127,7 +129,7 @@ infer_entity_type <- function(entity_id) {
     stop("'entity_id' input is missing.")
   }
   if (is.null(entity_id) | length(entity_id) == 0) {
-    stop("'entity_id' input is invalid.")
+    stop("'entity_id' input is invalid. Must be a 1-D list or character vector")
   } 
   if ((any(purrr::map(entity_id, ~ length(.) != 1) == TRUE)) | 
       (any(purrr::map(entity_id, ~ !is.character(.)) == TRUE)) |

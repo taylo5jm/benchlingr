@@ -16,8 +16,13 @@
 #' are the responses from the calls made to each identifier's set of bulk-get API endpoints or single
 #' API endpoint in the form of character strings.
 #' @examples \dontrun{
-#' entity_id <- c("seq_Cuf0omCm", "bfi_9fKcrORv")
-#' entities <- bulk_get_entity(entity_id=entity_id, benchling_api_key=Sys.getenv("BENCHLING_API_KEY"))
+#' entity_id1 <- c("seq_Cuf0omCm", "bfi_9fKcrORv")
+#' entities1 <- bulk_get_entity(entity_id=entity_id1, api_key=Sys.getenv("BENCHLING_API_KEY"))
+#' entity_id2 <- c("etr_IWLMFYhR","etr_T3WZTyAe", "bfi_9fKcrORv", "bfi_KsLU5uWV", "bfi_VVamxrKQ")
+#' entities2 <- bulk_get_entity(entity_id=entity_id2, api_key=Sys.getenv("BENCHLING_API_KEY"))
+#' entity_id3 <- c("ent_sPrxBNOh")
+#' entities3 <- bulk_get_entity(entity_id=entity_id3, api_key=Sys.getenv("BENCHLING_API_KEY"))
+
 #' }
 #' @export
 

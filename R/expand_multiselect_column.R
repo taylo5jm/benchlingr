@@ -106,10 +106,9 @@ expand_multiselect_column <- function(conn, df, column, shape="long",
     as.character(df[[column]]), ~RJSONIO::fromJSON(.))
   new_rows <- list()
   for (i in 1:nrow(df)) {
-    if (length(df[[i,column]]) == 0 ) {
+    if (length(df[[i,column]]) == 0) {
       new_rows[[i]] <- df[i,]
-      new_rows[[i]][i,][column] <- NA
-
+      new_rows[[i]][column] <- NA
     } else {
       new_rows[[i]] <- purrr::map_df(
         df[[i,column]], 

@@ -23,6 +23,7 @@ BugReports: https://github.com/hemoshear/benchlingr
 RoxygenNote: 7.2.3
 Suggests: 
     knitr,
+    RSQLite,
     rmarkdown,
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
@@ -55,7 +56,10 @@ Collate:
     'assay_results_utils.R'
     'error.R'
     'benchling_api_auth.R'
+    'infer_entity_type.R'
+    'bulk_get_entity.R'
     'config_sdk_env.R'
+    'dropdown.R'
     'vec2sql_tuple.R'
     'field_validation.R'
     'upload_files.R'
