@@ -74,7 +74,7 @@ infer_entity_type <- function(entity_id) {
     if (substr(entity_id, 1, unlist(gregexpr('_', entity_id))[1]-1) %in% names(entity_list)) {
       output <- c(entity_list[[substr(entity_id, 1, unlist(gregexpr('_', entity_id))[1]-1)]][1])
     } else {
-      output <- "unknown"
+      output <- "invalid_entities"
       warning(glue::glue("'entity_id' contains an unknown identifier. {entity_id} cannot be matched with any listed identifier."))
     }
     return(output)
@@ -87,7 +87,7 @@ infer_entity_type <- function(entity_id) {
     
     for (i in 1:length(organized_listed_ids)) {
       schema_label <- names(organized_listed_ids)[i]
-      if (names(organized_listed_ids)[i] != "unknown" & length(organized_listed_ids[[i]][[1]])/50 > 1) {
+      if (names(organized_listed_ids)[i] != "invalid_entities" & length(organized_listed_ids[[i]][[1]])/50 > 1) {
         organized_listed_ids[[i]] <- lapply(seq(1:ceiling(length(organized_listed_ids[[i]][[1]])/50)), 
                                             function(y)  
                                               unlist(purrr::map(organized_listed_ids[[i]][[1]][seq((1+((y-1)*50)),(y*50))], ~ .[!is.na(.)])))
@@ -109,7 +109,7 @@ infer_entity_type <- function(entity_id) {
       for (m in 1:length(organized_listed_ids[[l]])) {
         if (names(organized_listed_ids)[l] == "dropdown" |
             names(organized_listed_ids)[l] == "dropdown_option" | 
-            names(organized_listed_ids)[l] == "unknown") {
+            names(organized_listed_ids)[l] == "invalid_entities") {
           organized_listed_ids[[l]][[m]][[2]] <- NA
         } else {
           organized_listed_ids[[l]][[m]][[2]] <- gsub("ENTITY_ID_VARIABLE",
@@ -141,7 +141,7 @@ infer_entity_type <- function(entity_id) {
     if (unlist(gregexpr('_', entity_id[[i]]))[1] < 4) {
       warning(glue::glue("'entity_id' contains an unknown identifier. {entity_id[[i]]} cannot be matched with any listed identifier."))
       res[[i]] <- entity_id[[i]]
-      names(res)[[i]] <- "unknown"
+      names(res)[[i]] <- "invalid_entities"
     } else {
       res[[i]] <- entity_id[[i]]
       names(res)[[i]] <- .entity_lookup(entity_id=entity_id[[i]], entity_list=entity_list)
