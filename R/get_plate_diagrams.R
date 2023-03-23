@@ -1,4 +1,4 @@
-# read_plate_diagrams.R
+# get_plate_diagrams.R
 
 #' Find and parse plate diagrams in a notebook entry
 #' 
@@ -7,7 +7,7 @@
 #' of physical plates. The `read_plate_layouts` function will extract these 
 #' plate diagrams into data frames for further processing in R.
 #' 
-#' @include read_entry_tables.R
+#' @include get_entry_tables.R
 #' @importFrom stats setNames
 #' @param entry response from GET /entry/{entry_id}
 #' @param plate_dim A numeric vector of length 2 that describes the dimensions
@@ -19,13 +19,13 @@
 #' @return List of data frames representing the plate diagrams present
 #' in the notebook entry.
 #' @examples \dontrun{
-#' client <- benchling_api_auth(tenant="https://hemoshear-dev.benchling.com",
+#' client <- connect_sdk(tenant="https://hemoshear-dev.benchling.com",
 #'                             api_key=Sys.getenv("BENCHLING_DEV_API_KEY"))
 #' entry <- client$entries$get_entry_by_id("etr_f1bpDIes")
-#' plate_diagrams <- read_plate_diagrams(entry)
+#' plate_diagrams <- get_plate_diagrams(entry)
 #' }
 #' @export
-read_plate_diagrams <- function(entry, plate_dim=NULL) {
+get_plate_diagrams <- function(entry, plate_dim=NULL) {
   is_plate_diagram <- function(df, plate_dim=NULL) {
     # If user selects a plate size, verify it is one of the plate sizes
     # offered by Benchling. 
@@ -63,7 +63,7 @@ read_plate_diagrams <- function(entry, plate_dim=NULL) {
       dplyr::mutate(row = LETTERS[1:nrow(.)]) %>%
       tidyr::gather(key = "column", value = !!id, -row) 
   }
-  res <- read_entry_tables(entry)
+  res <- get_entry_tables(entry)
   plate_diagram_indices <- purrr::map_lgl(res, ~ is_plate_diagram(., plate_dim))
   res <- res[plate_diagram_indices]
   purrr::map(res, ~ parse_plate_diagram(.))

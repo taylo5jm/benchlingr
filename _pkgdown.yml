@@ -6,7 +6,8 @@ reference:
 - title: Data warehouse
   desc: The Benchling data warehouse is a read-only, Postgres database.
 - contents:
-  - warehouse_connect
+  - connect_warehouse
+  - disconnect_warehouse
   - expand_multiselect_column
   - get_entity_table
   - list_entity_columns
@@ -18,7 +19,7 @@ reference:
   desc: Python SDK and API
   contents:
   - config_sdk_env
-  - benchling_api_auth
+  - connect_sdk
 - title: Blobs
   desc: Files attached to Benchling results and entities. 
   contents:
@@ -27,7 +28,23 @@ reference:
 - title: Notebook entries
   desc: Notebook entries
   contents:
-  - find_entry_tables
-  - read_entry_tables
-  - read_plate_diagrams
+  - list_entry_tables
+  - get_entry_tables
+  - get_plate_diagrams
   - list_schemas_in_entry
+- title: Assay results
+  desc: Assay results
+  contents:
+  - archive_assay_results
+  - create_assay_results
+  - get_assay_result
+  - unarchive_assay_results
+- title: Dropdowns
+  desc: Dropdown menus.
+  contents:
+  - get_dropdown
+  - get_dropdown_options
+- title: Misc
+  desc: Misc
+  contents:
+  - get_project_ids

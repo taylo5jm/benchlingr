@@ -36,7 +36,7 @@
 #' @export
 #' @examples \dontrun{
 #' schema_id <- "assaysch_yKoqVsej"
-#' conn <- warehouse_connect("hemoshear-dev")
+#' conn <- connect_warehouse("hemoshear-dev")
 #' api_key <- Sys.getenv("BENCHLING_DEV_API_KEY")
 #' tenant <- "hemoshear-dev"
 #' }
@@ -137,7 +137,7 @@ create_assay_results <- function(conn, client, df, project_id, schema_id,
 # Add these convenience functions for getting hte ProjectIds and results schema Ids
 #' Get Benchling project metadata
 #' 
-#' @param conn Database connection opened with `warehouse_connect`.
+#' @param conn Database connection opened with `connect_warehouse`.
 #' @return data.frame with `id` and `name` attributes for Benchling projects. 
 #' @export
 

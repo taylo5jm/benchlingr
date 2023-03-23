@@ -9,14 +9,14 @@
 #' @importFrom rlang .data
 #' @include vec2sql_tuple.R
 #' @importFrom magrittr %<>% %>%
-#' @param conn Database connection opened by `warehouse_connect`
+#' @param conn Database connection opened by `connect_warehouse`
 #' @param df data.frame with one or more fields that are entity types. 
 #' @return A vector where the names are the warehouse names for the fields 
 #' in the schema and the values are the warehouse names for the entities in the 
 #' schema 
 #' @export
 #' @examples \dontrun{
-#' conn <- warehouse_connect(
+#' conn <- connect_warehouse(
 #' "hemoshear-dev",
 #'  username = Sys.getenv("BENCHLING_DEV_WAREHOUSE_USERNAME"),
 #'  password = Sys.getenv("BENCHLING_DEV_WAREHOUSE_PASSWORD"))

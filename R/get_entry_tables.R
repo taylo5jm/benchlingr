@@ -1,15 +1,15 @@
-# read_entry_tables.R
+# get_entry_tables.R
 
 #' Read all unstructured tables in a notebook entry. 
 #' 
 #' This function will read all unstructured tables in a notebook entry,
 #' returning a list of data frames. 
 #' 
-#' @include find_entry_tables.R
+#' @include list_entry_tables.R
 #' @param entry Notebook entry in JSON format. See `get_entry`.
-#' @param day Integer for the day in the notebook entry. See `find_entry_tables`.
+#' @param day Integer for the day in the notebook entry. See `list_entry_tables`.
 #' @param table_position Integer for the position of the table in the notebook entry list. 
-#' See `find_entry_tables`.
+#' See `list_entry_tables`.
 #' @param table_name A specific table can be read by name with the `table_name` argument.
 #' If `table_name` is provided, then `day` and `table_position` are ignored.  
 #' @param return_table_name If return_return_table_name is TRUE, then the names of the tables
@@ -19,14 +19,14 @@
 #' @return List of data frames representing the unstructured tables in
 #' the notebook entry.
 #' @examples \dontrun{
-#' client <- benchling_api_auth(tenant="https://hemoshear.benchling.com")
+#' client <- connect_sdk(tenant="https://hemoshear.benchling.com")
 #' client$entries$get_entry_by_id
 #' entry <- get_entry(id = "etr")
-#' tables <- read_entry_tables(entry)
+#' tables <- get_entry_tables(entry)
 #' }
 #' @export
 
-read_entry_tables <- function(entry, day=NULL, table_position=NULL, 
+get_entry_tables <- function(entry, day=NULL, table_position=NULL, 
                               table_name=NULL, return_table_name=TRUE, 
                               verbose=FALSE) {
   if (missing(entry)) {
@@ -44,7 +44,7 @@ read_entry_tables <- function(entry, day=NULL, table_position=NULL,
   }
   
   
-  table_indices <- find_entry_tables(entry)
+  table_indices <- list_entry_tables(entry)
   
   if (!is.null(table_name)) {
     table_name_check <- FALSE
@@ -60,7 +60,7 @@ read_entry_tables <- function(entry, day=NULL, table_position=NULL,
     if (table_name_check == FALSE) {
       stop("Input for 'table_name' does not exist in notebook entry.")
     } else {
-      res <- read_entry_table(entry=entry, day=NULL, table_position=NULL,table_name=table_name,
+      res <- get_entry_table(entry=entry, day=NULL, table_position=NULL,table_name=table_name,
                               return_table_name=return_table_name) 
     }
     
@@ -74,7 +74,7 @@ read_entry_tables <- function(entry, day=NULL, table_position=NULL,
         stop("Input for 'day' does not exist in notebook entry.")
       }
       
-      res <- read_entry_table(entry, day=day, table_position=table_position,table_name=NULL,
+      res <- get_entry_table(entry, day=day, table_position=table_position,table_name=NULL,
                               return_table_name=return_table_name)
       
     } else {
@@ -83,7 +83,7 @@ read_entry_tables <- function(entry, day=NULL, table_position=NULL,
       for (i in 1:length(table_indices)) {
         if (length(table_indices[[i]]) > 0) {
           for (j in 1:length(table_indices[[i]])) {
-            res[[k]] <- read_entry_table(entry, day=i, 
+            res[[k]] <- get_entry_table(entry, day=i, 
                                          table_position=table_indices[[i]][j],
                                          table_name=NULL,
                                          return_table_name=return_table_name)

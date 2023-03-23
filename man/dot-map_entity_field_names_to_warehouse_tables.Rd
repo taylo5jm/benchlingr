@@ -8,7 +8,7 @@ table with the relevant entities.}
 .map_entity_field_names_to_warehouse_tables(conn, df)
 }
 \arguments{
-\item{conn}{Database connection opened by `warehouse_connect`}
+\item{conn}{Database connection opened by `connect_warehouse`}
 
 \item{df}{data.frame with one or more fields that are entity types.}
 }
@@ -24,7 +24,7 @@ the field name in one schema to the actual name of the entity.
 }
 \examples{
 \dontrun{
-conn <- warehouse_connect(
+conn <- connect_warehouse(
 "hemoshear-dev",
  username = Sys.getenv("BENCHLING_DEV_WAREHOUSE_USERNAME"),
  password = Sys.getenv("BENCHLING_DEV_WAREHOUSE_PASSWORD"))

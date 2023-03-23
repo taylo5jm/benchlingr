@@ -7,7 +7,7 @@
 get_project_ids(conn)
 }
 \arguments{
-\item{conn}{Database connection opened with `warehouse_connect`.}
+\item{conn}{Database connection opened with `connect_warehouse`.}
 }
 \value{
 data.frame with `id` and `name` attributes for Benchling projects.

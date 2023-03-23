@@ -8,7 +8,7 @@
 .validate_data_frame(conn, client, df, fk_type = "name", mappings)
 }
 \arguments{
-\item{conn}{Data warehouse connection typically opened by `warehouse_connect`.}
+\item{conn}{Data warehouse connection typically opened by `connect_warehouse`.}
 
 \item{client}{API facade object}
 

@@ -7,12 +7,12 @@
 #' @include util.R
 #' @importFrom rlang .data
 #' @importFrom magrittr %>%
-#' @param conn Database connection opened with `warehouse_connect`
+#' @param conn Database connection opened with `connect_warehouse`
 #' @param df Data frame with entity columns
 #' @return Vector where the names are the names of entity columns in the data frame
 #' and the values are the corresponding indices. 
 #' @examples \dontrun{
-#' conn <- warehouse_connect("hemoshear-dev", 
+#' conn <- connect_warehouse("hemoshear-dev", 
 #'     username = Sys.getenv("BENCHLING_DEV_WAREHOUSE_USERNAME"),
 #'     password = Sys.getenv("BENCHLING_DEV_WAREHOUSE_PASSWORD"))
 #' res <- DBI::dbGetQuery(conn, "SELECT * FROM simple_plate_analyte_mapping$raw")

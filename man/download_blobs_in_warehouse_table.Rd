@@ -38,8 +38,8 @@ Download blobs contained within a warehouse table.
 \examples{
 \dontrun{
 library(magrittr)
-client <- benchling_api_auth("https://hemoshear.benchling.com")
-conn <- warehouse_connect("hemoshear-dev", 
+client <- connect_sdk("https://hemoshear.benchling.com")
+conn <- connect_warehouse("hemoshear-dev", 
     username = Sys.getenv("BENCHLING_DEV_WAREHOUSE_USERNAME"),
     password = Sys.getenv("BENCHLING_DEV_WAREHOUSE_PASSWORD"))
 res <- DBI::dbGetQuery(conn, "SELECT * FROM 

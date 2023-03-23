@@ -54,8 +54,8 @@
 #' input data frame exist in the inventory. If the column refers to a blob
 #' link field, then the function will assume the values are file paths and will
 #' check to see if the file exists on the local machine. 
-#' @param conn Database connection typically opened with `warehouse_connect`.
-#' @param client A Benchling SDK object typically created with `benchling_api_auth`.
+#' @param conn Database connection typically opened with `connect_warehouse`.
+#' @param client A Benchling SDK object typically created with `connect_sdk`.
 #' @param errors Character vector of errors.
 #' @param values Values in the column. 
 #' @param column_name Name of the column in the data frame to be uploaded to Benchling.

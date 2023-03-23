@@ -1,4 +1,4 @@
-# benchling_api_auth.R
+# connect_sdk.R
 #' Create a Benchling API client that can be used to access the API via R. 
 #' 
 #' @include error.R
@@ -10,10 +10,10 @@
 #' API via R. 
 #' @export
 #' @examples \dontrun{
-#' client <- benchling_api_auth(tenant="https://my-company-tenant-name.benchling.com")
+#' client <- connect_sdk(tenant="https://my-company-tenant-name.benchling.com")
 #' }
 
-benchling_api_auth <- function(
+connect_sdk <- function(
   tenant, api_key=Sys.getenv("BENCHLING_API_KEY")) {
   if (api_key == "") {
     .missing_api_key_error()

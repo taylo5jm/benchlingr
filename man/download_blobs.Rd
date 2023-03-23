@@ -7,7 +7,7 @@
 download_blobs(client, file_map, outdir, condaenv = "benchling-reticulate")
 }
 \arguments{
-\item{client}{Benchling client object created by `benchling_api_auth()`.}
+\item{client}{Benchling client object created by `connect_sdk()`.}
 
 \item{file_map}{List where names are blob (file) identifiers
 and values are file names.}
@@ -22,7 +22,7 @@ Download "blobs" attached to Benchling entities or results.
 }
 \examples{
 \dontrun{
-conn <- warehouse_connect("hemoshear-dev", 
+conn <- connect_warehouse("hemoshear-dev", 
     username = Sys.getenv("BENCHLING_DEV_WAREHOUSE_USERNAME"),
     password = Sys.getenv("BENCHLING_DEV_WAREHOUSE_PASSWORD"))
 res <- DBI::dbGetQuery(conn, "SELECT * FROM 

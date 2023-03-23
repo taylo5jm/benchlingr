@@ -1,11 +1,11 @@
 library(benchlingr)
 
-conn <- benchlingr::warehouse_connect(
+conn <- benchlingr::connect_warehouse(
   "hemoshear-dev",
   Sys.getenv("BENCHLING_DEV_WAREHOUSE_USERNAME"),
   Sys.getenv("BENCHLING_DEV_WAREHOUSE_PASSWORD"))
 
-client <- benchlingr::benchling_api_auth(
+client <- benchlingr::connect_sdk(
   tenant = "https://hemoshear-dev.benchling.com",
   api_key = Sys.getenv("BENCHLING_DEV_API_KEY"))
 

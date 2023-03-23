@@ -7,7 +7,7 @@
 get_entity_table(conn, df, columns = NULL, return_cols = "*", key = "id")
 }
 \arguments{
-\item{conn}{Database connection opened with `warehouse_connect`}
+\item{conn}{Database connection opened with `connect_warehouse`}
 
 \item{df}{Data frame with one or more entity columns. The data frame
 must also have a column called `schema`, which indicates the schema
@@ -40,7 +40,7 @@ data frame.
 }
 \examples{
 \dontrun{
-conn <- warehouse_connect("hemoshear-dev", 
+conn <- connect_warehouse("hemoshear-dev", 
    username = Sys.getenv("BENCHLING_DEV_WAREHOUSE_USERNAME"),
    password = Sys.getenv("BENCHLING_DEV_WAREHOUSE_PASSWORD"))
 df <- DBI::dbGetQuery(conn, "SELECT * FROM simple_plate_analyte_mapping$raw")
