@@ -1,4 +1,4 @@
-# bulk_get_entity.R
+# get_entity.R
 
 #' Call the bulk-get API endpoints or single API endpoint if no set of bulk-get 
 #' API endpoints is provided for an arbitrary set of entity identifiers.
@@ -11,6 +11,7 @@
 #' @include infer_entity_type.R
 #' @param entity_id Either a character vector or list that contains the entities. All entities 
 #' in the list or character vector must be character strings.
+#' @param api_key Benchling API key.
 #' @return A named list, where the names are the identifiers or elements from entity_id and the values
 #' are the responses from the calls made to each identifier's set of bulk-get API endpoints or single
 #' API endpoint in the form of character strings.
