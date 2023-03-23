@@ -34,7 +34,7 @@ infer_entity_type <- function(entity_id) {
                                 "https://hemoshear-dev.benchling.com/api/v2/containers/ENTITY_ID_VARIABLE",
                                 "https://hemoshear-dev.benchling.com/api/v2/containers:bulk-get?containerIds=ENTITY_ID_VARIABLE"),
                       "ent" = c("user", 
-                                "https://hemoshear-dev.benchling.com/api/v2/users?ids=eENTITY_ID_VARIABLE&pageSize=50&sort=name",
+                                "https://hemoshear-dev.benchling.com/api/v2/users?ids=ENTITY_ID_VARIABLE&pageSize=50&sort=name",
                                 "https://hemoshear-dev.benchling.com/api/v2/users/ENTITY_ID_VARIABLE", 
                                 NA),
                       "etr" = c("entry", 
@@ -79,6 +79,50 @@ infer_entity_type <- function(entity_id) {
     }
     return(output)
   }  
+  
+  .entity_match <- function(listed_ids, entity_list) {
+    schema_labels <- unique(names(listed_ids))
+    organized_listed_ids <- purrr::map(unique(names(listed_ids)), ~ list(unlist(listed_ids[which(names(listed_ids) == .)], use.names = FALSE)))
+    names(organized_listed_ids) <- schema_labels
+    
+    for (i in 1:length(organized_listed_ids)) {
+      schema_label <- names(organized_listed_ids)[i]
+      if (names(organized_listed_ids)[i] != "unknown" & length(organized_listed_ids[[i]][[1]])/50 > 1) {
+        organized_listed_ids[[i]] <- lapply(seq(1:ceiling(length(organized_listed_ids[[i]][[1]])/50)), 
+                                            function(y)  
+                                              unlist(purrr::map(organized_listed_ids[[i]][[1]][seq((1+((y-1)*50)),(y*50))], ~ .[!is.na(.)])))
+      } 
+      for (j in 1:length(organized_listed_ids[[i]])) {
+        organized_listed_ids[[i]][[j]] <- list(organized_listed_ids[[i]][[j]])
+        if (length(organized_listed_ids[[i]]) > 1) {
+          names(organized_listed_ids[[i]])[j] <- paste0("set", as.character(j))
+        } else {
+          names(organized_listed_ids[[i]])[j] <- "set"
+        }
+        for (k in 1:length(organized_listed_ids[[i]][[j]])) {
+          names(organized_listed_ids[[i]][[j]])[k] <- "items"
+        }
+      }
+      names(organized_listed_ids)[i] <- schema_label
+    }
+    for (l in 1:length(organized_listed_ids)) {
+      for (m in 1:length(organized_listed_ids[[l]])) {
+        if (names(organized_listed_ids)[l] == "dropdown" |
+            names(organized_listed_ids)[l] == "dropdown_option" | 
+            names(organized_listed_ids)[l] == "unknown") {
+          organized_listed_ids[[l]][[m]][[2]] <- NA
+        } else {
+          organized_listed_ids[[l]][[m]][[2]] <- gsub("ENTITY_ID_VARIABLE",
+                                                      paste(organized_listed_ids[[l]][[m]][[1]], collapse = "%2C"),
+                                                      entity_list[which(lapply(entity_list, 
+                                                                               function(x) x[1]) == names(organized_listed_ids)[l])][[1]][2])
+        }
+        names(organized_listed_ids[[l]][[m]])[2] <- "entity_list_URL"
+      }
+    }
+    return(organized_listed_ids)
+  }
+  
   if (missing(entity_id)) {
     stop("'entity_id' input is missing.")
   }
@@ -103,5 +147,6 @@ infer_entity_type <- function(entity_id) {
       names(res)[[i]] <- .entity_lookup(entity_id=entity_id[[i]], entity_list=entity_list)
     }
   }
-  return(res)
+  organized_res <- .entity_match(listed_ids = res, entity_list = entity_list)
+  return(organized_res)
 }
