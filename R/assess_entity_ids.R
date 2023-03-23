@@ -1,4 +1,4 @@
-assess_entity_ids <- function(entity_id_list, benchling_api_key=Sys.getenv("BENCHLING_DEV_API_KEY")) {
+assess_entity_ids <- function(entity_id_list, benchling_api_key=Sys.getenv("BENCHLING_API_KEY")) {
   entity_list <- list("bat" = c("batch", 
                                 "https://hemoshear-dev.benchling.com/api/v2/batches?pageSize=50&sort=name&ids=ENTITY_ID_VARIABLE",
                                 "https://hemoshear-dev.benchling.com/api/v2/batches/ENTITY_ID_VARIABLE",
@@ -56,13 +56,15 @@ assess_entity_ids <- function(entity_id_list, benchling_api_key=Sys.getenv("BENC
     stop("Benchling API key is missing or empty.")
   }
   inferred_types <- infer_entity_type(entity_id=entity_id)
+  invalid_ids <- list()
   for (i in 1:length(inferred_types)) {
+    invalid_ids_set <- list()
     for (j in 1:length(inferred_types[[1]])) {
       if (!is.na(inferred_types[[i]][[j]][[2]])) {
         content <- httr::content(httr::GET(inferred_types[[i]][[j]][[2]], 
                                            httr::authenticate(benchling_api_key, '')))
         if (!is.null(content$error)) {
-          invalid_ids <- unlist(content$error$invalidIds)
+          invalid_ids_set <- unlist(content$error$invalidIds)
         }
       }
 
