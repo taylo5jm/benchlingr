@@ -14,7 +14,7 @@
 #' @return A vector where the names are the warehouse names for the fields 
 #' in the schema and the values are the warehouse names for the entities in the 
 #' schema 
-#' @export
+#' @keywords internal
 #' @examples \dontrun{
 #' conn <- connect_warehouse(
 #' "hemoshear-dev",

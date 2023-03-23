@@ -33,3 +33,4 @@ conn <- connect_warehouse(
  .map_entity_field_names_to_warehouse_tables(conn, d)
  }
 }
+\keyword{internal}
