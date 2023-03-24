@@ -44,7 +44,7 @@
   # Trim the data frame down to the name and ID we care about. 
   ## The first column here is the name of the schema
   ## The second column is the name of the *field* that is the entity type. 
-  schema <- dplyr::select(schema, .data$id, .data$system_name)
+  schema <- dplyr::select(schema, "id", "system_name")
   colnames(schema) <- c('target_schema_id', 'entity_system_name')
   # Join the names we need to the original schema
   res %<>% dplyr::inner_join(schema, by='target_schema_id')

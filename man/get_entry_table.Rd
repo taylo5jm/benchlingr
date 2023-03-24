@@ -8,7 +8,6 @@ get_entry_table(
   entry,
   day = NULL,
   table_position = NULL,
-  table_name = NULL,
   return_table_name = TRUE
 )
 }
@@ -20,7 +19,7 @@ get_entry_table(
 \item{table_position}{Integer for the position of the table in the notebook entry list. 
 See `list_entry_tables`.}
 
-\item{return_return_table_name}{bool Determines how the name of the table in the notebook 
+\item{return_table_name}{bool Determines how the name of the table in the notebook 
 entry is included in the output.
 If `TRUE` is selected, the table name will be added as a new column
 to the data frame. If `FALSE`, then the table name will be ignored.}
@@ -34,9 +33,11 @@ Read unstructured table in a notebook entry
 }
 \examples{
 \dontrun{
-client <- connect_sdk(tenant="https://hemoshear-dev.benchling.com",
-                             api_key=Sys.getenv("BENCHLING_DEV_API_KEY"))
+client <- benchlingr::connect_sdk(
+    tenant="https://hemoshear-dev.benchling.com",
+    api_key = Sys.getenv("BENCHLING_DEV_API_KEY"))
 entry <- client$entries$get_entry_by_id("etr_T3WZTyAe")
+
 table_indices <- benchlingr:::list_entry_tables(entry)
 print(table_indices)
 a_table <- get_entry_table(entry, day=1, table_position=2)
