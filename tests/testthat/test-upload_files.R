@@ -1,6 +1,6 @@
 # test-upload_files.R
 
-client <- benchlingr::benchling_api_auth(
+client <- benchlingr::connect_sdk(
   tenant="https://hemoshear-dev.benchling.com",
   api_key = Sys.getenv("BENCHLING_DEV_API_KEY"))
 
@@ -15,7 +15,7 @@ test_that("upload_files.character works for one file", {
 
 test_that("upload_files.character works for two files", {
   res <- benchlingr:::upload_files.character(
-    file=c("test-upload_files.R", "test-find_entry_tables.R"), 
+    file=c("test-upload_files.R", "test-list_entry_tables.R"), 
     client=client)
   testthat::expect_length(res, 2)
 })
@@ -38,7 +38,7 @@ test_that("upload_files.character works for one file", {
 
 test_that("upload_files.character works for two files", {
   res <- benchlingr:::upload_files.list(
-    file=list(c("test-upload_files.R","test-list_schemas_in_entry.R"), "test-find_entry_tables.R"), 
+    file=list(c("test-upload_files.R","test-list_schemas_in_entry.R"), "test-list_entry_tables.R"), 
     client=client)
   testthat::expect_length(res, 2)
 })

@@ -47,7 +47,7 @@ upload_files.list <- function(file, client, blob_link_cols=NULL) {
 #' to be uploaded
 #' @keywords internal
 #' @examples \dontrun{
-#' client <- benchlingr::benchling_api_auth(
+#' client <- benchlingr::connect_sdk(
 #' tenant="https://hemoshear-dev.benchling.com",
 #' api_key = Sys.getenv("BENCHLING_DEV_API_KEY"))
 #' df <- data.frame(file = "upload_files.R")

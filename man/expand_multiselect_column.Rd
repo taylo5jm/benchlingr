@@ -14,7 +14,7 @@ expand_multiselect_column(
 )
 }
 \arguments{
-\item{conn}{Database connection opened by `warehouse_connect`. This is used
+\item{conn}{Database connection opened by `connect_warehouse`. This is used
 to ensure that the specified `column` is actually a multi-select field
 defined in the schema.}
 
@@ -45,7 +45,7 @@ columns in the data frame.
 }
 \examples{
 \dontrun{
-conn <- warehouse_connect("hemoshear-dev", 
+conn <- connect_warehouse("hemoshear-dev", 
     username = Sys.getenv("BENCHLING_DEV_WAREHOUSE_USERNAME"),
     password = Sys.getenv("BENCHLING_DEV_WAREHOUSE_PASSWORD"))
 d <- DBI::dbGetQuery(conn, "SELECT plate,analytes FROM simple_plate_analyte_mapping$raw 

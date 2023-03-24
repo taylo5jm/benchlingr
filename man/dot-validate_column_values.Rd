@@ -17,9 +17,9 @@
 )
 }
 \arguments{
-\item{conn}{Database connection typically opened with `warehouse_connect`.}
+\item{conn}{Database connection typically opened with `connect_warehouse`.}
 
-\item{client}{A Benchling SDK object typically created with `benchling_api_auth`.}
+\item{client}{A Benchling SDK object typically created with `connect_sdk`.}
 
 \item{errors}{Character vector of errors.}
 

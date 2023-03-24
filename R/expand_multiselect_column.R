@@ -6,13 +6,13 @@
 #' @include util.R 
 #' @importFrom rlang .data
 #' @importFrom magrittr %>%
-#' @param conn Database connection opened with `warehouse_connect`.
+#' @param conn Database connection opened with `connect_warehouse`.
 #' @param df Data frame retrieved from the data warehouse.
 #' @return Character vector where the names are the names of the multi-select
 #' columns in the data frame and the values are the positions of the multi-select
 #' columns in the data frame. 
 #' @examples \dontrun{
-#' conn <- warehouse_connect("hemoshear-dev", 
+#' conn <- connect_warehouse("hemoshear-dev", 
 #'     username = Sys.getenv("BENCHLING_DEV_WAREHOUSE_USERNAME"),
 #'     password = Sys.getenv("BENCHLING_DEV_WAREHOUSE_PASSWORD"))
 #' res <- DBI::dbGetQuery(conn, "SELECT * FROM simple_plate_analyte_mapping$raw")
@@ -44,7 +44,7 @@ list_multiselect_columns <- function(conn, df) {
 #' columns in the data frame. 
 #' 
 #' @importFrom rlang .data
-#' @param conn Database connection opened by `warehouse_connect`. This is used
+#' @param conn Database connection opened by `connect_warehouse`. This is used
 #' to ensure that the specified `column` is actually a multi-select field
 #' defined in the schema. 
 #' @param df Input data frame retrieved from the data warehouse.
@@ -62,7 +62,7 @@ list_multiselect_columns <- function(conn, df) {
 #' @return Data frame with the values in `column` unpacked. 
 #' @export
 #' @examples \dontrun{
-#' conn <- warehouse_connect("hemoshear-dev", 
+#' conn <- connect_warehouse("hemoshear-dev", 
 #'     username = Sys.getenv("BENCHLING_DEV_WAREHOUSE_USERNAME"),
 #'     password = Sys.getenv("BENCHLING_DEV_WAREHOUSE_PASSWORD"))
 #' d <- DBI::dbGetQuery(conn, "SELECT plate,analytes FROM simple_plate_analyte_mapping$raw 

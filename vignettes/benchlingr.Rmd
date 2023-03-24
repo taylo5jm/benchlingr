@@ -24,7 +24,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-```{r setup}
+```{r setup, include=FALSE}
 library(benchlingr)
 library(magrittr)
 ```
@@ -81,15 +81,15 @@ The `benchlingr` R package uses the official Benchling Python SDK to access the 
 config_sdk_env()
 ```
 
-To create an interface to the Benchling API, use the `benchling_api_auth` function after you have set the `BENCHLING_API_KEY` environment variable as described in the Python SDK configuration section. 
+To create an interface to the Benchling API, use the `connect_sdk` function after you have set the `BENCHLING_API_KEY` environment variable as described in the Python SDK configuration section. 
 
 ```{r, eval=has_credentials}
-client <- benchling_api_auth(
+client <- connect_sdk(
   tenant="https://hemoshear-dev.benchling.com",
   api_key=Sys.getenv("BENCHLING_DEV_API_KEY"))
 ```
 
-The `benchling_api_auth` function returns the [facade object](https://benchling.com/sdk-docs/benchling_sdk.benchling.html) from the Benchling Python SDK that facilitates interaction with the API. Most of the attributes of the facade object are the [services in the Benchling API documentation](https://benchling.com/api/reference). 
+The `connect_sdk` function returns the [facade object](https://benchling.com/sdk-docs/benchling_sdk.benchling.html) from the Benchling Python SDK that facilitates interaction with the API. Most of the attributes of the facade object are the [services in the Benchling API documentation](https://benchling.com/api/reference). 
 
 
 ```{r, eval=has_credentials}
@@ -123,16 +123,16 @@ BENCHLING_WAREHOUSE_PASSWORD=xxxxxxxxxxx
 
 The Benchling data warehouse is a read-only, Postgres database that can be used to easily extract data pertaining to items such as the inventory, entities, results, and noteboook entries using SQL queries. Before moving on, we recommend that the user reads the [official Benchling documentation](https://docs.benchling.com/docs/getting-started) for the data warehouse. The rest of this section will assume the user has a basic understanding of Benchling's data warehouse, as we will discuss practical considerations of working with the database, including how to use `benchlingr` tools to streamline your interactions with the database. 
 
-To connect to the data warehouse on your tenant with the `benchlingr` package, use the `warehouse_connect` function. By default, the function looks for two environment variables in `.Renviron`: `BENCHLING_WAREHOUSE_USERNAME` and `BENCHLING_WAREHOUSE_PASSWORD`. If this function is not working for you, please see the instructions for configuration in the  [official documentation](https://docs.benchling.com/docs/getting-started#warehouse-configuration). Once you are able to connect to the database using the instructions in the official tutorial, the `warehouse_connect` function should work properly, assuming that the aforementioned environment variables are set. 
+To connect to the data warehouse on your tenant with the `benchlingr` package, use the `connect_warehouse` function. By default, the function looks for two environment variables in `.Renviron`: `BENCHLING_WAREHOUSE_USERNAME` and `BENCHLING_WAREHOUSE_PASSWORD`. If this function is not working for you, please see the instructions for configuration in the  [official documentation](https://docs.benchling.com/docs/getting-started#warehouse-configuration). Once you are able to connect to the database using the instructions in the official tutorial, the `connect_warehouse` function should work properly, assuming that the aforementioned environment variables are set. 
 
 ```{r, eval=has_credentials}
-conn <- warehouse_connect(tenant = "hemoshear-dev",
+conn <- connect_warehouse(tenant = "hemoshear-dev",
                           username = Sys.getenv("BENCHLING_DEV_WAREHOUSE_USERNAME"),
                           password = Sys.getenv("BENCHLING_DEV_WAREHOUSE_PASSWORD"))
 class(conn)
 ```
 
-The `warehouse_connect` function will return a Postgres SQL database connection object (`PqConnection`), which can be used to make queries against the database using the `DBI` package in R. To verify that you are connected to the database for your Benchling tenant, one can use the `dbIsValid` to display information about the connection itself. 
+The `connect_warehouse` function will return a Postgres SQL database connection object (`PqConnection`), which can be used to make queries against the database using the `DBI` package in R. To verify that you are connected to the database for your Benchling tenant, one can use the `dbIsValid` to display information about the connection itself. 
 
 ```{r, eval=has_credentials}
 DBI::dbIsValid(conn)
@@ -149,7 +149,7 @@ DBI::dbDisconnect(conn)
 One can use the `DBI::dbListTables` function to see all the tables in the database. You'll notice that every "table" in the database is actually comprised of two tables: an unedited version of the data, referred to as the "raw" table, and a cleaned up Postgres view of the data. For example, the `analyte` table is the Postgres view for a custom entity schema we defined, and the `analyte$raw` table is unedited table. 
 
 ```{r, eval=has_credentials}
-conn <- warehouse_connect(
+conn <- connect_warehouse(
   tenant = "hemoshear-dev",
   username = Sys.getenv("BENCHLING_DEV_WAREHOUSE_USERNAME"),
   password = Sys.getenv("BENCHLING_DEV_WAREHOUSE_PASSWORD"))
@@ -298,7 +298,7 @@ head(res)
 Notebook entries can be found in the `entry` table in the data warehouse. Note, this table contains some of the notebook entry metadata, but not the content of the entry itself.
 
 ```{r, eval=has_credentials}
-conn <- warehouse_connect(
+conn <- connect_warehouse(
   "hemoshear-dev",
   username = Sys.getenv("BENCHLING_DEV_WAREHOUSE_USERNAME"),
   password = Sys.getenv("BENCHLING_DEV_WAREHOUSE_PASSWORD"))
@@ -326,10 +326,10 @@ Benchling users can record information in unstructured tables within notebook en
 ----
 
 
-The `read_entry_tables` function extracts all unstructured tables in a notebook entry, and returns them as a list of data frames for further processing in R. 
+The `get_entry_tables` function extracts all unstructured tables in a notebook entry, and returns them as a list of data frames for further processing in R. 
 
 ```{r, eval=has_credentials}
-tables <- read_entry_tables(entry)
+tables <- get_entry_tables(entry)
 tables[[1]]
 ```
 
@@ -340,13 +340,13 @@ In addition to unstructured tables, Benchling users can create "plate diagrams" 
 
 ![Plate diagrams in a Benchling notebook entry.](img/plate_diagram_entry.png)
 
-It is useful to convert these tables into long form for further processing in R. To do so, one can start with the `read_plate_diagrams` function instead of the `read_entry_tables` function. The `read_plate_diagrams` will extract the plate diagrams from the notebook entry and convert the output data frames into long form tables with three columns: `row`, `column`, and `content`. The `row` is a letter for the row on the plate, the `column` is an integer for the column on the plate, and `content` is the text that appears in the cell in the table. 
+It is useful to convert these tables into long form for further processing in R. To do so, one can start with the `get_plate_diagrams` function instead of the `get_entry_tables` function. The `get_plate_diagrams` will extract the plate diagrams from the notebook entry and convert the output data frames into long form tables with three columns: `row`, `column`, and `content`. The `row` is a letter for the row on the plate, the `column` is an integer for the column on the plate, and `content` is the text that appears in the cell in the table. 
 
 The names of the list will be the names of the tables in the notebook entry.  
 
 ```{r, eval=has_credentials}
 entry <- client$entries$get_entry_by_id("etr_f1bpDIes")
-diagrams <- read_plate_diagrams(entry)
+diagrams <- get_plate_diagrams(entry)
 str(diagrams)
 head(diagrams$Well1)
 ```

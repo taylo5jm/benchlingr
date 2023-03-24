@@ -1,6 +1,6 @@
 # test-expand_multiselect_column.R
 
-conn <- warehouse_connect("hemoshear-dev", 
+conn <- connect_warehouse("hemoshear-dev", 
      username = Sys.getenv("BENCHLING_DEV_WAREHOUSE_USERNAME"),
      password = Sys.getenv("BENCHLING_DEV_WAREHOUSE_PASSWORD"))
 

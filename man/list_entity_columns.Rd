@@ -8,7 +8,7 @@ to a warehouse table.}
 list_entity_columns(conn, df)
 }
 \arguments{
-\item{conn}{Database connection opened with `warehouse_connect`}
+\item{conn}{Database connection opened with `connect_warehouse`}
 
 \item{df}{Data frame with entity columns}
 }
@@ -22,7 +22,7 @@ to a warehouse table.
 }
 \examples{
 \dontrun{
-conn <- warehouse_connect("hemoshear-dev", 
+conn <- connect_warehouse("hemoshear-dev", 
     username = Sys.getenv("BENCHLING_DEV_WAREHOUSE_USERNAME"),
     password = Sys.getenv("BENCHLING_DEV_WAREHOUSE_PASSWORD"))
 res <- DBI::dbGetQuery(conn, "SELECT * FROM simple_plate_analyte_mapping$raw")

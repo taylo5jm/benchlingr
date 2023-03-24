@@ -1,4 +1,4 @@
-# find_entry_tables.R
+# list_entry_tables.R
 
 #' Find unstructured tables (not registry or results) in a notebook entry.
 #' 
@@ -13,15 +13,15 @@
 #' @return List where names are days and elements are indices in the `notes` attribute that
 #'    correspond to tables in the entry.
 #' @examples \dontrun{
-#' client <- benchlingr::benchling_api_auth(
+#' client <- benchlingr::connect_sdk(
 #'     tenant="https://hemoshear-dev.benchling.com",
 #'     api_key = Sys.getenv("BENCHLING_DEV_API_KEY"))
 #' entry <- client$entries$get_entry_by_id("etr_T3WZTyAe")
-#' benchlingr::find_entry_tables(entry)
+#' benchlingr::list_entry_tables(entry)
 #' }
 #' @export
 
-find_entry_tables <- function(entry, min_rows=NULL) {
+list_entry_tables <- function(entry, min_rows=NULL) {
   if (missing(entry)) {
     stop("Entry input is missing.")
   }

@@ -8,7 +8,7 @@
 #' 
 #' @importFrom methods is
 #' @include vec2sql_tuple.R
-#' @param conn Database connection opened by `warehouse_connect`
+#' @param conn Database connection opened by `connect_warehouse`
 #' @param df Data frame with one or more entity columns. The data frame
 #' must also have a column called `schema`, which indicates the schema
 #' name of the warehouse table. 
@@ -79,7 +79,7 @@
 #' data frame. 
 #' 
 #' @include list_entity_columns.R
-#' @param conn Database connection opened with `warehouse_connect`
+#' @param conn Database connection opened with `connect_warehouse`
 #' @param df Data frame with one or more entity columns. The data frame
 #' must also have a column called `schema`, which indicates the schema
 #' name of the warehouse table. 
@@ -100,7 +100,7 @@
 #' corresponds to an entity column in the input data frame.
 #' @export
 #' @examples \dontrun{
-#' conn <- warehouse_connect("hemoshear-dev", 
+#' conn <- connect_warehouse("hemoshear-dev", 
 #'    username = Sys.getenv("BENCHLING_DEV_WAREHOUSE_USERNAME"),
 #'    password = Sys.getenv("BENCHLING_DEV_WAREHOUSE_PASSWORD"))
 #' df <- DBI::dbGetQuery(conn, "SELECT * FROM simple_plate_analyte_mapping$raw")

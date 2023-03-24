@@ -36,7 +36,7 @@ is_schema_in_dataframe <- function(df) {
 
 #' Raise exception if the `schema` column is not in the data frame.
 #'  Dataframe validation
-#' @param conn Data warehouse connection typically opened by `warehouse_connect`.
+#' @param conn Data warehouse connection typically opened by `connect_warehouse`.
 #' @param client API facade object
 #' @param df data.frame with table from the data warehouse.
 #' @return error list

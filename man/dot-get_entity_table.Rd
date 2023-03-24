@@ -7,7 +7,7 @@
 .get_entity_table(conn, df, column, return_cols = c("id", "name$"), key = "id")
 }
 \arguments{
-\item{conn}{Database connection opened by `warehouse_connect`}
+\item{conn}{Database connection opened by `connect_warehouse`}
 
 \item{df}{Data frame with one or more entity columns. The data frame
 must also have a column called `schema`, which indicates the schema

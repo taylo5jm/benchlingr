@@ -7,7 +7,7 @@
 get_dropdown(conn, name)
 }
 \arguments{
-\item{conn}{Database connection opened with `warehouse_connect`.}
+\item{conn}{Database connection opened with `connect_warehouse`.}
 
 \item{name}{Schema name for the dropdown}
 }

@@ -2,7 +2,7 @@
 #' 
 #' 
 #' @importFrom magrittr %>%
-#' @param conn Database connection opened with `warehouse_connect`.
+#' @param conn Database connection opened with `connect_warehouse`.
 #' @param schema_id Schema ID for the dropdown.
 #' @return character vector of dropdown menu options 
 #' @export
@@ -20,7 +20,7 @@ get_dropdown_options <- function(conn, schema_id) {
 
 #' Get metadata for a dropdown menu
 #' 
-#' @param conn Database connection opened with `warehouse_connect`.
+#' @param conn Database connection opened with `connect_warehouse`.
 #' @param name Schema name for the dropdown
 #' @export
 #' 

@@ -9,13 +9,13 @@
 #' might be "My cell line". 
 #' 
 #' @include get_entity_table.R
-#' @param conn Database connection opened by `warehouse_connect`.
+#' @param conn Database connection opened by `connect_warehouse`.
 #' @param df Data frame with entity columns.
 #' @return data.frame with the Benchling entity identifiers replaced by the 
 #' names of the entities. 
 #' @export
 #' @examples \dontrun{
-#' conn <- warehouse_connect("hemoshear-dev", 
+#' conn <- connect_warehouse("hemoshear-dev", 
 #'     username = Sys.getenv("BENCHLING_DEV_WAREHOUSE_USERNAME"),
 #'     password = Sys.getenv("BENCHLING_DEV_WAREHOUSE_PASSWORD"))
 #' 
