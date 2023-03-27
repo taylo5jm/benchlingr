@@ -90,9 +90,7 @@ test_that("create_assay_results will work when a file needs to be uploaded.", {
       tenant = "https://hemoshear-dev.benchling.com",
       api_key = Sys.getenv("BENCHLING_DEV_API_KEY"),
       fk_type = "name")),
-    1
-  )
-}
+    1)}
 )
 
 test_that("create_assay_results will work when a file
