@@ -126,4 +126,22 @@ test_that("create_assay_results with more than 100 results.", {
     length(created_results), 110)
 })
 
+test_that("create_assay_results works with schema that has multi-select field and
+          when fk_type has multiple values.", {
+  df <- tibble::tibble(
+    plate = c(as.integer(1), 
+              as.integer(2)),
+    analytes = list(list("bfi_9fKcrORv", "bfi_VVamxrKQ"), list( "bfi_VVamxrKQ")),
+    file = c("test-create_assay_results.R", "test-download_blobs.R"))
+  res <- create_assay_results(
+    conn=conn, client=client, df=df,
+    project_id="src_ZRvTYOgM",
+    schema_id="assaysch_nIw4yAq8",
+    fk_type=c(analytes = "id", file = "name"),
+    tenant="hemoshear-dev.benchling.com",
+    api_key=Sys.getenv("BENCHLING_DEV_API_KEY"))
+
+  expect_equal(length(res), 2)
+
+})
 DBI::dbDisconnect(conn)
