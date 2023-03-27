@@ -2,7 +2,7 @@
 % Please edit documentation in R/list_entry_tables.R
 \name{list_entry_tables}
 \alias{list_entry_tables}
-\title{Find unstructured tables (not registry or results) in a notebook entry.}
+\title{Find unstructured tables (not registry, results, or look-up) in a notebook entry.}
 \usage{
 list_entry_tables(entry, min_rows = NULL)
 }

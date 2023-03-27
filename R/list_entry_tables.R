@@ -1,6 +1,6 @@
 # list_entry_tables.R
 
-#' Find unstructured tables (not registry or results) in a notebook entry.
+#' Find unstructured tables (not registry, results, or look-up) in a notebook entry.
 #' 
 #' This function returns the locations of unstructured tables in a notebook entry.
 #' It does not show the user where any registration or results tables might be 

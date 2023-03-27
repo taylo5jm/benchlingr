@@ -134,19 +134,23 @@ create_assay_results <- function(conn, client, df, project_id, schema_id,
 }
 
 
-# Add these convenience functions for getting hte ProjectIds and results schema Ids
+# Add these convenience functions for getting the ProjectIds and results schema Ids
 #' Get Benchling project metadata
 #' 
 #' @param conn Database connection opened with `connect_warehouse`.
 #' @return data.frame with `id` and `name` attributes for Benchling projects. 
 #' @export
-
 get_project_ids <- function(conn) {
   return(DBI::dbGetQuery(conn, "SELECT id,name FROM project"))
 }
 
 
-get_results_schema_ids <- function(conn) {
+#' Get Benchling assay results metadata
+#' 
+#' @param conn Database connection opened with `connect_warehouse`.
+#' @return data.frame with `id` and `name` attributes for Benchling assay results 
+#' @export
+get_assay_results_schema_ids <- function(conn) {
   return(DBI::dbGetQuery(
     conn,
     "SELECT id,name FROM schema WHERE schema_type = 'assay_result'"))
