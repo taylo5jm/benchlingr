@@ -418,5 +418,55 @@ ggplot(diagrams$Plate1, aes(x=column, y=row, label=content)) +
 ggplot2::text
 ```
 
+# Creating assay results
+
+In Benchling, [assay results](https://help.benchling.com/hc/en-us/articles/9684255418765-Use-a-Result-table) are structured tables that allow users to record experimental metadata and data in a standardized manner. The Benchling API enables developers to create assay results in the system and `benchlingr` provides an interface for interacting with the relevant endpoints starting with a data frame. 
+
+First, you need to find the ID of the assay results schema. If you are already working in the Benchling GUI, you can find it using the registry URL:
+
+[Red box indicates the schema ID in the GUI. The column names of the input data frame must match the field names in the "Warehouse name" column.](vignettes/img/assay_result_schema_id_gui.jpg)
+
+Alternatively, you can use the `get_results_schema_ids` function in the `benchlingr` package to run a simple warehouse query that will extract the names and identifiers of the current assay result schemas. 
+
+```{r}
+get_results_schema_ids(conn)
+```
+
+Assay results are also tied to Benchling projects, so you will need to find the project identifier in order to create results. While you can also use the Benchling GUI to find the identifier you need, the `get_project_ids` function in the `benchlingr` package will the names and identifiers of the Benchling projects, similar to `get_results_schema_ids`. 
+
+
+```{r}
+get_project_ids(conn)
+```
+
+
+
+Now, you will need to assemble a data frame that can be uploaded to the Benchling system. The column names of your data frame must match the column names of the table in the data warehouse. In the example, we are working with, the column names are `plate`, `analytes`, and `file`. 
+
+```{r}
+df <- tibble::tibble(plate = as.integer(c(1, 2)),
+                 analytes = list(c("bfi_9fKcrORv", "bfi_VVamxrKQ"), c( "bfi_VVamxrKQ")),
+                 file = c("benchlingr.Rmd", "benchlingr.Rmd"))
+df
+```
+
+```{r}
+create_assay_results(conn=conn, client=client, df=df,
+                     project_id="src_ZRvTYOgM",
+                     schema_id="assaysch_nIw4yAq8",
+                     fk_type="id", tenant="hemoshear-dev.benchling.com",
+                     api_key=Sys.getenv("BENCHLING_DEV_API_KEY"))
+```
+
+you will need to create a database connection and initialize the SDK facade object. 
+
+create_assay_results <- function(conn, client, df, project_id, schema_id,
+                                 fk_type = 'name',
+                                 tenant = Sys.getenv("BENCHLING_TENANT"),
+                                 api_key = Sys.getenv("BENCHLING_API_KEY")) {
+
+
+
+
 
 
