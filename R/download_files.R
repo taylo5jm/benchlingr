@@ -48,6 +48,47 @@ download_blobs <- function(client, file_map, outdir,
     download_files(client, file_map)
 }
 
+#' @keywords internal
+.download_blobs_in_warehouse_table <- function(client, df, column, outdir, outdir_column) {
+  reticulate::source_python(
+    system.file("python", "download_files.py", package = "benchlingr"))
+  file_col <- purrr::map(as.character(df[[column]]),
+                         ~ RJSONIO::fromJSON(.))
+  # If user wants to save results in child directories named by result ID,
+  # then carry that information with the rest of the file metadata.
+  for (i in 1:length(file_col)) {
+    # Single value
+    if (is.character(file_col[[i]])) {
+      if (!is.null(outdir_column)) {
+        file_col[[i]]['outdir'] <- df[[outdir_column]][i]
+      } else {
+        file_col[[i]]['outdir'] <- outdir
+      }
+    } else { # multi-select
+      for (j in 1:length(file_col[[i]])) {
+        if (!is.null(outdir_column)) {
+          file_col[[i]][[j]]['outdir'] <- df[[outdir_column]][i]
+        } else {
+          file_col[[i]][[j]]['outdir'] <- outdir
+        }
+      }
+    }
+  }
+  unlisted_file_col <- unlist(file_col, recursive = FALSE)
+  
+  # multi-select
+  if (is.list(unlisted_file_col)) {
+    file_col <- unlisted_file_col
+  }
+  
+  file_map <- purrr::map_chr(
+    file_col, ~ file.path(.['outdir'], .['name']))
+  
+  names(file_map) <- purrr::map_chr(file_col, ~ .['id'])
+  file_map <- as.list(file_map)
+  download_files(client, file_map)
+}
+
 #' Download blobs contained within a warehouse table. 
 #' 
 #' @include util.R
@@ -132,47 +173,7 @@ download_blobs_in_warehouse_table <- function(client,conn,  df, columns=NULL,
     }
   }
 
-  .download_blobs <- function(client, df, column, outdir, outdir_column) {
-    reticulate::source_python(
-      system.file("python", "download_files.py", package = "benchlingr"))
-    file_col <- purrr::map(as.character(df[[column]]),
-                           ~ RJSONIO::fromJSON(.))
-    # If user wants to save results in child directories named by result ID,
-    # then carry that information with the rest of the file metadata.
-    for (i in 1:length(file_col)) {
-      # Single value
-      if (is.character(file_col[[i]])) {
-        if (!is.null(outdir_column)) {
-          file_col[[i]]['outdir'] <- df[[outdir_column]][i]
-        } else {
-          file_col[[i]]['outdir'] <- outdir
-        }
-      } else { # multi-select
-        for (j in 1:length(file_col[[i]])) {
-          if (!is.null(outdir_column)) {
-            file_col[[i]][[j]]['outdir'] <- df[[outdir_column]][i]
-          } else {
-            file_col[[i]][[j]]['outdir'] <- outdir
-            }
-          }
-      }
-    }
-    unlisted_file_col <- unlist(file_col, recursive = FALSE)
-  
-    # multi-select
-    if (is.list(unlisted_file_col)) {
-      file_col <- unlisted_file_col
-    }
-    
-    file_map <- purrr::map_chr(
-        file_col, ~ file.path(.['outdir'], .['name']))
-
-    names(file_map) <- purrr::map_chr(file_col, ~ .['id'])
-    file_map <- as.list(file_map)
-    download_files(client, file_map)
-  }
-
-  purrr::walk(columns, ~ .download_blobs(client, df, ., outdir,
-                                         outdir_column))
+  purrr::walk(columns, ~ .download_blobs_in_warehouse_table(
+    client, df, ., outdir, outdir_column))
   return(df)
 }
