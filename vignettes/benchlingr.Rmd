@@ -424,7 +424,7 @@ In Benchling, [assay results](https://help.benchling.com/hc/en-us/articles/96842
 
 First, you need to find the ID of the assay results schema. If you are already working in the Benchling GUI, you can find it using the registry URL:
 
-[Red box indicates the schema ID in the GUI. The column names of the input data frame must match the field names in the "Warehouse name" column.](vignettes/img/assay_result_schema_id_gui.jpg)
+![Red boxes indicate the schema ID in the GUI and the field names. The column names of the input data frame must match the field names in the "Warehouse name" column.](img/assay_result_id_gui.jpg)
 
 Alternatively, you can use the `get_results_schema_ids` function in the `benchlingr` package to run a simple warehouse query that will extract the names and identifiers of the current assay result schemas. 
 
@@ -440,8 +440,40 @@ get_project_ids(conn)
 ```
 
 
+Now, you will need to assemble a data frame that can be uploaded to the Benchling system. The column names of your data frame must match the column names of the table in the data warehouse. In the example, we are working with, the column names are `plate_number`, `scientist`, and `temperature`. 
 
-Now, you will need to assemble a data frame that can be uploaded to the Benchling system. The column names of your data frame must match the column names of the table in the data warehouse. In the example, we are working with, the column names are `plate`, `analytes`, and `file`. 
+```{r}
+df <- data.frame(
+  plate_number = as.integer(c(1, 2)),
+  scientist = c("Mary", "Gordon"),
+  temperature = c(22.3, 22.1))
+```
+
+```{r}
+create_assay_results(
+  conn=conn, client=client, df=df,
+  project_id="src_ZRvTYOgM", schema_id="assaysch_72DzZjn5",
+  tenant="hemoshear-dev.benchling.com",
+  api_key=Sys.getenv("BENCHLING_DEV_API_KEY"))
+```
+If your upload was successful, the `create_assay_results` function will return the identifiers for the results that were created. 
+
+To create a result with entity links, the process becomes more involved. Consider the next example schema -- it is the same as the one before with an additional custom entity column of schema "Analyte". 
+
+![Second example schema](img/assay_result_test_schema2.png)
+```{r}
+assaysch_72DzZjn5
+```
+
+When uploading results with entity links, you have the choice of providing the entity name or identifier in the input data frame. The `fk_type` argument is a named vector where the names are the column names of the entity fields in your results schema and the values are either `id` or `name` to indicate whether the entity value is the primary identifier or name, respectively.
+
+
+
+
+
+
+
+Blob links, or file attachments, work differently than entity links. While any entity link passed to `create_assay_results` must refer to an entity currently registered in Benchling, the user does not need to upload a file (blob) to Benchling before creating results, because the `create_assay_results` can upload the file and attach its identifier to the results for you.
 
 ```{r}
 df <- tibble::tibble(plate = as.integer(c(1, 2)),
@@ -450,11 +482,16 @@ df <- tibble::tibble(plate = as.integer(c(1, 2)),
 df
 ```
 
+
+
+If the file already exists in Benchling, you can provide the blob identifier to `create_assay_results` and the function will not upload any new files because they already exist in the system. 
+
+
 ```{r}
 create_assay_results(conn=conn, client=client, df=df,
                      project_id="src_ZRvTYOgM",
                      schema_id="assaysch_nIw4yAq8",
-                     fk_type="id", tenant="hemoshear-dev.benchling.com",
+                     fk_type=c(analytes = "id", file="name"), tenant="hemoshear-dev.benchling.com",
                      api_key=Sys.getenv("BENCHLING_DEV_API_KEY"))
 ```
 
