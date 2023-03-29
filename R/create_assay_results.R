@@ -76,7 +76,7 @@ create_assay_results <- function(conn, client, df, project_id, schema_id,
     # If all looks good, let's upload the files if we need to
     if (any(colnames(df) %in% blob_link_column_names)) {
       if (any(fk_type[blob_link_column_names] == "name")) {
-        df <- upload_files(
+        df <- .upload_files(
           file = df, client = client,
           blob_link_cols = blob_link_column_names)
       } else {
