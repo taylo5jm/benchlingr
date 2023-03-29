@@ -95,8 +95,10 @@ download_blobs <- function(client, file_map, outdir,
 #' @importFrom magrittr %>%
 #' @param client A Benchling API client object. 
 #' @param conn PqConnection object.
-#' @param df Data frame retrieved from the Benchling data warehouse.
-#' Must have the `schema` column included.
+#' @param df Data frame with one or more blob link (file attachment) columns. 
+#' The data frame must also have a column called `schema`, which indicates the schema
+#' name of the warehouse table. One can use `DBI::dbReadTable` or `DBI::dbGetQuery`
+#' to retrieve tables from the data warehouse.
 #' @param columns Character vector of column names in the table to download 
 #' blobs from. 
 #' @param outdir Directory where the files should be saved on the local machine.
