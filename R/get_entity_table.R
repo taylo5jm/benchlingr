@@ -1,18 +1,19 @@
 # get_entity_table.R
 
-#' Get additional information about entities in a warehouse table (single entity column.)
+#' Get additional information about entity links in a warehouse table (single entity column.)
 #' 
 #' Given a data frame retrieved from the Benchling warehouse, extract the
-#' additional table in the warehouse that correspond to the entities in the 
-#' data frame. 
+#' additional table in the warehouse that correspond to the entity links in
+#' the table. 
 #' 
 #' @importFrom methods is
 #' @include vec2sql_tuple.R
 #' @param conn Database connection opened by `connect_warehouse`
-#' @param df Data frame with one or more entity columns. The data frame
+#' @param df Data frame with one or more entity link columns. The data frame
 #' must also have a column called `schema`, which indicates the schema
-#' name of the warehouse table. 
-#' @param column Name of the entity column. 
+#' name of the warehouse table. One can use `DBI::dbReadTable` or `DBI::dbGetQuery`
+#' to retrieve tables from the data warehouse.
+#' @param column Name of the entity link column. 
 #' @param return_cols Character vector of warehouse column names to include
 #'  in results. If `return_cols` is missing, then every column will be returned. 
 #' @param key The column in the data warehouse table that should be used
