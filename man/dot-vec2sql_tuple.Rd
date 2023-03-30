@@ -19,8 +19,11 @@ Convert a vector into a valid tuple that can be used
 in SQL queries.
 }
 \examples{
+\dontrun{
 x <- c('A', 'B', 'C')
 res <- .vec2sql_tuple(x)
 y <- c(1, 2)
 res <- .vec2sql_tuple(y)
 }
+}
+\keyword{internal}

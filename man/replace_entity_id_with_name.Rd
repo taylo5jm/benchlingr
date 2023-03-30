@@ -9,7 +9,11 @@ replace_entity_id_with_name(conn, df)
 \arguments{
 \item{conn}{Database connection opened by `connect_warehouse`.}
 
-\item{df}{Data frame with entity columns.}
+\item{df}{Data frame retrieved from the Benchling data warehouse with one or 
+more entity link columns. The data frame must also have a column called `schema`, 
+which indicates the schema name of the warehouse table. 
+One can use `DBI::dbReadTable` or `DBI::dbGetQuery` to retrieve tables 
+from the data warehouse.}
 }
 \value{
 data.frame with the Benchling entity identifiers replaced by the 

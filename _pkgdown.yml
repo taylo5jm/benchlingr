@@ -13,7 +13,6 @@ reference:
   - list_entity_columns
   - list_multiselect_columns
   - replace_entity_id_with_name
-  - .vec2sql_tuple
 - title: Python SDK
   desc: Python SDK and API
   contents:
@@ -38,6 +37,7 @@ reference:
   - create_assay_results
   - get_assay_result
   - unarchive_assay_results
+  - get_assay_results_schema_ids
 - title: Dropdowns
   desc: Dropdown menus.
   contents:

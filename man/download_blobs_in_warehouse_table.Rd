@@ -18,8 +18,10 @@ download_blobs_in_warehouse_table(
 
 \item{conn}{PqConnection object.}
 
-\item{df}{Data frame retrieved from the Benchling data warehouse.
-Must have the `schema` column included.}
+\item{df}{Data frame with one or more blob link (file attachment) columns. 
+The data frame must also have a column called `schema`, which indicates the schema
+name of the warehouse table. One can use `DBI::dbReadTable` or `DBI::dbGetQuery`
+to retrieve tables from the data warehouse.}
 
 \item{columns}{Character vector of column names in the table to download 
 blobs from.}

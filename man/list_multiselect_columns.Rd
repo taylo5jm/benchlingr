@@ -10,7 +10,11 @@ list_multiselect_columns(conn, df)
 \arguments{
 \item{conn}{Database connection opened with `connect_warehouse`.}
 
-\item{df}{Data frame retrieved from the data warehouse.}
+\item{df}{Data frame retrieved from the Benchling data warehouse with one or 
+more multi-select columns. The data frame must also have a column called `schema`, 
+which indicates the schema name of the warehouse table. 
+One can use `DBI::dbReadTable` or `DBI::dbGetQuery` to retrieve tables 
+from the data warehouse.}
 }
 \value{
 Character vector where the names are the names of the multi-select

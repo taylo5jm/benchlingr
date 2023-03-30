@@ -5,7 +5,8 @@
 #' @importFrom magrittr %>%
 #' @param client Benchling API client created by `connect_sdk`.
 #' @param conn Benchling data warehouse connection created with `connect_warehouse`.
-#' @param entry Notebook entry retrieved with `client$entries$get_entry_by_id`.
+#' @param entry Notebook entry retrieved with the `entries$get_entry_by_id` method
+#' of the Benchling Python SDK facade object created by `benchlingr::connect_sdk`.
 #' @return A data frame that includes the names and identifiers of the results
 #' and registration schemas contained within a notebook entry. 
 #' @export

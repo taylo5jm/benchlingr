@@ -2,18 +2,19 @@
 % Please edit documentation in R/get_entity_table.R
 \name{.get_entity_table}
 \alias{.get_entity_table}
-\title{Get additional information about entities in a warehouse table (single entity column.)}
+\title{Get additional information about entity links in a warehouse table (single entity column.)}
 \usage{
 .get_entity_table(conn, df, column, return_cols = c("id", "name$"), key = "id")
 }
 \arguments{
 \item{conn}{Database connection opened by `connect_warehouse`}
 
-\item{df}{Data frame with one or more entity columns. The data frame
-must also have a column called `schema`, which indicates the schema
-name of the warehouse table.}
+\item{df}{Data frame retrieved from the Benchling data warehouse with one or more entity link columns. 
+The data frame must also have a column called `schema`, which indicates the schema
+name of the warehouse table. One can use `DBI::dbReadTable` or `DBI::dbGetQuery`
+to retrieve tables from the data warehouse.}
 
-\item{column}{Name of the entity column.}
+\item{column}{Name of the entity link column.}
 
 \item{return_cols}{Character vector of warehouse column names to include
 in results. If `return_cols` is missing, then every column will be returned.}
@@ -29,7 +30,7 @@ entities found in the input data frame (`df`).
 }
 \description{
 Given a data frame retrieved from the Benchling warehouse, extract the
-additional table in the warehouse that correspond to the entities in the 
-data frame.
+additional table in the warehouse that correspond to the entity links in
+the table.
 }
 \keyword{internal}

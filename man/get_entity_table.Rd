@@ -9,9 +9,10 @@ get_entity_table(conn, df, columns = NULL, return_cols = "*", key = "id")
 \arguments{
 \item{conn}{Database connection opened with `connect_warehouse`}
 
-\item{df}{Data frame with one or more entity columns. The data frame
-must also have a column called `schema`, which indicates the schema
-name of the warehouse table.}
+\item{df}{Data frame retrieved from the Benchling data warehouse with one or more entity link columns. 
+The data frame must also have a column called `schema`, which indicates the schema
+name of the warehouse table. One can use `DBI::dbReadTable` or `DBI::dbGetQuery`
+to retrieve tables from the data warehouse.}
 
 \item{columns}{Character vector of column names to expand. If NULL, then all entity columns
 will be expanded. To see which columns in the data frame correspond to
