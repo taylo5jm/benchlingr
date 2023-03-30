@@ -109,7 +109,11 @@
 #' returning a list of data frames. 
 #' 
 #' @include list_entry_tables.R
-#' @param entry Notebook entry in JSON format. See `get_entry`.
+#' @param entry Notebook entry retrieved with Benchling Python SDK. To retrieve a notebook
+#' entry, use the `connect_sdk` function to create the Benchling Python SDK facade object,
+#' then use the `entries$get_entry_by_id` method to get the entry by ID. The ID
+#' of an entry will always start with `etr_`. The notebook entry metadata in your Benchling
+#' system can be retrieved from the `entry` table in the data warehouse.
 #' @param day Integer for the day in the notebook entry. See `list_entry_tables`.
 #' @param table_position Integer for the position of the table in the notebook entry list. 
 #' See `list_entry_tables`.

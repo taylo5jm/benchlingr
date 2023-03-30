@@ -9,12 +9,10 @@ get_plate_diagrams(entry, plate_dim = NULL)
 \arguments{
 \item{entry}{response from GET /entry/{entry_id}}
 
-\item{plate_dim}{A numeric vector of length 2 that describes the dimensions
-of the plates that should be extracted from the notebook entry. For example,
-`c(16, 24)` will return only 384-well plates. The plate sizes
-must be `c(2,3)`, `c(3,4)`, `c(4,6)`, `c(6,8)`, `c(8, 12)`, `c(16, 24)`, 
-or `c(32, 48)`. By default, `plate_dim` is `NULL` the function will
-return plates of all sizes supported by Benchling.}
+\item{plate_dim}{A numeric vector of length 1 that describes the number of wells
+in the plates that should be read. The plate sizes must be one of the following:
+6, 12, 24, 48, 96, 384, and 1536. By default, `plate_dim` is `NULL` and the 
+function will return plates of all sizes supported by Benchling.}
 }
 \value{
 List of data frames representing the plate diagrams present
