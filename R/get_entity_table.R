@@ -81,9 +81,10 @@
 #' 
 #' @include list_entity_columns.R
 #' @param conn Database connection opened with `connect_warehouse`
-#' @param df Data frame with one or more entity columns. The data frame
-#' must also have a column called `schema`, which indicates the schema
-#' name of the warehouse table. 
+#' @param df Data frame retrieved from the Benchling data warehouse with one or more entity link columns. 
+#' The data frame must also have a column called `schema`, which indicates the schema
+#' name of the warehouse table. One can use `DBI::dbReadTable` or `DBI::dbGetQuery`
+#' to retrieve tables from the data warehouse.
 #' @param columns Character vector of column names to expand. If NULL, then all entity columns
 #' will be expanded. To see which columns in the data frame correspond to
 #' entity fields, use the `list_entity_columns` tables. 

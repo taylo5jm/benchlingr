@@ -12,7 +12,8 @@ list_schemas_in_entry(client, conn, entry)
 
 \item{conn}{Benchling data warehouse connection created with `connect_warehouse`.}
 
-\item{entry}{Notebook entry retrieved with `client$entries$get_entry_by_id`.}
+\item{entry}{Notebook entry retrieved with the `entries$get_entry_by_id` method
+of the Benchling Python SDK facade object created by `benchlingr::connect_sdk`.}
 }
 \value{
 A data frame that includes the names and identifiers of the results

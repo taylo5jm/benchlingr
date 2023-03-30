@@ -7,7 +7,8 @@
 get_plate_diagrams(entry, plate_dim = NULL)
 }
 \arguments{
-\item{entry}{response from GET /entry/{entry_id}}
+\item{entry}{Notebook entry retrieved with the `entries$get_entry_by_id` method
+of the Benchling Python SDK facade object created by `benchling::connect_sdk`.}
 
 \item{plate_dim}{A numeric vector of length 1 that describes the number of wells
 in the plates that should be read. The plate sizes must be one of the following:
