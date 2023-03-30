@@ -9,8 +9,8 @@
 #' @importFrom methods is
 #' @include vec2sql_tuple.R
 #' @param conn Database connection opened by `connect_warehouse`
-#' @param df Data frame with one or more entity link columns. The data frame
-#' must also have a column called `schema`, which indicates the schema
+#' @param df Data frame retrieved from the Benchling data warehouse with one or more entity link columns. 
+#' The data frame must also have a column called `schema`, which indicates the schema
 #' name of the warehouse table. One can use `DBI::dbReadTable` or `DBI::dbGetQuery`
 #' to retrieve tables from the data warehouse.
 #' @param column Name of the entity link column. 

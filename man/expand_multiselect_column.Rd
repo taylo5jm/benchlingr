@@ -18,7 +18,11 @@ expand_multiselect_column(
 to ensure that the specified `column` is actually a multi-select field
 defined in the schema.}
 
-\item{df}{Input data frame retrieved from the data warehouse.}
+\item{df}{Data frame retrieved from the Benchling data warehouse with one or 
+more multi-select columns. The data frame must also have a column called `schema`, 
+which indicates the schema name of the warehouse table. 
+One can use `DBI::dbReadTable` or `DBI::dbGetQuery` to retrieve tables 
+from the data warehouse.}
 
 \item{column}{Name of the JSON column that should be expanded.}
 
