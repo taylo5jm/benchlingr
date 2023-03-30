@@ -34,35 +34,3 @@ is_schema_in_dataframe <- function(df) {
 }
 
 
-#' Raise exception if the `schema` column is not in the data frame.
-#'  Dataframe validation
-#' @param conn Data warehouse connection typically opened by `connect_warehouse`.
-#' @param client API facade object
-#' @param df data.frame with table from the data warehouse.
-#' @return error list
-#' @keywords internal
-
-.validate_data_frame <- function (conn, client, df, fk_type='name', mappings){
-    errors <- c()
-  # print(df)
-  for (i in 1:length(colnames(df))) {
-    this_colname <- colnames(df)[i]
-    errors <- .validate_column_types(
-      errors, df[,i], this_colname,
-      benchling_type=mappings$type_map[this_colname],
-      multi_select = mappings$multi_select_map[this_colname])
-    errors <- .validate_column_values(
-      client=client, conn=conn, errors=errors, values=df[,i],
-      column_name=this_colname,
-      benchling_type=mappings$type_map[this_colname],
-      multi_select=mappings$multi_select_map[this_colname],
-      fk_type=fk_type[this_colname],
-      target_schema_id=mappings$target_schema_map[this_colname])
-  }
-  # Stop function execution and show all errors to the user.
-  assertthat::assert_that(
-    length(errors) == 0,
-    msg=paste0(errors, collapse='\n'))
-
-  return(errors)
-}

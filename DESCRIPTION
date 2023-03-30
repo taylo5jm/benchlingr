@@ -25,6 +25,7 @@ RoxygenNote: 7.2.3
 Suggests: 
     knitr,
     RSQLite,
+    tibble,
     rmarkdown,
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
