@@ -20,7 +20,7 @@ remotes::install_github("hemoshear/benchlingr")
 
 ### Documentation
 
-Read the [documentation on GitHub](https://upgraded-succotash-8df2b926.pages.github.io/)
+The full documentation is at: [benchling-r.info](https://benchling-r.info)
 
 
 ### Benchling credentials
