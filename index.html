@@ -34,7 +34,7 @@
     
     <a class="navbar-brand me-2" href="index.html">benchlingr</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -78,7 +78,8 @@
 <h3 id="unofficial-r-interface-to-the-benchling-cloud-rd-laboratory-information-management-system-lims">Unofficial R Interface to the “Benchling Cloud R&amp;D” Laboratory Information Management System (LIMS).<a class="anchor" aria-label="anchor" href="#unofficial-r-interface-to-the-benchling-cloud-rd-laboratory-information-management-system-lims"></a>
 </h3>
 <p><img src="https://github.com/hemoshear/benchlingr/actions/workflows/check-full.yml/badge.svg" alt="Ubuntu R package check, build, and test"><img src="https://github.com/hemoshear/benchlingr/actions/workflows/check-full-macos.yml/badge.svg" alt="Mac OS R package check, build, and test"><img src="https://github.com/hemoshear/benchlingr/actions/workflows/check-full-windows.yml/badge.svg" alt="Windows R package check, build, and test"></p>
-<p>Benchling is a laboratory information management system with a developer platform that is comprised of a Postgres database, an application programming interface (API), an “Events” system that is built on top of the AWS EventBridge service, as well as a Python software development kit (SDK).<code>benchlingr</code> is an unofficial R package that streamlines common extract, transform, and load (ETL) operations by providing functions to extract and join tables in the Benchling data warehouse, download file attachments, extract unstructured tables from notebook entries, and upload assay results to the platform.</p>
+<p><a href="https://www.benchling.com/" class="external-link">Benchling</a> is a laboratory information management system (LIMS) with a <a href="https://www.benchling.com/developer-platform" class="external-link">developer platform</a> that is comprised of a Postgres database, an application programming interface (API), an “Events” system that is built on top of the AWS EventBridge service, as well as a Python software development kit (SDK).</p>
+<p><code>benchlingr</code> is an unofficial R package that streamlines common data science and engineering operations by providing functions to extract and join tables in the Benchling data warehouse, download file attachments, extract tables from notebook entries, and upload assay results to the Benchling platform.</p>
 </div>
 <div class="section level3">
 <h3 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
@@ -89,18 +90,17 @@
 <div class="section level3">
 <h3 id="documentation">Documentation<a class="anchor" aria-label="anchor" href="#documentation"></a>
 </h3>
-<ul>
-<li><a href="https://upgraded-succotash-8df2b926.pages.github.io/">GitHub Pages</a></li>
-</ul>
+<p>Read the <a href="https://upgraded-succotash-8df2b926.pages.github.io/" class="external-link">documentation on GitHub</a></p>
 </div>
 <div class="section level3">
-<h3 id="configuration">Configuration<a class="anchor" aria-label="anchor" href="#configuration"></a>
+<h3 id="benchling-credentials">Benchling credentials<a class="anchor" aria-label="anchor" href="#benchling-credentials"></a>
 </h3>
-<p>The <code>benchlingr</code> package primarily utilizes the RESTFUL API service and Postgres database services of the Benchling developer platform. In order to use these components of the Benchling platform, one must acquire API keys and database credentials through the Benchling interface. This section will focus on how to make these credentials available to the <code>benchlingr</code> package.</p>
+<p>The <code>benchlingr</code> package uses the RESTFUL API and Postgres database components of the Benchling developer platform. In order to access the API and database, one must acquire API keys and database credentials through the Benchling interface. This section will focus on how to make these credentials available to the <code>benchlingr</code> package.</p>
+<p><em>Note: If you are unable to generate an API key and/or database credentials, you may need to ask your Benchling administrator for developer access</em></p>
 <div class="section level4">
 <h4 id="api">API<a class="anchor" aria-label="anchor" href="#api"></a>
 </h4>
-<p>In order to access the Benchling API service on one’s Benchling tenant, one must obtain an API key through the Benchling interface. <a href="https://help.benchling.com/en/articles/2353570-access-the-benchling-developer-platform-enterprise" class="external-link">Follow the instructions in the official documentation</a> to obtain an API key. After obtaining an API key, it is recommended that you define a variable in <code>.Renviron</code> called <code>BENCHLING_API_KEY</code> to make this key accessible to the <code>benchlingr</code> package with the default function arguments.</p>
+<p>In order to access the Benchling API service on one’s Benchling tenant, <a href="https://help.benchling.com/en/articles/2353570-access-the-benchling-developer-platform-enterprise" class="external-link">one must obtain an API key through the Benchling interface.</a>. After obtaining an API key, it is recommended that you define a variable in <code>.Renviron</code> called <code>BENCHLING_API_KEY</code> to make this key accessible to the <code>benchlingr</code> package, since functions in the package will look for <code>BENCHLING_API_KEY</code> by default.</p>
 <pre><code><span><span class="co"># ~/.Renviron</span></span>
 <span></span>
 <span><span class="co"># Benchling API key</span></span>
@@ -118,14 +118,12 @@
 <span><span class="co"># Benchling warehouse credentials</span></span>
 <span><span class="va">BENCHLING_WAREHOUSE_USERNAME</span><span class="op">=</span><span class="va">yyyyyyyyyyy</span></span>
 <span><span class="va">BENCHLING_WAREHOUSE_PASSWORD</span><span class="op">=</span><span class="va">xxxxxxxxxxx</span></span></code></pre>
-<div class="section level5">
-<h5 id="development-environment">Development environment<a class="anchor" aria-label="anchor" href="#development-environment"></a>
-</h5>
-<p>We use the <code>renv</code> package to track R dependencies for this project. The list of R package versions is stored in the <code>renv.lock</code> file. The <code>.Rprofile</code> and <code>renv/activate.R</code> files are auto-loaders that <code>renv</code> uses to bootstrap itself. After creating a new RStudio project for development on this package, <code>renv</code> should install itself and one will be able to use <code><a href="https://rstudio.github.io/renv/reference/restore.html" class="external-link">renv::restore</a></code> to install the set of packages defined in the <code>renv</code> file.</p>
-<pre><code><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">'renv'</span><span class="op">)</span></span>
-<span><span class="fu">renv</span><span class="fu">::</span><span class="fu"><a href="https://rstudio.github.io/renv/reference/restore.html" class="external-link">restore</a></span><span class="op">(</span><span class="op">)</span></span></code></pre>
 </div>
 </div>
+<div class="section level3">
+<h3 id="contributing">Contributing<a class="anchor" aria-label="anchor" href="#contributing"></a>
+</h3>
+<p>See the <a href="https://github.com/hemoshear/benchlingr/wiki/Contribution-guidelines" class="external-link">contribution guidelines</a> for more information.</p>
 </div>
 </div>
   </main><aside class="col-md-3"><div class="links">
@@ -155,7 +153,10 @@
 <div class="developers">
 <h2 data-toc-skip>Developers</h2>
 <ul class="list-unstyled">
-<li>Justin Taylor <br><small class="roles"> Maintainer </small>  </li>
+<li>Justin Taylor <br><small class="roles"> Maintainer </small> <a href="https://orcid.org/0000-0003-4590-0777" target="orcid.widget" aria-label="ORCID" class="external-link"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a> </li>
+<li>Davut Uçar <br><small class="roles"> Author </small>  </li>
+<li>Steve Hoang <br><small class="roles"> Author </small> <a href="https://orcid.org/0000-0002-4413-6036" target="orcid.widget" aria-label="ORCID" class="external-link"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a> </li>
+<li>Aakshay Kumar <br><small class="roles"> Author </small>  </li>
 </ul>
 </div>
 
@@ -167,7 +168,7 @@
 
     <footer><div class="pkgdown-footer-left">
   <p></p>
-<p>Developed by Justin Taylor.</p>
+<p>Developed by Justin Taylor, Davut Uçar, Steve Hoang, Aakshay Kumar.</p>
 </div>
 
 <div class="pkgdown-footer-right">

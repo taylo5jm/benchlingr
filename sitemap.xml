@@ -1,93 +1,162 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://upgraded-succotash-8df2b926.pages.github.io/404.html</loc>
+    <loc>https://benchling-r.info/404.html</loc>
   </url>
   <url>
-    <loc>https://upgraded-succotash-8df2b926.pages.github.io/LICENSE-text.html</loc>
+    <loc>https://benchling-r.info/LICENSE-text.html</loc>
   </url>
   <url>
-    <loc>https://upgraded-succotash-8df2b926.pages.github.io/LICENSE.html</loc>
+    <loc>https://benchling-r.info/LICENSE.html</loc>
   </url>
   <url>
-    <loc>https://upgraded-succotash-8df2b926.pages.github.io/articles/benchlingr.html</loc>
+    <loc>https://benchling-r.info/articles/benchlingr.html</loc>
   </url>
   <url>
-    <loc>https://upgraded-succotash-8df2b926.pages.github.io/articles/index.html</loc>
+    <loc>https://benchling-r.info/articles/index.html</loc>
   </url>
   <url>
-    <loc>https://upgraded-succotash-8df2b926.pages.github.io/authors.html</loc>
+    <loc>https://benchling-r.info/authors.html</loc>
   </url>
   <url>
-    <loc>https://upgraded-succotash-8df2b926.pages.github.io/index.html</loc>
+    <loc>https://benchling-r.info/index.html</loc>
   </url>
   <url>
-    <loc>https://upgraded-succotash-8df2b926.pages.github.io/news/index.html</loc>
+    <loc>https://benchling-r.info/news/index.html</loc>
   </url>
   <url>
-    <loc>https://upgraded-succotash-8df2b926.pages.github.io/reference/benchling_api_auth.html</loc>
+    <loc>https://benchling-r.info/reference/archive_assay_results.html</loc>
   </url>
   <url>
-    <loc>https://upgraded-succotash-8df2b926.pages.github.io/reference/config_sdk_env.html</loc>
+    <loc>https://benchling-r.info/reference/config_sdk_env.html</loc>
   </url>
   <url>
-    <loc>https://upgraded-succotash-8df2b926.pages.github.io/reference/dot-get_entity_table.html</loc>
+    <loc>https://benchling-r.info/reference/connect_sdk.html</loc>
   </url>
   <url>
-    <loc>https://upgraded-succotash-8df2b926.pages.github.io/reference/dot-map_entity_field_names_to_warehouse_tables.html</loc>
+    <loc>https://benchling-r.info/reference/connect_warehouse.html</loc>
   </url>
   <url>
-    <loc>https://upgraded-succotash-8df2b926.pages.github.io/reference/dot-unpack_long.html</loc>
+    <loc>https://benchling-r.info/reference/create_assay_results.html</loc>
   </url>
   <url>
-    <loc>https://upgraded-succotash-8df2b926.pages.github.io/reference/dot-unpack_wide.html</loc>
+    <loc>https://benchling-r.info/reference/disconnect_warehouse.html</loc>
   </url>
   <url>
-    <loc>https://upgraded-succotash-8df2b926.pages.github.io/reference/dot-vec2sql_tuple.html</loc>
+    <loc>https://benchling-r.info/reference/dot-create_assay_result.html</loc>
   </url>
   <url>
-    <loc>https://upgraded-succotash-8df2b926.pages.github.io/reference/download_blobs.html</loc>
+    <loc>https://benchling-r.info/reference/dot-get_entity_table.html</loc>
   </url>
   <url>
-    <loc>https://upgraded-succotash-8df2b926.pages.github.io/reference/download_blobs_in_warehouse_table.html</loc>
+    <loc>https://benchling-r.info/reference/dot-map_entity_field_names_to_warehouse_tables.html</loc>
   </url>
   <url>
-    <loc>https://upgraded-succotash-8df2b926.pages.github.io/reference/expand_multiselect_column.html</loc>
+    <loc>https://benchling-r.info/reference/dot-missing_api_key_error.html</loc>
   </url>
   <url>
-    <loc>https://upgraded-succotash-8df2b926.pages.github.io/reference/find_entry_tables.html</loc>
+    <loc>https://benchling-r.info/reference/dot-missing_tenant_error.html</loc>
   </url>
   <url>
-    <loc>https://upgraded-succotash-8df2b926.pages.github.io/reference/get_entity_table.html</loc>
+    <loc>https://benchling-r.info/reference/dot-to_fields.html</loc>
   </url>
   <url>
-    <loc>https://upgraded-succotash-8df2b926.pages.github.io/reference/index.html</loc>
+    <loc>https://benchling-r.info/reference/dot-unpack_long.html</loc>
   </url>
   <url>
-    <loc>https://upgraded-succotash-8df2b926.pages.github.io/reference/is_schema_in_dataframe.html</loc>
+    <loc>https://benchling-r.info/reference/dot-unpack_wide.html</loc>
   </url>
   <url>
-    <loc>https://upgraded-succotash-8df2b926.pages.github.io/reference/list_entity_columns.html</loc>
+    <loc>https://benchling-r.info/reference/dot-upload_files.data.frame.html</loc>
   </url>
   <url>
-    <loc>https://upgraded-succotash-8df2b926.pages.github.io/reference/list_multiselect_columns.html</loc>
+    <loc>https://benchling-r.info/reference/dot-upload_files.html</loc>
   </url>
   <url>
-    <loc>https://upgraded-succotash-8df2b926.pages.github.io/reference/list_schemas_in_entry.html</loc>
+    <loc>https://benchling-r.info/reference/dot-validate_blob_link_column_values.html</loc>
   </url>
   <url>
-    <loc>https://upgraded-succotash-8df2b926.pages.github.io/reference/read_entry_table.html</loc>
+    <loc>https://benchling-r.info/reference/dot-validate_column_types.html</loc>
   </url>
   <url>
-    <loc>https://upgraded-succotash-8df2b926.pages.github.io/reference/read_entry_tables.html</loc>
+    <loc>https://benchling-r.info/reference/dot-validate_column_values.html</loc>
   </url>
   <url>
-    <loc>https://upgraded-succotash-8df2b926.pages.github.io/reference/read_plate_diagrams.html</loc>
+    <loc>https://benchling-r.info/reference/dot-validate_data_frame.html</loc>
   </url>
   <url>
-    <loc>https://upgraded-succotash-8df2b926.pages.github.io/reference/replace_entity_id_with_name.html</loc>
+    <loc>https://benchling-r.info/reference/dot-validate_dropdown_column_values.html</loc>
   </url>
   <url>
-    <loc>https://upgraded-succotash-8df2b926.pages.github.io/reference/warehouse_connect.html</loc>
+    <loc>https://benchling-r.info/reference/dot-validate_entity_column_values.html</loc>
+  </url>
+  <url>
+    <loc>https://benchling-r.info/reference/dot-vec2sql_tuple.html</loc>
+  </url>
+  <url>
+    <loc>https://benchling-r.info/reference/download_blobs.html</loc>
+  </url>
+  <url>
+    <loc>https://benchling-r.info/reference/download_blobs_in_warehouse_table.html</loc>
+  </url>
+  <url>
+    <loc>https://benchling-r.info/reference/expand_multiselect_column.html</loc>
+  </url>
+  <url>
+    <loc>https://benchling-r.info/reference/get_assay_result.html</loc>
+  </url>
+  <url>
+    <loc>https://benchling-r.info/reference/get_assay_results_schema_ids.html</loc>
+  </url>
+  <url>
+    <loc>https://benchling-r.info/reference/get_dropdown.html</loc>
+  </url>
+  <url>
+    <loc>https://benchling-r.info/reference/get_dropdown_options.html</loc>
+  </url>
+  <url>
+    <loc>https://benchling-r.info/reference/get_entity_table.html</loc>
+  </url>
+  <url>
+    <loc>https://benchling-r.info/reference/get_entry_table.html</loc>
+  </url>
+  <url>
+    <loc>https://benchling-r.info/reference/get_entry_tables.html</loc>
+  </url>
+  <url>
+    <loc>https://benchling-r.info/reference/get_plate_diagrams.html</loc>
+  </url>
+  <url>
+    <loc>https://benchling-r.info/reference/get_project_ids.html</loc>
+  </url>
+  <url>
+    <loc>https://benchling-r.info/reference/get_schema_fields.html</loc>
+  </url>
+  <url>
+    <loc>https://benchling-r.info/reference/index.html</loc>
+  </url>
+  <url>
+    <loc>https://benchling-r.info/reference/is_schema_in_dataframe.html</loc>
+  </url>
+  <url>
+    <loc>https://benchling-r.info/reference/list_entity_columns.html</loc>
+  </url>
+  <url>
+    <loc>https://benchling-r.info/reference/list_entry_tables.html</loc>
+  </url>
+  <url>
+    <loc>https://benchling-r.info/reference/list_multiselect_columns.html</loc>
+  </url>
+  <url>
+    <loc>https://benchling-r.info/reference/list_schemas_in_entry.html</loc>
+  </url>
+  <url>
+    <loc>https://benchling-r.info/reference/replace_entity_id_with_name.html</loc>
+  </url>
+  <url>
+    <loc>https://benchling-r.info/reference/unarchive_assay_results.html</loc>
+  </url>
+  <url>
+    <loc>https://benchling-r.info/reference/verify_schema_fields.html</loc>
   </url>
 </urlset>

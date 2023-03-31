@@ -18,7 +18,7 @@ columns in the data frame."><!-- mathjax --><script src="https://cdnjs.cloudflar
     
     <a class="navbar-brand me-2" href="../index.html">benchlingr</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -78,13 +78,17 @@ columns in the data frame.</p>
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
     <dl><dt>conn</dt>
-<dd><p>Database connection opened by `warehouse_connect`. This is used
+<dd><p>Database connection opened by `connect_warehouse`. This is used
 to ensure that the specified `column` is actually a multi-select field
 defined in the schema.</p></dd>
 
 
 <dt>df</dt>
-<dd><p>Input data frame retrieved from the data warehouse.</p></dd>
+<dd><p>Data frame retrieved from the Benchling data warehouse with one or 
+more multi-select columns. The data frame must also have a column called `schema`, 
+which indicates the schema name of the warehouse table. 
+One can use `DBI::dbReadTable` or `DBI::dbGetQuery` to retrieve tables 
+from the data warehouse.</p></dd>
 
 
 <dt>column</dt>
@@ -117,7 +121,7 @@ or `replace_entity_id_with_name` with the new columns.</p></dd>
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span></span>
-<span class="r-in"><span><span class="va">conn</span> <span class="op">&lt;-</span> <span class="fu"><a href="warehouse_connect.html">warehouse_connect</a></span><span class="op">(</span><span class="st">"hemoshear-dev"</span>, </span></span>
+<span class="r-in"><span><span class="va">conn</span> <span class="op">&lt;-</span> <span class="fu"><a href="connect_warehouse.html">connect_warehouse</a></span><span class="op">(</span><span class="st">"hemoshear-dev"</span>, </span></span>
 <span class="r-in"><span>    username <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Sys.getenv.html" class="external-link">Sys.getenv</a></span><span class="op">(</span><span class="st">"BENCHLING_DEV_WAREHOUSE_USERNAME"</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>    password <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Sys.getenv.html" class="external-link">Sys.getenv</a></span><span class="op">(</span><span class="st">"BENCHLING_DEV_WAREHOUSE_PASSWORD"</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">d</span> <span class="op">&lt;-</span> <span class="fu">DBI</span><span class="fu">::</span><span class="fu"><a href="https://dbi.r-dbi.org/reference/dbGetQuery.html" class="external-link">dbGetQuery</a></span><span class="op">(</span><span class="va">conn</span>, <span class="st">"SELECT plate,analytes FROM simple_plate_analyte_mapping$raw </span></span></span>
@@ -134,7 +138,7 @@ or `replace_entity_id_with_name` with the new columns.</p></dd>
 
 
     <footer><div class="pkgdown-footer-left">
-  <p></p><p>Developed by Justin Taylor.</p>
+  <p></p><p>Developed by Justin Taylor, Davut Uçar, Steve Hoang, Aakshay Kumar.</p>
 </div>
 
 <div class="pkgdown-footer-right">

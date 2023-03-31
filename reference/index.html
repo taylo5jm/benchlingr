@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">benchlingr</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -59,9 +59,14 @@
 
       <dl><dt>
           
-          <code><a href="warehouse_connect.html">warehouse_connect()</a></code> 
+          <code><a href="connect_warehouse.html">connect_warehouse()</a></code> 
         </dt>
         <dd>Connect to a Benchling data warehouse</dd>
+      </dl><dl><dt>
+          
+          <code><a href="disconnect_warehouse.html">disconnect_warehouse()</a></code> 
+        </dt>
+        <dd>Disconnect from a Benchling data warehouse</dd>
       </dl><dl><dt>
           
           <code><a href="expand_multiselect_column.html">expand_multiselect_column()</a></code> 
@@ -90,18 +95,6 @@ warehouse</dd>
           <code><a href="replace_entity_id_with_name.html">replace_entity_id_with_name()</a></code> 
         </dt>
         <dd>Replace identifiers in entity columns with the entity names.</dd>
-      </dl><dl><dt>
-          
-          <code><a href="dot-map_entity_field_names_to_warehouse_tables.html">.map_entity_field_names_to_warehouse_tables()</a></code> 
-        </dt>
-        <dd>Map entity field names in one warehouse table to corresponding warehouse
-table with the relevant entities.</dd>
-      </dl><dl><dt>
-          
-          <code><a href="dot-vec2sql_tuple.html">.vec2sql_tuple()</a></code> 
-        </dt>
-        <dd>Convert a vector into a valid tuple that can be used
-in SQL queries.</dd>
       </dl></div><div class="section level2">
       <h2 id="python-sdk">Python SDK<a class="anchor" aria-label="anchor" href="#python-sdk"></a></h2>
       
@@ -120,7 +113,7 @@ in SQL queries.</dd>
         <dd>Configure environment for accessing API</dd>
       </dl><dl><dt>
           
-          <code><a href="benchling_api_auth.html">benchling_api_auth()</a></code> 
+          <code><a href="connect_sdk.html">connect_sdk()</a></code> 
         </dt>
         <dd>Create a Benchling API client that can be used to access the API via R.</dd>
       </dl></div><div class="section level2">
@@ -157,17 +150,17 @@ in SQL queries.</dd>
 
       <dl><dt>
           
-          <code><a href="find_entry_tables.html">find_entry_tables()</a></code> 
+          <code><a href="list_entry_tables.html">list_entry_tables()</a></code> 
         </dt>
-        <dd>Find unstructured tables (not registry or results) in a notebook entry.</dd>
+        <dd>Find unstructured tables (not registry, results, or look-up) in a notebook entry.</dd>
       </dl><dl><dt>
           
-          <code><a href="read_entry_tables.html">read_entry_tables()</a></code> 
+          <code><a href="get_entry_tables.html">get_entry_tables()</a></code> 
         </dt>
         <dd>Read all unstructured tables in a notebook entry.</dd>
       </dl><dl><dt>
           
-          <code><a href="read_plate_diagrams.html">read_plate_diagrams()</a></code> 
+          <code><a href="get_plate_diagrams.html">get_plate_diagrams()</a></code> 
         </dt>
         <dd>Find and parse plate diagrams in a notebook entry</dd>
       </dl><dl><dt>
@@ -176,13 +169,86 @@ in SQL queries.</dd>
         </dt>
         <dd>List the schemas for the results and registration tables contained within
 a notebook entry</dd>
+      </dl></div><div class="section level2">
+      <h2 id="assay-results">Assay results<a class="anchor" aria-label="anchor" href="#assay-results"></a></h2>
+      
+      <p class="section-desc"></p><p>Assay results</p>
+
+      
+    </div><div id="" class="section level2">
+      
+      
+      
+
+      <dl><dt>
+          
+          <code><a href="archive_assay_results.html">archive_assay_results()</a></code> 
+        </dt>
+        <dd>Makes a direct API Call to Benchling Assay Result Archive endpoint</dd>
+      </dl><dl><dt>
+          
+          <code><a href="create_assay_results.html">create_assay_results()</a></code> 
+        </dt>
+        <dd>Upload assay results to Benchling from a data frame</dd>
+      </dl><dl><dt>
+          
+          <code><a href="get_assay_result.html">get_assay_result()</a></code> 
+        </dt>
+        <dd>Makes a direct API Call to Benchling Get Assay Result endpoint.</dd>
+      </dl><dl><dt>
+          
+          <code><a href="unarchive_assay_results.html">unarchive_assay_results()</a></code> 
+        </dt>
+        <dd>Makes a direct API Call to Benchling Assay Result Unarchive endpoint</dd>
+      </dl><dl><dt>
+          
+          <code><a href="get_assay_results_schema_ids.html">get_assay_results_schema_ids()</a></code> 
+        </dt>
+        <dd>Get Benchling assay results metadata</dd>
+      </dl></div><div class="section level2">
+      <h2 id="dropdowns">Dropdowns<a class="anchor" aria-label="anchor" href="#dropdowns"></a></h2>
+      
+      <p class="section-desc"></p><p>Dropdown menus.</p>
+
+      
+    </div><div id="" class="section level2">
+      
+      
+      
+
+      <dl><dt>
+          
+          <code><a href="get_dropdown.html">get_dropdown()</a></code> 
+        </dt>
+        <dd>Get metadata for a dropdown menu</dd>
+      </dl><dl><dt>
+          
+          <code><a href="get_dropdown_options.html">get_dropdown_options()</a></code> 
+        </dt>
+        <dd>Get the options in a dropdown menu</dd>
+      </dl></div><div class="section level2">
+      <h2 id="misc">Misc<a class="anchor" aria-label="anchor" href="#misc"></a></h2>
+      
+      <p class="section-desc"></p><p>Misc</p>
+
+      
+    </div><div id="" class="section level2">
+      
+      
+      
+
+      <dl><dt>
+          
+          <code><a href="get_project_ids.html">get_project_ids()</a></code> 
+        </dt>
+        <dd>Get Benchling project metadata</dd>
       </dl></div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
     </nav></aside></div>
 
 
     <footer><div class="pkgdown-footer-left">
-  <p></p><p>Developed by Justin Taylor.</p>
+  <p></p><p>Developed by Justin Taylor, Davut Uçar, Steve Hoang, Aakshay Kumar.</p>
 </div>
 
 <div class="pkgdown-footer-right">
