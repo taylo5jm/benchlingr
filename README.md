@@ -20,7 +20,7 @@ remotes::install_github("hemoshear/benchlingr")
 
 ### Documentation
 
-The full documentation is at: [benchling-r.info](https://benchling-r.info)
+The full documentation is at: [https://benchling-r.info](https://benchling-r.info)
 
 
 ### Benchling credentials
