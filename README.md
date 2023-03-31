@@ -6,8 +6,9 @@
 ![Windows R package check, build, and test](https://github.com/hemoshear/benchlingr/actions/workflows/check-full-windows.yml/badge.svg)
 
 
-Benchling is a laboratory information management system with a developer platform that is comprised of a Postgres database, an application programming interface (API), an "Events" system that is built on top of the AWS EventBridge service, as well as a Python software development kit (SDK).`benchlingr` is an unofficial R package that streamlines common extract, transform, and load (ETL) operations by providing functions to extract and join tables in the Benchling data warehouse, download file attachments, extract unstructured tables from notebook entries, and upload assay results to the platform. 
+[Benchling](https://www.benchling.com/) is a laboratory information management system (LIMS) with a [developer platform](https://www.benchling.com/developer-platform) that is comprised of a Postgres database, an application programming interface (API), an "Events" system that is built on top of the AWS EventBridge service, as well as a Python software development kit (SDK).
 
+`benchlingr` is an unofficial R package that streamlines common data science and engineering operations by providing functions to extract and join tables in the Benchling data warehouse, download file attachments, extract tables from notebook entries, and upload assay results to the Benchling platform. 
 
 ### Installation
 
@@ -19,16 +20,18 @@ remotes::install_github("hemoshear/benchlingr")
 
 ### Documentation
 
-- [GitHub Pages](https://upgraded-succotash-8df2b926.pages.github.io/)
+Read the [documentation on GitHub](https://upgraded-succotash-8df2b926.pages.github.io/)
 
 
-### Configuration
+### Benchling credentials
 
-The `benchlingr` package primarily utilizes the RESTFUL API service and Postgres database services of the Benchling developer platform. In order to use these components of the Benchling platform, one must acquire API keys and database credentials through the Benchling interface. This section will focus on how to make these credentials available to the `benchlingr` package. 
+The `benchlingr` package uses the RESTFUL API and Postgres database components of the Benchling developer platform. In order to access the API and database, one must acquire API keys and database credentials through the Benchling interface. This section will focus on how to make these credentials available to the `benchlingr` package. 
+
+*Note: If you are unable to generate an API key and/or database credentials, you may need to ask your Benchling administrator for developer access*
 
 #### API
 
-In order to access the Benchling API service on one's Benchling tenant, one must obtain an API key through the Benchling interface. [Follow the instructions in the official documentation](https://help.benchling.com/en/articles/2353570-access-the-benchling-developer-platform-enterprise) to obtain an API key. After obtaining an API key, it is recommended that you define a variable in `.Renviron` called `BENCHLING_API_KEY` to make this key accessible to the `benchlingr` package with the default function arguments. 
+In order to access the Benchling API service on one's Benchling tenant, [one must obtain an API key through the Benchling interface.](https://help.benchling.com/en/articles/2353570-access-the-benchling-developer-platform-enterprise). After obtaining an API key, it is recommended that you define a variable in `.Renviron` called `BENCHLING_API_KEY` to make this key accessible to the `benchlingr` package, since functions in the package will look for `BENCHLING_API_KEY` by default.
 
 ```
 # ~/.Renviron
@@ -52,12 +55,8 @@ BENCHLING_WAREHOUSE_USERNAME=yyyyyyyyyyy
 BENCHLING_WAREHOUSE_PASSWORD=xxxxxxxxxxx
 ```
 
-##### Development environment
 
-We use the `renv` package to track R dependencies for this project. The list of R package versions is stored in the `renv.lock` file. The `.Rprofile` and `renv/activate.R` files are auto-loaders that `renv` uses to bootstrap itself. After creating a new RStudio project for development on this package, `renv` should install itself and one will be able to use `renv::restore` to install the set of packages defined in the `renv` file.
+### Contributing
 
-```
-install.packages('renv')
-renv::restore()
-```
+See the [contribution guidelines](https://github.com/hemoshear/benchlingr/wiki/Contribution-guidelines) for more information.
 

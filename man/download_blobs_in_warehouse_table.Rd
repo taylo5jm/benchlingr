@@ -16,10 +16,12 @@ download_blobs_in_warehouse_table(
 \arguments{
 \item{client}{A Benchling API client object.}
 
-\item{conn}{A warehouse connection opened with `warehouse_connect`.}
+\item{conn}{PqConnection object.}
 
-\item{df}{Data frame retrieved from the Benchling data warehouse.
-Must have the `schema` column included.}
+\item{df}{Data frame with one or more blob link (file attachment) columns. 
+The data frame must also have a column called `schema`, which indicates the schema
+name of the warehouse table. One can use `DBI::dbReadTable` or `DBI::dbGetQuery`
+to retrieve tables from the data warehouse.}
 
 \item{columns}{Character vector of column names in the table to download 
 blobs from.}
@@ -38,8 +40,8 @@ Download blobs contained within a warehouse table.
 \examples{
 \dontrun{
 library(magrittr)
-client <- benchling_api_auth("https://hemoshear.benchling.com")
-conn <- warehouse_connect("hemoshear-dev", 
+client <- connect_sdk("https://hemoshear.benchling.com")
+conn <- connect_warehouse("hemoshear-dev", 
     username = Sys.getenv("BENCHLING_DEV_WAREHOUSE_USERNAME"),
     password = Sys.getenv("BENCHLING_DEV_WAREHOUSE_PASSWORD"))
 res <- DBI::dbGetQuery(conn, "SELECT * FROM 

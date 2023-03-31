@@ -54,6 +54,8 @@
 #' input data frame exist in the inventory. If the column refers to a blob
 #' link field, then the function will assume the values are file paths and will
 #' check to see if the file exists on the local machine. 
+#' @param conn Database connection typically opened with `connect_warehouse`.
+#' @param client A Benchling SDK object typically created with `connect_sdk`.
 #' @param errors Character vector of errors.
 #' @param values Values in the column. 
 #' @param column_name Name of the column in the data frame to be uploaded to Benchling.
@@ -66,7 +68,7 @@
 #' to the column. 
 #' @keywords internal
 
-.validate_column_values <- function(conn, errors, values, column_name, benchling_type,
+.validate_column_values <- function(conn, client, errors, values, column_name, benchling_type,
                                     multi_select, fk_type,
                                     target_schema_id) {
   # If the column is an entity_link, storage_link, or  dropdown,
@@ -78,7 +80,7 @@
   } else if (benchling_type == 'dropdown') {
     errors <- .validate_dropdown_column_values(
       conn=conn, errors=errors, values=values, column_name=column_name,
-      dropdown_id=dropdown_id)
+      dropdown_id=target_schema_id)
   } else if (benchling_type == 'storage_link') {
     errors <- .validate_storage_link_column_values(errors, values, column_name)
   } else if (benchling_type == 'blob_link') {
@@ -110,14 +112,14 @@
   if (benchling_type %in% 
       c('text', 'entity_link', 'dropdown', 'long_text', 
         'storage_link', 'blob_link', 'dna_sequence_link')) {
-    is_text <- all(is.character(values))
+    is_text <- all(is.character(unlist(values)))
     if (!is_text) {
       errors <- c(errors, 
                   c(glue::glue('{column_name} must be a character type.')))
     }
     #   
   } else if (benchling_type == 'float') {
-    is_numeric <- all(is.numeric(values))
+    is_numeric <- all(is.numeric(unlist(values)))
     if (!is_numeric) {
       errors <- c(errors, glue::glue("{column_name} must be a numeric type."))
     }
@@ -147,7 +149,7 @@
   registered_values <- DBI::dbGetQuery(
     conn, glue::glue("SELECT {`fk_type`} FROM {`target_schema_id`} WHERE 
       {`fk_type`} IN {.vec2sql_tuple(values)}"))
-  if (!(all(unique(values) %in% registered_values[,1]))) {
+  if (!(all(unique(unlist(values)) %in% registered_values[,1]))) {
     # Which ones?
     errors <- c(errors, glue::glue(
                   "Not all values in '{column_name}' are registered."))
@@ -157,10 +159,11 @@
 }
 
 #' Verify that values in dropdown column are valid options in the dropdown schema. 
+#' @include dropdown.R
 #' @keywords internal
 .validate_dropdown_column_values <- function(conn, errors, values, column_name,
                                              dropdown_id) {
-  valid_options <- get_dropdown_options(conn, dropdown_id)
+  valid_options <- get_dropdown_options(conn, schema_id=dropdown_id)
   invalid <- setdiff(values, valid_options)
   if (length(invalid) > 0) {
     errors <- c(errors, 
@@ -253,3 +256,37 @@
     
 }
   
+
+
+#' Raise exception if the `schema` column is not in the data frame.
+#'  Dataframe validation
+#' @param conn Data warehouse connection typically opened by `connect_warehouse`.
+#' @param client API facade object
+#' @param df data.frame with table from the data warehouse.
+#' @return error list
+#' @keywords internal
+
+.validate_data_frame <- function (conn, client, df, fk_type='name', mappings){
+  errors <- c()
+  # print(df)
+  for (i in 1:length(colnames(df))) {
+    this_colname <- colnames(df)[i]
+    errors <- .validate_column_types(
+      errors, df[,i], this_colname,
+      benchling_type=mappings$type_map[this_colname],
+      multi_select = mappings$multi_select_map[this_colname])
+    errors <- .validate_column_values(
+      client=client, conn=conn, errors=errors, values=df[,i],
+      column_name=this_colname,
+      benchling_type=mappings$type_map[this_colname],
+      multi_select=mappings$multi_select_map[this_colname],
+      fk_type=fk_type[this_colname],
+      target_schema_id=mappings$target_schema_map[this_colname])
+  }
+  # Stop function execution and show all errors to the user.
+  assertthat::assert_that(
+    length(errors) == 0,
+    msg=paste0(errors, collapse='\n'))
+  
+  return(errors)
+}

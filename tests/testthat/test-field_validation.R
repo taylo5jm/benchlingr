@@ -1,11 +1,11 @@
 
 
-conn <- benchlingr::warehouse_connect(
+conn <- benchlingr::connect_warehouse(
   "hemoshear-dev",
   Sys.getenv("BENCHLING_DEV_WAREHOUSE_USERNAME"),
   Sys.getenv("BENCHLING_DEV_WAREHOUSE_PASSWORD"))
 
-client <- benchlingr::benchling_api_auth(
+client <- benchlingr::connect_sdk(
   tenant="https://hemoshear-dev.benchling.com",
   api_key = Sys.getenv("BENCHLING_DEV_API_KEY"))
 
@@ -25,7 +25,7 @@ test_that(".validate_blob_link_column_values throws error when file does
 test_that(".validate_blob_link_column_values returns nothing when file exists.", {
             testthat::expect_equal(
               benchlingr:::.validate_blob_link_column_values(
-                client, errors=c(), values="test-upload_results.R", 
+                client, errors=c(), values="test-create_assay_results.R", 
                 column_name="MyFileColumn", multi_select=FALSE,
                 fk_type="name"),
               c())

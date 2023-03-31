@@ -14,7 +14,7 @@ get_schema_fields(
 \arguments{
 \item{schema_id}{provided schema id}
 
-\item{schema_type}{schema type name as it shown on benhcling API endpoints 
+\item{schema_type}{schema type name as it shown on benchling API endpoints 
 with or without `-schemas` ending. See \url{https://benchling.com/api/reference#/Schemas}.}
 
 \item{tenant}{is tenant name in the form "https://your-organization.benchling.com".

@@ -7,9 +7,9 @@
 
 on:
   push:
-    branches: [ main, master, 21-implement-function-to-upload-results-from-a-data-frame ]
+    branches: [ main, devel]
   pull_request:
-    branches: [ main, master ]
+    branches: [ main, devel]
   release:
     types: [ published ]
   workflow_dispatch:
@@ -37,7 +37,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - uses: r-lib/actions/setup-pandoc@v1
+      - uses: r-lib/actions/setup-pandoc@v2
       - name: Install dependencies
         run: |
           sudo apt-get update

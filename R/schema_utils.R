@@ -2,7 +2,7 @@
 #' 
 #' @include error.R
 #' @param schema_id provided schema id
-#' @param schema_type schema type name as it shown on benhcling API endpoints 
+#' @param schema_type schema type name as it shown on benchling API endpoints 
 #' with or without `-schemas` ending. See \url{https://benchling.com/api/reference#/Schemas}.
 #' @param tenant is tenant name in the form "https://your-organization.benchling.com".
 #' Default value is the `BENCHLING_TENANT` environment variable. 
@@ -109,15 +109,3 @@ verify_schema_fields <- function(schema_id, schema_type, df, strict_check = FALS
 
 
 }
-
-# schema_id <- 'assaysch_nIw4yAq8'
-# schema_type <- 'assay-result'
-# df <- data.frame(
-#   "plate" = c('davut'),
-#   "analytes" = c('0.2'),
-#   'file' = c('aaaa'),
-#   check.names = FALSE
-# )
-#
-# result <- verify_schema_fields(schema_id = schema_id, schema_type = schema_type, df = df)
-# print(result)
