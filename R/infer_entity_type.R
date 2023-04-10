@@ -53,182 +53,182 @@ infer_entity_type <- function(entity_id, entity_list=NULL, verbose=FALSE,
     return(output)
   }
   
-  .entity_match(sorted_ids, entity_list, api_key) {
-    entity_types <- unique(names(sorted_ids))
-    valid_entity_types <- entity_types[which(entity_types != "invalid_entities")]
-    listed_entity_types <- valid_entity_types[which(unlist(lapply(valid_entity_types, function(x)
-      !is.na(entity_list[names(which(purrr::map(entity_list, ~ .[1]) == x))][[1]][2]))))]
-    testable_entity_types <- listed_entity_types[which(unlist(lapply(listed_entity_types, function(x)
-      (!is.na(entity_list[names(which(purrr::map(entity_list, ~ .[1]) == x))][[1]][3]) |
-         !is.na(entity_list[names(which(purrr::map(entity_list, ~ .[1]) == x))][[1]][4])))))]
-    sorted_ids1 <- list()
-    sorted_ids2 <- list()
-    sorted_ids_counter <- 0
-    for (i in 1:length(testable_entity_types)) {
-      ids <- unlist(sorted_ids[which(names(sorted_ids) == testable_entity_types[i])], use.names = FALSE)
-      api_urls <- entity_list[which(purrr::map(entity_list, ~ .[1]) == testable_entity_types[[i]])][[1]][c(2,3,4)]
-      valid_ids <- list()
-      valid_ids_counter <- 0
-      for (j in 1:ceiling(length(ids)/50)) {
-        ids_set <- ids[seq((1+((j-1)*50)),(j*50))][which(unlist(purrr::map(ids[seq((1+((j-1)*50)), (j*50))],
-                                                                           ~ !is.na(.))))]
-        lookup_url <- gsub("ENTITY_IDS", paste(ids_set, collapse = "%2C"),
-                           api_urls[1])
-        lookup_content <- httr::content(httr::GET(lookup_url, httr::authenticate(api_key, '')))
-        if ("error" %in% names(lookup_content)) {
-          if ("invalidId" %in% names(lookup_content$error)) {
-            invalid_ids <- lookup_content$error$invalidId
-          }
-          if ("invalidIds" %in% names(lookup_content$error)) {
-            invalid_ids <- lookup_content$error$invalidIds
-          }
-          valid_ids_set <- setdiff(ids_set, unlist(invalid_ids))
-          sorted_ids2 <- unlist(append(sorted_ids2, invalid_ids))
-        } else {
-          valid_ids_set <- ids_set
-        }
-        if (length(valid_ids_set) != 0) {
-          valid_ids_counter <- valid_ids_counter + 1
-          valid_ids[[valid_ids_counter]] <- valid_ids_set
-        }
-      }
-      valid_ids <- unlist(valid_ids)
-      if (!is.null(valid_ids)) {
-        sorted_ids_counter <- sorted_ids_counter + 1
-        sorted_ids1[[sorted_ids_counter]] <- list()
-        names(sorted_ids1)[sorted_ids_counter] <- entity_types1[i]
-        if (!is.na(api_urls[3])) {
-          for (l in 1:ceiling(length(valid_ids)/50)) {
-            ids_set <- valid_ids[seq((1+((l-1)*50)), (l*50))][which(unlist(purrr::map(valid_ids[seq((1+((l-1)*50)), (l*50))],
-                                                                                      ~ !is.na(.))))]
-            lookup_url <- c("Bulk-Get API Endpoints URL", gsub("ENTITY_IDS", paste(ids_set, collapse = "%2C"),
-                                                               api_urls[3]))
-            sorted_ids1[[sorted_ids_counter]][[l]] <- list(ids_set, api_urls, lookup_url, "TESTED")
-            if (length(ids_set) > 1) {
-              names(sorted_ids1[[sorted_ids_counter]][[l]])[1] <- "entity_identifiers"
-            } else {
-              names(sorted_ids1[[sorted_ids_counter]][[l]])[1] <- "entity_identifier"
-            }
-            names(sorted_ids1[[sorted_ids_counter]][[l]])[2] <- "api_urls"
-            names(sorted_ids1[[sorted_ids_counter]][[l]])[3] <- "lookup_url"
-            names(sorted_ids1[[sorted_ids_counter]][[l]])[4] <- "status"
-          }
-        } else {
-          if (!is.na(api_urls[2])) {
-            for (m in 1:length(valid_ids)) {
-              lookup_url <- c("Single-Get API Endpoint URL", gsub("ENTITY_ID",
-                                                                  as.character(valid_ids[m]),
-                                                                  api_urls[2]))
-              sorted_ids1[[sorted_ids_counter]][[m]] <- list(valid_ids[m], api_urls, lookup_url, "TESTED")
-              names(sorted_ids1[[sorted_ids_counter]][[m]])[1] <- "entity_identifier"
-              names(sorted_ids1[[sorted_ids_counter]][[m]])[2] <- "api_urls"
-              names(sorted_ids1[[sorted_ids_counter]][[m]])[3] <- "lookup_url"
-              names(sorted_ids1[[sorted_ids_counter]][[m]])[4] <- "status"
-            }
-          }
-        }
-        if (length(sorted_ids1[[sorted_ids_counter]]) == 1) {
-          names(sorted_ids1[[sorted_ids_counter]]) <- "set"
-        }
-        if (length(sorted_ids1[[sorted_ids_counter]]) > 1) {
-          names(sorted_ids1[[sorted_ids_counter]]) <- unlist(purrr::map(seq(1,length(sorted_ids1[[sorted_ids_counter]])),
-                                                                        ~ paste0("set",as.character(.))))
-        }
-      }
-    }
-    if (length(sorted_ids2) >= 1) {
-      sorted_ids2 <- list("invalid_entities" = list("set" = list("entity_identifiers" = sorted_ids2, 
-                                                                 "api_urls" = "INVALID",
-                                                                 "lookup_url_info" = "INVALID",
-                                                                 "status" = "INVALID")))
-    }
-    if ("invalid_entities" %in% names(sorted_ids)) {
-      if ("invalid_entities" %in% names(sorted_ids2)) {
-        sorted_ids2$invalid_entities$set$entity_identifiers <- append(sorted_ids2$invalid_entities$set$entity_identifiers,
-                                                                      unlist(sorted_ids[which(names(sorted_ids) == "invalid_entities")], use.names = FALSE))
-      } else {
-        sorted_ids2 <- list("invalid_entities" = list("set" = list("entity_identifiers" = unlist(sorted_ids[which(names(sorted_ids) == "invalid_entities")], use.names = FALSE), 
-                                                                   "api_urls" = "INVALID",
-                                                                   "lookup_url_info" = "INVALID",
-                                                                   "status" = "INVALID")))
-      }
-    } 
-    if (length(setdiff(entity_types[which(entity_types != "invalid_entities")], 
-                       entity_types1)) != 0) {
-      untested_ids <- list()
-      for (n in 1:length(setdiff(entity_types[which(entity_types != "invalid_entities")], 
-                                 entity_types1))) {
-        ids <- unlist(sorted_ids[which(names(sorted_ids) == setdiff(entity_types[which(entity_types != "invalid_entities")], 
-                                                                    entity_types1)[n])], 
-                      use.names = FALSE)
-        api_urls <- entity_list[which(purrr::map(entity_list, ~ .[1]) == 
-                                        setdiff(entity_types[which(entity_types != "invalid_entities")], 
-                                                entity_types1)[n])][[1]][c(2,3,4)]
-        untested_ids[[n]] <- list()
-        if (!is.na(api_urls[3])) {
-          for (o in 1:ceiling(length(ids)/50)) {
-            ids_set <- ids[seq((1+((o-1)*50)), (o*50))][which(unlist(purrr::map(ids[seq((1+((o-1)*50)), (o*50))],
-                                                                                ~ !is.na(.))))]
-            lookup_url_info <- c("Bulk-Get API Endpoints URL", gsub("ENTITY_IDS", paste(ids_set, collapse = "%2C"),
-                                                                    api_urls[3]))
-            untested_ids[[n]][[o]] <- list(ids_set, api_urls, lookup_url_info, "UNTESTED")
-            if (length(ids_set) > 1) {
-              names(untested_ids[[n]][[o]])[1] <- "entity_identifiers"
-            } else {
-              names(untested_ids[[n]][[o]])[1] <- "entity_identifier"
-            }
-            names(untested_ids[[n]][[o]])[2] <- "api_urls"
-            names(untested_ids[[n]][[o]])[3] <- "lookup_url_info"
-            names(untested_ids[[n]][[o]])[4] <- "status"
-          }
-          if (length(untested_ids[[n]]) == 1) {
-            names(untested_ids[[n]]) <- "set"
-          }
-          if (length(untested_ids[[n]]) > 1) {
-            names(untested_ids[[n]]) <- unlist(purrr::map(seq(1,length(untested_ids[[n]])), 
-                                                          ~ paste0("set", as.character(.)))) 
-          }
-          names(untested_ids)[n] <- setdiff(entity_types[which(entity_types != "invalid_entities")], 
-                                            entity_types1)[n]
-        } else {
-          if (!is.na(api_urls[2])) {
-            for (p in 1:length(ids)) {
-              lookup_url_info <- c("Single-Get API Endpoint URL", gsub("ENTITY_ID", 
-                                                                       as.character(ids[p]), 
-                                                                       api_urls[2]))
-              untested_ids[[n]][[p]] <- list(ids[p], api_urls, lookup_url_info, "UNTESTED")
-              names(untested_ids[[n]][[p]])[1] <- "entity_identifier"
-              names(untested_ids[[n]][[p]])[2] <- "api_urls"
-              names(untested_ids[[n]][[p]])[3] <- "lookup_url_info"
-              names(untested_ids[[n]][[p]])[4] <- "status"
-            }
-            if (length(untested_ids[[n]]) == 1) {
-              names(untested_ids[[n]]) <- "set"
-            }
-            if (length(untested_ids[[n]]) > 1) {
-              names(untested_ids[[n]]) <- unlist(purrr::map(seq(1,length(untested_ids[[n]])), 
-                                                            ~ paste0("set", as.character(.)))) 
-            }
-            names(untested_ids)[n] <- setdiff(entity_types[which(entity_types != "invalid_entities")], 
-                                              entity_types1)[n]
-          }
-          if (is.na(api_urls[2])) {
-            if ("invalid_entities" %in% names(sorted_ids2)) {
-              sorted_ids2$invalid_entities$set$entity_identifiers <- append(sorted_ids2$invalid_entities$set$entity_identifiers,
-                                                                            ids)
-            } else {
-              sorted_ids2 <- list("invalid_entities" = list("set" = list("entity_identifiers" = ids, 
-                                                                         "api_urls" = "INVALID",
-                                                                         "lookup_url_info" = "INVALID",
-                                                                         "status" = "INVALID")))
-            }
-          }
-        }
-      }
-      sorted_ids2 <- append(sorted_ids2, untested_ids)
-    } 
-    return(append(sorted_ids1, sorted_ids2))
-  }
+  # .entity_match(sorted_ids, entity_list, api_key) {
+  #   entity_types <- unique(names(sorted_ids))
+  #   valid_entity_types <- entity_types[which(entity_types != "invalid_entities")]
+  #   listed_entity_types <- valid_entity_types[which(unlist(lapply(valid_entity_types, function(x)
+  #     !is.na(entity_list[names(which(purrr::map(entity_list, ~ .[1]) == x))][[1]][2]))))]
+  #   testable_entity_types <- listed_entity_types[which(unlist(lapply(listed_entity_types, function(x)
+  #     (!is.na(entity_list[names(which(purrr::map(entity_list, ~ .[1]) == x))][[1]][3]) |
+  #        !is.na(entity_list[names(which(purrr::map(entity_list, ~ .[1]) == x))][[1]][4])))))]
+  #   sorted_ids1 <- list()
+  #   sorted_ids2 <- list()
+  #   sorted_ids_counter <- 0
+  #   for (i in 1:length(testable_entity_types)) {
+  #     ids <- unlist(sorted_ids[which(names(sorted_ids) == testable_entity_types[i])], use.names = FALSE)
+  #     api_urls <- entity_list[which(purrr::map(entity_list, ~ .[1]) == testable_entity_types[[i]])][[1]][c(2,3,4)]
+  #     valid_ids <- list()
+  #     valid_ids_counter <- 0
+  #     for (j in 1:ceiling(length(ids)/50)) {
+  #       ids_set <- ids[seq((1+((j-1)*50)),(j*50))][which(unlist(purrr::map(ids[seq((1+((j-1)*50)), (j*50))],
+  #                                                                          ~ !is.na(.))))]
+  #       lookup_url <- gsub("ENTITY_IDS", paste(ids_set, collapse = "%2C"),
+  #                          api_urls[1])
+  #       lookup_content <- httr::content(httr::GET(lookup_url, httr::authenticate(api_key, '')))
+  #       if ("error" %in% names(lookup_content)) {
+  #         if ("invalidId" %in% names(lookup_content$error)) {
+  #           invalid_ids <- lookup_content$error$invalidId
+  #         }
+  #         if ("invalidIds" %in% names(lookup_content$error)) {
+  #           invalid_ids <- lookup_content$error$invalidIds
+  #         }
+  #         valid_ids_set <- setdiff(ids_set, unlist(invalid_ids))
+  #         sorted_ids2 <- unlist(append(sorted_ids2, invalid_ids))
+  #       } else {
+  #         valid_ids_set <- ids_set
+  #       }
+  #       if (length(valid_ids_set) != 0) {
+  #         valid_ids_counter <- valid_ids_counter + 1
+  #         valid_ids[[valid_ids_counter]] <- valid_ids_set
+  #       }
+  #     }
+  #     valid_ids <- unlist(valid_ids)
+  #     if (!is.null(valid_ids)) {
+  #       sorted_ids_counter <- sorted_ids_counter + 1
+  #       sorted_ids1[[sorted_ids_counter]] <- list()
+  #       names(sorted_ids1)[sorted_ids_counter] <- entity_types1[i]
+  #       if (!is.na(api_urls[3])) {
+  #         for (l in 1:ceiling(length(valid_ids)/50)) {
+  #           ids_set <- valid_ids[seq((1+((l-1)*50)), (l*50))][which(unlist(purrr::map(valid_ids[seq((1+((l-1)*50)), (l*50))],
+  #                                                                                     ~ !is.na(.))))]
+  #           lookup_url <- c("Bulk-Get API Endpoints URL", gsub("ENTITY_IDS", paste(ids_set, collapse = "%2C"),
+  #                                                              api_urls[3]))
+  #           sorted_ids1[[sorted_ids_counter]][[l]] <- list(ids_set, api_urls, lookup_url, "TESTED")
+  #           if (length(ids_set) > 1) {
+  #             names(sorted_ids1[[sorted_ids_counter]][[l]])[1] <- "entity_identifiers"
+  #           } else {
+  #             names(sorted_ids1[[sorted_ids_counter]][[l]])[1] <- "entity_identifier"
+  #           }
+  #           names(sorted_ids1[[sorted_ids_counter]][[l]])[2] <- "api_urls"
+  #           names(sorted_ids1[[sorted_ids_counter]][[l]])[3] <- "lookup_url"
+  #           names(sorted_ids1[[sorted_ids_counter]][[l]])[4] <- "status"
+  #         }
+  #       } else {
+  #         if (!is.na(api_urls[2])) {
+  #           for (m in 1:length(valid_ids)) {
+  #             lookup_url <- c("Single-Get API Endpoint URL", gsub("ENTITY_ID",
+  #                                                                 as.character(valid_ids[m]),
+  #                                                                 api_urls[2]))
+  #             sorted_ids1[[sorted_ids_counter]][[m]] <- list(valid_ids[m], api_urls, lookup_url, "TESTED")
+  #             names(sorted_ids1[[sorted_ids_counter]][[m]])[1] <- "entity_identifier"
+  #             names(sorted_ids1[[sorted_ids_counter]][[m]])[2] <- "api_urls"
+  #             names(sorted_ids1[[sorted_ids_counter]][[m]])[3] <- "lookup_url"
+  #             names(sorted_ids1[[sorted_ids_counter]][[m]])[4] <- "status"
+  #           }
+  #         }
+  #       }
+  #       if (length(sorted_ids1[[sorted_ids_counter]]) == 1) {
+  #         names(sorted_ids1[[sorted_ids_counter]]) <- "set"
+  #       }
+  #       if (length(sorted_ids1[[sorted_ids_counter]]) > 1) {
+  #         names(sorted_ids1[[sorted_ids_counter]]) <- unlist(purrr::map(seq(1,length(sorted_ids1[[sorted_ids_counter]])),
+  #                                                                       ~ paste0("set",as.character(.))))
+  #       }
+  #     }
+  #   }
+  #   if (length(sorted_ids2) >= 1) {
+  #     sorted_ids2 <- list("invalid_entities" = list("set" = list("entity_identifiers" = sorted_ids2, 
+  #                                                                "api_urls" = "INVALID",
+  #                                                                "lookup_url_info" = "INVALID",
+  #                                                                "status" = "INVALID")))
+  #   }
+  #   if ("invalid_entities" %in% names(sorted_ids)) {
+  #     if ("invalid_entities" %in% names(sorted_ids2)) {
+  #       sorted_ids2$invalid_entities$set$entity_identifiers <- append(sorted_ids2$invalid_entities$set$entity_identifiers,
+  #                                                                     unlist(sorted_ids[which(names(sorted_ids) == "invalid_entities")], use.names = FALSE))
+  #     } else {
+  #       sorted_ids2 <- list("invalid_entities" = list("set" = list("entity_identifiers" = unlist(sorted_ids[which(names(sorted_ids) == "invalid_entities")], use.names = FALSE), 
+  #                                                                  "api_urls" = "INVALID",
+  #                                                                  "lookup_url_info" = "INVALID",
+  #                                                                  "status" = "INVALID")))
+  #     }
+  #   } 
+  #   if (length(setdiff(entity_types[which(entity_types != "invalid_entities")], 
+  #                      entity_types1)) != 0) {
+  #     untested_ids <- list()
+  #     for (n in 1:length(setdiff(entity_types[which(entity_types != "invalid_entities")], 
+  #                                entity_types1))) {
+  #       ids <- unlist(sorted_ids[which(names(sorted_ids) == setdiff(entity_types[which(entity_types != "invalid_entities")], 
+  #                                                                   entity_types1)[n])], 
+  #                     use.names = FALSE)
+  #       api_urls <- entity_list[which(purrr::map(entity_list, ~ .[1]) == 
+  #                                       setdiff(entity_types[which(entity_types != "invalid_entities")], 
+  #                                               entity_types1)[n])][[1]][c(2,3,4)]
+  #       untested_ids[[n]] <- list()
+  #       if (!is.na(api_urls[3])) {
+  #         for (o in 1:ceiling(length(ids)/50)) {
+  #           ids_set <- ids[seq((1+((o-1)*50)), (o*50))][which(unlist(purrr::map(ids[seq((1+((o-1)*50)), (o*50))],
+  #                                                                               ~ !is.na(.))))]
+  #           lookup_url_info <- c("Bulk-Get API Endpoints URL", gsub("ENTITY_IDS", paste(ids_set, collapse = "%2C"),
+  #                                                                   api_urls[3]))
+  #           untested_ids[[n]][[o]] <- list(ids_set, api_urls, lookup_url_info, "UNTESTED")
+  #           if (length(ids_set) > 1) {
+  #             names(untested_ids[[n]][[o]])[1] <- "entity_identifiers"
+  #           } else {
+  #             names(untested_ids[[n]][[o]])[1] <- "entity_identifier"
+  #           }
+  #           names(untested_ids[[n]][[o]])[2] <- "api_urls"
+  #           names(untested_ids[[n]][[o]])[3] <- "lookup_url_info"
+  #           names(untested_ids[[n]][[o]])[4] <- "status"
+  #         }
+  #         if (length(untested_ids[[n]]) == 1) {
+  #           names(untested_ids[[n]]) <- "set"
+  #         }
+  #         if (length(untested_ids[[n]]) > 1) {
+  #           names(untested_ids[[n]]) <- unlist(purrr::map(seq(1,length(untested_ids[[n]])), 
+  #                                                         ~ paste0("set", as.character(.)))) 
+  #         }
+  #         names(untested_ids)[n] <- setdiff(entity_types[which(entity_types != "invalid_entities")], 
+  #                                           entity_types1)[n]
+  #       } else {
+  #         if (!is.na(api_urls[2])) {
+  #           for (p in 1:length(ids)) {
+  #             lookup_url_info <- c("Single-Get API Endpoint URL", gsub("ENTITY_ID", 
+  #                                                                      as.character(ids[p]), 
+  #                                                                      api_urls[2]))
+  #             untested_ids[[n]][[p]] <- list(ids[p], api_urls, lookup_url_info, "UNTESTED")
+  #             names(untested_ids[[n]][[p]])[1] <- "entity_identifier"
+  #             names(untested_ids[[n]][[p]])[2] <- "api_urls"
+  #             names(untested_ids[[n]][[p]])[3] <- "lookup_url_info"
+  #             names(untested_ids[[n]][[p]])[4] <- "status"
+  #           }
+  #           if (length(untested_ids[[n]]) == 1) {
+  #             names(untested_ids[[n]]) <- "set"
+  #           }
+  #           if (length(untested_ids[[n]]) > 1) {
+  #             names(untested_ids[[n]]) <- unlist(purrr::map(seq(1,length(untested_ids[[n]])), 
+  #                                                           ~ paste0("set", as.character(.)))) 
+  #           }
+  #           names(untested_ids)[n] <- setdiff(entity_types[which(entity_types != "invalid_entities")], 
+  #                                             entity_types1)[n]
+  #         }
+  #         if (is.na(api_urls[2])) {
+  #           if ("invalid_entities" %in% names(sorted_ids2)) {
+  #             sorted_ids2$invalid_entities$set$entity_identifiers <- append(sorted_ids2$invalid_entities$set$entity_identifiers,
+  #                                                                           ids)
+  #           } else {
+  #             sorted_ids2 <- list("invalid_entities" = list("set" = list("entity_identifiers" = ids, 
+  #                                                                        "api_urls" = "INVALID",
+  #                                                                        "lookup_url_info" = "INVALID",
+  #                                                                        "status" = "INVALID")))
+  #           }
+  #         }
+  #       }
+  #     }
+  #     sorted_ids2 <- append(sorted_ids2, untested_ids)
+  #   } 
+  #   return(append(sorted_ids1, sorted_ids2))
+  # }
   
   for (i in 1:length(entity_id)){
     if ((grepl("_", entity_id[[i]], fixed = TRUE) == FALSE) | 
@@ -245,6 +245,187 @@ infer_entity_type <- function(entity_id, entity_list=NULL, verbose=FALSE,
       names(res)[[i]] <- .entity_lookup(entity_id=entity_id[[i]], entity_list=entity_list, verbose=verbose)
     }
   }
-  output_ids <- .entity_match(sorted_ids=res, entity_list=entity_list, api_key=benchling_api_key)
-  return(output_ids)
+  return(res)
+  # output_ids <- .entity_match(sorted_ids=res, entity_list=entity_list, api_key=benchling_api_key)
+  # return(output_ids)
+}
+
+#####################################################################################################
+
+entity_list <- list_api_contents(contents="all")
+api_key <- Sys.getenv("BENCHLING_DEV_API_KEY")
+entity_id <- c("bfi_Ur5DfvGJ","ent_Ec76qX9f","bfi_VVamxrKQ","etr_MWQ7M7Pz","ent_sPrxBNOh",
+               "bfi_Q13AlXkf","ent_NldKfsH8","ent_GSsZcvZS","ent_YVC1AxlF","box_t99a7IQ8",
+               "seq_Cuf0bmCm","bfi_Ur5DfvGJ","soc_I023das","bfi_KsLU5uWV","bfi_193msqdsd",
+               "bfi_asd9asd2","prtn_ObbdtGhC","sfs_21asdas","sfso_93lsas93",
+               "con_m1dmbdV8","sjasdi2_asdasd","lok_asd12was","seq_E81usd", "sfso_9ikh6tgbv",
+               "edi_8j7bvrre")
+entity_ids_list <- infer_entity_type(entity_id=entity_id, 
+                                     benchling_api_key=Sys.getenv("BENCHLING_DEV_API_KEY"))
+
+entity_types <- unique(names(entity_ids_list))
+
+entity_types1 <- entity_types[which(entity_types != 
+                                      "invalid_entities")][which(unlist(lapply(entity_types[which(entity_types != "invalid_entities")], function(x)
+                                        !is.na(entity_list[names(which(purrr::map(entity_list, ~ .[1]) == x))][[1]][2]))))]
+entity_types1 <- entity_types1[which(unlist(lapply(entity_types1, function(x)
+  (!is.na(entity_list[names(which(purrr::map(entity_list, ~ .[1]) == x))][[1]][3]) |
+     !is.na(entity_list[names(which(purrr::map(entity_list, ~ .[1]) == x))][[1]][4])))))]
+
+entity_types2 <- c(entity_types[which(entity_types == "invalid_entities")],
+                   entity_types[which(entity_types != "invalid_entities")][which(unlist(lapply(entity_types[which(entity_types != "invalid_entities")], function(x)
+                     (is.na(entity_list[names(which(purrr::map(entity_list, ~ .[1]) == x))][[1]][3]) &
+                        is.na(entity_list[names(which(purrr::map(entity_list, ~ .[1]) == x))][[1]][4])))))])
+
+entity_types3 <- entity_types[which(entity_types != 
+                                      "invalid_entities")][which(unlist(lapply(entity_types[which(entity_types != "invalid_entities")], function(x)
+                                        is.na(entity_list[names(which(purrr::map(entity_list, ~ .[1]) == x))][[1]][2]))))]
+entity_types3 <- entity_types3[which(unlist(lapply(entity_types3, function(x)
+  (!is.na(entity_list[names(which(purrr::map(entity_list, ~ .[1]) == x))][[1]][3]) |
+     !is.na(entity_list[names(which(purrr::map(entity_list, ~ .[1]) == x))][[1]][4])))))]
+
+tested_ids_list <- list()
+invalid_ids_list <- list()
+untested_ids_list <- list()
+if (length(entity_types1) > 0) {
+  for (a in 1:length(entity_types1)) {
+    ids <- unlist(entity_ids_list[which(names(entity_ids_list) == entity_types1[a])], use.names = FALSE)
+    api_urls <- entity_list[which(purrr::map(entity_list, ~ .[1]) == entity_types1[[a]])][[1]][c(2,3,4)]
+    valid_ids <- list()
+    for (b in 1:ceiling(length(ids)/50)) {
+      ids_set <- ids[seq((1+((b-1)*50)),(b*50))][which(unlist(purrr::map(ids[seq((1+((b-1)*50)), (b*50))],
+                                                                         ~ !is.na(.))))]
+      lookup_url <- gsub("ENTITY_IDS", paste(ids_set, collapse = "%2C"),
+                         api_urls[1])
+      lookup_content <- httr::content(httr::GET(lookup_url, httr::authenticate(api_key, '')))
+      if ("error" %in% names(lookup_content)) {
+        if ("invalidId" %in% names(lookup_content$error)) {
+          invalid_ids <- lookup_content$error$invalidId
+        }
+        if ("invalidIds" %in% names(lookup_content$error)) {
+          invalid_ids <- lookup_content$error$invalidIds
+        }
+        valid_ids_set <- setdiff(ids_set, unlist(invalid_ids))
+        invalid_ids_list <- unlist(append(invalid_ids_list, invalid_ids))
+      } else {
+        valid_ids_set <- ids_set
+      }
+      if (length(valid_ids_set) > 0) {
+        valid_ids <- unlist(append(valid_ids, valid_ids_set))
+      }
+    }
+    if (length(valid_ids) > 0) {
+      tested_ids <- list()
+      if (!is.na(api_urls[3])) {
+        for (c in 1:ceiling(length(valid_ids)/50)) {
+          ids_set <- valid_ids[seq((1+((c-1)*50)), (c*50))][which(unlist(purrr::map(valid_ids[seq((1+((c-1)*50)), (c*50))],
+                                                                                    ~ !is.na(.))))]
+          lookup_url <- c("Bulk-Get API Endpoints URL", gsub("ENTITY_IDS", paste(ids_set, collapse = "%2C"),
+                                                             api_urls[3]))
+          tested_ids[[c]] <- list(ids_set, api_urls, lookup_url, "TESTED")
+          if (ceiling(length(valid_ids)/50) > 1) {
+            names(tested_ids)[c] <- paste0("set", as.character(l))
+          } else {
+            names(tested_ids)[c] <- "set"
+          }
+          if (length(ids_set) > 1) {
+            names(tested_ids[[c]])[1] <- "entity_identifiers"
+          } else {
+            names(tested_ids[[c]])[1] <- "entity_identifier"
+          }
+          names(tested_ids[[c]])[2] <- "api_urls"
+          names(tested_ids[[c]])[3] <- "lookup_url"
+          names(tested_ids[[c]])[4] <- "status"
+        }
+      } else {
+        if (!is.na(api_urls[2])) {
+          for (d in 1:length(valid_ids)) {
+            lookup_url <- c("Single-Get API Endpoint URL", gsub("ENTITY_ID",
+                                                                as.character(valid_ids[d]),
+                                                                api_urls[2]))
+            tested_ids[[d]] <- list(valid_ids[d], api_urls, lookup_url, "TESTED")
+            if (length(valid_ids) > 1) {
+              names(tested_ids)[d] <- paste0("set", as.character(d))
+            } else {
+              names(tested_ids)[d] <- "set"
+            }
+            names(tested_ids[[d]])[1] <- "entity_identifier"
+            names(tested_ids[[d]])[2] <- "api_urls"
+            names(tested_ids[[d]])[3] <- "lookup_url"
+            names(tested_ids[[d]])[4] <- "status"
+          }
+        }
+      }
+      tested_ids <- list(tested_ids)
+      names(tested_ids) <- entity_types1[a]
+      tested_ids_list <- append(tested_ids_list, tested_ids)
+    }
+  }
+}
+
+if (length(entity_types2) > 0) {
+  invalid_ids_list <- append(invalid_ids_list, 
+                             unlist(purrr::map(entity_types2, ~ entity_ids_list[which(names(entity_ids_list) == .)]), 
+                                    use.names = FALSE))
+  invalid_ids_list <- list("invalid_entities" = list("set" = list("entity_identifiers" = invalid_ids_list,
+                                                                  "api_urls" = "INVALID",
+                                                                  "lookup_url_info" = "INVALID",
+                                                                  "status" = "INVALID")))
+}
+
+if (length(entity_types3) > 0) {
+  for (e in 1:length(entity_types3)) {
+    ids <- unlist(entity_ids_list[which(names(entity_ids_list) == entity_types3[e])],
+                  use.names = FALSE)
+    api_urls <- entity_list[which(purrr::map(entity_list, ~ .[1]) == entity_types3[[e]])][[1]][c(2,3,4)]
+    untested_ids[[n]] <- list()
+    if (!is.na(api_urls[3])) {
+      for (f in 1:ceiling(length(ids)/50)) {
+        ids_set <- ids[seq((1+((f-1)*50)), (f*50))][which(unlist(purrr::map(ids[seq((1+((f-1)*50)), (f*50))],
+                                                                            ~ !is.na(.))))]
+        lookup_url_info <- c("Bulk-Get API Endpoints URL", gsub("ENTITY_IDS", paste(ids_set, collapse = "%2C"),
+                                                                api_urls[3]))
+        untested_ids[[n]][[o]] <- list(ids_set, api_urls, lookup_url_info, "UNTESTED")
+        if (length(ids_set) > 1) {
+          names(untested_ids[[n]][[o]])[1] <- "entity_identifiers"
+        } else {
+          names(untested_ids[[n]][[o]])[1] <- "entity_identifier"
+        }
+        names(untested_ids[[n]][[o]])[2] <- "api_urls"
+        names(untested_ids[[n]][[o]])[3] <- "lookup_url_info"
+        names(untested_ids[[n]][[o]])[4] <- "status"
+      }
+      if (length(untested_ids[[n]]) == 1) {
+        names(untested_ids[[n]]) <- "set"
+      }
+      if (length(untested_ids[[n]]) > 1) {
+        names(untested_ids[[n]]) <- unlist(purrr::map(seq(1,length(untested_ids[[n]])),
+                                                      ~ paste0("set", as.character(.))))
+      }
+      names(untested_ids)[n] <- setdiff(entity_types[which(entity_types != "invalid_entities")],
+                                        entity_types1)[n]
+    } else {
+      if (!is.na(api_urls[2])) {
+        for (p in 1:length(ids)) {
+          lookup_url_info <- c("Single-Get API Endpoint URL", gsub("ENTITY_ID",
+                                                                   as.character(ids[p]),
+                                                                   api_urls[2]))
+          untested_ids[[n]][[p]] <- list(ids[p], api_urls, lookup_url_info, "UNTESTED")
+          names(untested_ids[[n]][[p]])[1] <- "entity_identifier"
+          names(untested_ids[[n]][[p]])[2] <- "api_urls"
+          names(untested_ids[[n]][[p]])[3] <- "lookup_url_info"
+          names(untested_ids[[n]][[p]])[4] <- "status"
+        }
+        if (length(untested_ids[[n]]) == 1) {
+          names(untested_ids[[n]]) <- "set"
+        }
+        if (length(untested_ids[[n]]) > 1) {
+          names(untested_ids[[n]]) <- unlist(purrr::map(seq(1,length(untested_ids[[n]])),
+                                                        ~ paste0("set", as.character(.))))
+        }
+        names(untested_ids)[n] <- setdiff(entity_types[which(entity_types != "invalid_entities")],
+                                          entity_types1)[n]
+      }
+    }
+  }
 }
