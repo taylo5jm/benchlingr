@@ -34,7 +34,7 @@ The `benchlingr` package uses the RESTFUL API and Postgres database components o
 
 #### API
 
-In order to access the Benchling API service on one's Benchling tenant, [one must obtain an API key through the Benchling interface.](https://help.benchling.com/en/articles/2353570-access-the-benchling-developer-platform-enterprise). After obtaining an API key, it is recommended that you define a variable in `.Renviron` called `BENCHLING_API_KEY` to make this key accessible to the `benchlingr` package, since functions in the package will look for `BENCHLING_API_KEY` by default.
+In order to access the Benchling API service on one's Benchling tenant, [one must obtain an API key through the Benchling interface.](https://help.benchling.com/hc/en-us/articles/9714802977805-Access-the-Benchling-Developer-Platform). After obtaining an API key, it is recommended that you define a variable in `.Renviron` called `BENCHLING_API_KEY` to make this key accessible to the `benchlingr` package, since functions in the package will look for `BENCHLING_API_KEY` by default.
 
 ```
 # ~/.Renviron
