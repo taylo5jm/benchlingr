@@ -377,10 +377,10 @@ analyte entities we created can be retrieved with
 <span>  <span class="st">"SELECT schema,id,name$,precursor_ion_mz,product_ion_mz FROM analyte"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt;    schema           id                  name$ precursor_ion_mz product_ion_mz</span></span>
-<span><span class="co">#&gt; 1 analyte bfi_Q13AlXkf          13C-Uric Acid            171.0          126.0</span></span>
-<span><span class="co">#&gt; 2 analyte bfi_VVamxrKQ 13C-Methylmalonic Acid            121.3           76.4</span></span>
+<span><span class="co">#&gt; 1 analyte bfi_VVamxrKQ 13C-Methylmalonic Acid            121.3           76.4</span></span>
+<span><span class="co">#&gt; 2 analyte bfi_9fKcrORv 12C-Methylmalonic Acid            117.0           73.1</span></span>
 <span><span class="co">#&gt; 3 analyte bfi_KsLU5uWV          12C-Uric Acid            166.9          123.9</span></span>
-<span><span class="co">#&gt; 4 analyte bfi_9fKcrORv 12C-Methylmalonic Acid            117.0           73.1</span></span></code></pre></div>
+<span><span class="co">#&gt; 4 analyte bfi_Q13AlXkf          13C-Uric Acid            171.0          126.0</span></span></code></pre></div>
 <p>Benchling also created a “raw” table for our custom analyte
 schema.</p>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
@@ -480,8 +480,8 @@ reviewed yet.</p>
 <code class="sourceCode R"><span><span class="fu">DBI</span><span class="fu">::</span><span class="fu"><a href="https://dbi.r-dbi.org/reference/dbGetQuery.html" class="external-link">dbGetQuery</a></span><span class="op">(</span><span class="va">conn</span>, </span>
 <span>  <span class="st">"SELECT * FROM simple_plate_analyte_mapping$raw WHERE entry_id$ = 'etr_MWQ7M7Pz'"</span><span class="op">)</span></span>
 <span><span class="co">#&gt;                                     id                                _pkey</span></span>
-<span><span class="co">#&gt; 1 48d937f3-4035-494d-b63a-b658c91aadbd ad4344c3-4b58-476f-9fc2-caf043bec69a</span></span>
-<span><span class="co">#&gt; 2 b30e02a0-6084-419d-a552-d6419aa564e0 31a79378-e82e-4a25-837d-65f4619770c9</span></span>
+<span><span class="co">#&gt; 1 48d937f3-4035-494d-b63a-b658c91aadbd ecfe6b54-d5f0-413b-95b3-5352d8c21ab1</span></span>
+<span><span class="co">#&gt; 2 b30e02a0-6084-419d-a552-d6419aa564e0 1399c813-01e5-4964-87aa-409ac0d3487a</span></span>
 <span><span class="co">#&gt;            _sync_key    source_id                       schema</span></span>
 <span><span class="co">#&gt; 1 assay_result_22898 src_ZRvTYOgM simple_plate_analyte_mapping</span></span>
 <span><span class="co">#&gt; 2 assay_result_22897 src_ZRvTYOgM simple_plate_analyte_mapping</span></span>
@@ -494,9 +494,9 @@ reviewed yet.</p>
 <span><span class="co">#&gt;                                                                                                                                                                                                   field_validation$</span></span>
 <span><span class="co">#&gt; 1 {"file": {"validation_status": "VALID", "validation_comment": null}, "plate": {"validation_status": "VALID", "validation_comment": null}, "analytes": {"validation_status": "VALID", "validation_comment": null}}</span></span>
 <span><span class="co">#&gt; 2 {"file": {"validation_status": "VALID", "validation_comment": null}, "plate": {"validation_status": "VALID", "validation_comment": null}, "analytes": {"validation_status": "VALID", "validation_comment": null}}</span></span>
-<span><span class="co">#&gt;   plate                         analytes file</span></span>
-<span><span class="co">#&gt; 1     2 ["bfi_KsLU5uWV", "bfi_Q13AlXkf"] &lt;NA&gt;</span></span>
-<span><span class="co">#&gt; 2     1 ["bfi_9fKcrORv", "bfi_VVamxrKQ"] &lt;NA&gt;</span></span></code></pre></div>
+<span><span class="co">#&gt;   plate                         analytes file acl_resource_id</span></span>
+<span><span class="co">#&gt; 1     2 ["bfi_KsLU5uWV", "bfi_Q13AlXkf"] &lt;NA&gt;            &lt;NA&gt;</span></span>
+<span><span class="co">#&gt; 2     1 ["bfi_9fKcrORv", "bfi_VVamxrKQ"] &lt;NA&gt;            &lt;NA&gt;</span></span></code></pre></div>
 <p>Many of the columns in the “raw” tables should not be used in any
 context, such as <code>_pkey</code> and <code>_sync_key</code>, because
 they are internal identifiers for Benchling. It is important to also
@@ -576,35 +576,35 @@ for all entity columns in the table.</p>
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/get_entity_table.html">get_entity_table</a></span><span class="op">(</span><span class="va">conn</span>, <span class="va">res</span>, columns <span class="op">=</span> <span class="st">"analytes"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; $analytes</span></span>
 <span><span class="co">#&gt;             id    source_id  schema archived$ archive_purpose$  creator_id$</span></span>
-<span><span class="co">#&gt; 1 bfi_Q13AlXkf src_fv7Pvd8R analyte     FALSE             &lt;NA&gt; ent_Ec76qX9f</span></span>
-<span><span class="co">#&gt; 2 bfi_VVamxrKQ src_fv7Pvd8R analyte     FALSE             &lt;NA&gt; ent_Ec76qX9f</span></span>
+<span><span class="co">#&gt; 1 bfi_VVamxrKQ src_fv7Pvd8R analyte     FALSE             &lt;NA&gt; ent_Ec76qX9f</span></span>
+<span><span class="co">#&gt; 2 bfi_9fKcrORv src_fv7Pvd8R analyte     FALSE             &lt;NA&gt; ent_Ec76qX9f</span></span>
 <span><span class="co">#&gt; 3 bfi_KsLU5uWV src_fv7Pvd8R analyte     FALSE             &lt;NA&gt; ent_Ec76qX9f</span></span>
-<span><span class="co">#&gt; 4 bfi_9fKcrORv src_fv7Pvd8R analyte     FALSE             &lt;NA&gt; ent_Ec76qX9f</span></span>
+<span><span class="co">#&gt; 4 bfi_Q13AlXkf src_fv7Pvd8R analyte     FALSE             &lt;NA&gt; ent_Ec76qX9f</span></span>
 <span><span class="co">#&gt;           created_at$        modified_at$                  name$</span></span>
-<span><span class="co">#&gt; 1 2022-09-20 13:07:45 2022-09-20 13:07:45          13C-Uric Acid</span></span>
-<span><span class="co">#&gt; 2 2022-09-20 13:07:45 2022-09-20 13:07:45 13C-Methylmalonic Acid</span></span>
+<span><span class="co">#&gt; 1 2022-09-20 13:07:45 2022-09-20 13:07:45 13C-Methylmalonic Acid</span></span>
+<span><span class="co">#&gt; 2 2022-09-20 13:07:45 2022-09-20 13:07:45 12C-Methylmalonic Acid</span></span>
 <span><span class="co">#&gt; 3 2022-09-20 13:07:45 2022-09-20 13:07:45          12C-Uric Acid</span></span>
-<span><span class="co">#&gt; 4 2022-09-20 13:07:45 2022-09-20 13:07:45 12C-Methylmalonic Acid</span></span>
+<span><span class="co">#&gt; 4 2022-09-20 13:07:45 2022-09-20 13:07:45          13C-Uric Acid</span></span>
 <span><span class="co">#&gt;   file_registry_id$  schema_id$   folder_id$  project_id$</span></span>
-<span><span class="co">#&gt; 1              A004 ts_VvMdQcMn lib_F5H5Syfw src_ZRvTYOgM</span></span>
-<span><span class="co">#&gt; 2              A003 ts_VvMdQcMn lib_F5H5Syfw src_ZRvTYOgM</span></span>
+<span><span class="co">#&gt; 1              A003 ts_VvMdQcMn lib_F5H5Syfw src_ZRvTYOgM</span></span>
+<span><span class="co">#&gt; 2              A001 ts_VvMdQcMn lib_F5H5Syfw src_ZRvTYOgM</span></span>
 <span><span class="co">#&gt; 3              A002 ts_VvMdQcMn lib_F5H5Syfw src_ZRvTYOgM</span></span>
-<span><span class="co">#&gt; 4              A001 ts_VvMdQcMn lib_F5H5Syfw src_ZRvTYOgM</span></span>
+<span><span class="co">#&gt; 4              A004 ts_VvMdQcMn lib_F5H5Syfw src_ZRvTYOgM</span></span>
 <span><span class="co">#&gt;                                                                                                                              url$</span></span>
-<span><span class="co">#&gt; 1          https://hemoshear-dev.benchling.com/hemoshear_therapeutics_org/f/lib_HG4kUobQ-registry/bfi_Q13AlXkf-13c-uric-acid/edit</span></span>
-<span><span class="co">#&gt; 2 https://hemoshear-dev.benchling.com/hemoshear_therapeutics_org/f/lib_HG4kUobQ-registry/bfi_VVamxrKQ-13c-methylmalonic-acid/edit</span></span>
+<span><span class="co">#&gt; 1 https://hemoshear-dev.benchling.com/hemoshear_therapeutics_org/f/lib_HG4kUobQ-registry/bfi_VVamxrKQ-13c-methylmalonic-acid/edit</span></span>
+<span><span class="co">#&gt; 2 https://hemoshear-dev.benchling.com/hemoshear_therapeutics_org/f/lib_HG4kUobQ-registry/bfi_9fKcrORv-12c-methylmalonic-acid/edit</span></span>
 <span><span class="co">#&gt; 3          https://hemoshear-dev.benchling.com/hemoshear_therapeutics_org/f/lib_HG4kUobQ-registry/bfi_KsLU5uWV-12c-uric-acid/edit</span></span>
-<span><span class="co">#&gt; 4 https://hemoshear-dev.benchling.com/hemoshear_therapeutics_org/f/lib_HG4kUobQ-registry/bfi_9fKcrORv-12c-methylmalonic-acid/edit</span></span>
+<span><span class="co">#&gt; 4          https://hemoshear-dev.benchling.com/hemoshear_therapeutics_org/f/lib_HG4kUobQ-registry/bfi_Q13AlXkf-13c-uric-acid/edit</span></span>
 <span><span class="co">#&gt;   validation_status$         type$ is_registered$ precursor_ion_mz</span></span>
-<span><span class="co">#&gt; 1             PASSED custom_entity           TRUE            171.0</span></span>
-<span><span class="co">#&gt; 2             PASSED custom_entity           TRUE            121.3</span></span>
+<span><span class="co">#&gt; 1             PASSED custom_entity           TRUE            121.3</span></span>
+<span><span class="co">#&gt; 2             PASSED custom_entity           TRUE            117.0</span></span>
 <span><span class="co">#&gt; 3             PASSED custom_entity           TRUE            166.9</span></span>
-<span><span class="co">#&gt; 4             PASSED custom_entity           TRUE            117.0</span></span>
+<span><span class="co">#&gt; 4             PASSED custom_entity           TRUE            171.0</span></span>
 <span><span class="co">#&gt;   product_ion_mz</span></span>
-<span><span class="co">#&gt; 1          126.0</span></span>
-<span><span class="co">#&gt; 2           76.4</span></span>
+<span><span class="co">#&gt; 1           76.4</span></span>
+<span><span class="co">#&gt; 2           73.1</span></span>
 <span><span class="co">#&gt; 3          123.9</span></span>
-<span><span class="co">#&gt; 4           73.1</span></span></code></pre></div>
+<span><span class="co">#&gt; 4          126.0</span></span></code></pre></div>
 <p>The <code>replace_entity_id_with_name</code> function will simply
 replace the Benchling identifiers with the names of the entities.</p>
 <div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
@@ -803,11 +803,11 @@ various ways (ex. creation time).</p>
 <span><span class="st">  WHERE entry_id$ = 'etr_JYUlMiIs'"</span><span class="op">)</span></span>
 <span><span class="va">d</span></span>
 <span><span class="co">#&gt;                                     id plate         analytes</span></span>
-<span><span class="co">#&gt; 1 f72e61f1-a1dc-48d1-9e5e-ad5cb118d716     1 ["bfi_9fKcrORv"]</span></span>
-<span><span class="co">#&gt; 2 19ef2e88-761c-41d4-8a65-80acc2c30e3a     2 ["bfi_VVamxrKQ"]</span></span>
+<span><span class="co">#&gt; 1 19ef2e88-761c-41d4-8a65-80acc2c30e3a     2 ["bfi_VVamxrKQ"]</span></span>
+<span><span class="co">#&gt; 2 f72e61f1-a1dc-48d1-9e5e-ad5cb118d716     1 ["bfi_9fKcrORv"]</span></span>
 <span><span class="co">#&gt;                                                                                                                                                                 file</span></span>
-<span><span class="co">#&gt; 1 {"id": "ff0cca5f-b400-4e42-9df6-9f1badc4b7e2", "url": "https://hemoshear-dev.benchling.com/blobs/ff0cca5f-b400-4e42-9df6-9f1badc4b7e2", "name": "Plate1-Data.csv"}</span></span>
-<span><span class="co">#&gt; 2 {"id": "a2ed3ec8-59b9-451a-81eb-c4fb5322858b", "url": "https://hemoshear-dev.benchling.com/blobs/a2ed3ec8-59b9-451a-81eb-c4fb5322858b", "name": "Plate2-Data.csv"}</span></span></code></pre></div>
+<span><span class="co">#&gt; 1 {"id": "a2ed3ec8-59b9-451a-81eb-c4fb5322858b", "url": "https://hemoshear-dev.benchling.com/blobs/a2ed3ec8-59b9-451a-81eb-c4fb5322858b", "name": "Plate2-Data.csv"}</span></span>
+<span><span class="co">#&gt; 2 {"id": "ff0cca5f-b400-4e42-9df6-9f1badc4b7e2", "url": "https://hemoshear-dev.benchling.com/blobs/ff0cca5f-b400-4e42-9df6-9f1badc4b7e2", "name": "Plate1-Data.csv"}</span></span></code></pre></div>
 <p>Each “blob” consists of an identifier, a URL, and a name.
 <code>download_blobs</code> is a low-level wrapper for the Python SDK
 that downloads a set of blobs from Benchling as specified by their ID
