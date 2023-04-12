@@ -1,5 +1,7 @@
 # list_api_contents.R
 
+#' Generate a list of vectors that defines the entities we want to focus on in the form of vectors
+
 list_api_contents <- function(contents="all", entity_list=NULL) {
   if (is.null(entity_list)) {
     entity_list <- list("bat" = c("batch", 
