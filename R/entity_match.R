@@ -1,5 +1,8 @@
-entity_match(entity_ids_list, entity_list, benchling_api_key) {
-  entity_types <- unique(names(entity_ids_list))
+
+
+
+entity_match(entity_id, entity_list, benchling_api_key) {
+  entity_types <- unique(names(entity_id))
   entity_types1 <- entity_types[which(entity_types != 
                                         "invalid_entities")][which(unlist(lapply(entity_types[which(entity_types != "invalid_entities")], function(x)
                                           !is.na(entity_list[names(which(purrr::map(entity_list, ~ .[1]) == x))][[1]][2]))))]
@@ -24,14 +27,14 @@ entity_match(entity_ids_list, entity_list, benchling_api_key) {
   untested_ids_list <- list()
   if (length(entity_types1) > 0) {
     for (a in 1:length(entity_types1)) {
-      ids <- unlist(entity_ids_list[which(names(entity_ids_list) == entity_types1[a])], use.names = FALSE)
+      ids <- unlist(entity_id[which(names(entity_id) == entity_types1[a])], use.names = FALSE)
       api_urls <- entity_list[which(purrr::map(entity_list, ~ .[1]) == entity_types1[[a]])][[1]][c(2,3,4)]
       valid_ids <- list()
       tested_ids <- list()
       for (b in 1:ceiling(length(ids)/50)) {
         ids_set <- ids[seq((1+((b-1)*50)),(b*50))][which(unlist(purrr::map(ids[seq((1+((b-1)*50)), (b*50))],
                                                                            ~ !is.na(.))))]
-        lookup_url <- gsub("ENTITY_IDS", paste(ids_set, collapse = "%2C"),
+        lookup_url <- gsub("entity_id", paste(ids_set, collapse = "%2C"),
                            api_urls[1])
         lookup_content <- httr::content(httr::GET(lookup_url, httr::authenticate(api_key, '')))
         if ("error" %in% names(lookup_content)) {
@@ -56,7 +59,7 @@ entity_match(entity_ids_list, entity_list, benchling_api_key) {
           for (c in 1:ceiling(length(valid_ids)/50)) {
             ids_set <- valid_ids[seq((1+((c-1)*50)), (c*50))][which(unlist(purrr::map(valid_ids[seq((1+((c-1)*50)), (c*50))],
                                                                                       ~ !is.na(.))))]
-            lookup_url <- c("Bulk-Get API Endpoints URL", gsub("ENTITY_IDS", paste(ids_set, collapse = "%2C"),
+            lookup_url <- c("Bulk-Get API Endpoints URL", gsub("entity_id", paste(ids_set, collapse = "%2C"),
                                                                api_urls[3]))
             tested_ids[[1]][[c]] <- list(ids_set, api_urls, lookup_url, "TESTED")
             if (ceiling(length(valid_ids)/50) > 1) {
@@ -100,7 +103,7 @@ entity_match(entity_ids_list, entity_list, benchling_api_key) {
   
   if (length(entity_types2) > 0) {
     invalid_ids_list <- append(invalid_ids_list, 
-                               unlist(purrr::map(entity_types2, ~ entity_ids_list[which(names(entity_ids_list) == .)]), 
+                               unlist(purrr::map(entity_types2, ~ entity_id[which(names(entity_id) == .)]), 
                                       use.names = FALSE))
     invalid_ids_list <- list("invalid_entities" = list("set" = list("entity_identifiers" = invalid_ids_list,
                                                                     "api_urls" = "INVALID",
@@ -110,7 +113,7 @@ entity_match(entity_ids_list, entity_list, benchling_api_key) {
   
   if (length(entity_types3) > 0) {
     for (e in 1:length(entity_types3)) {
-      ids <- unlist(entity_ids_list[which(names(entity_ids_list) == entity_types3[e])],
+      ids <- unlist(entity_id[which(names(entity_id) == entity_types3[e])],
                     use.names = FALSE)
       api_urls <- entity_list[which(purrr::map(entity_list, ~ .[1]) == entity_types3[[e]])][[1]][c(2,3,4)]
       untested_ids_list[[e]] <- list()
@@ -118,7 +121,7 @@ entity_match(entity_ids_list, entity_list, benchling_api_key) {
         for (f in 1:ceiling(length(ids)/50)) {
           ids_set <- ids[seq((1+((f-1)*50)), (f*50))][which(unlist(purrr::map(ids[seq((1+((f-1)*50)), (f*50))],
                                                                               ~ !is.na(.))))]
-          lookup_url_info <- c("Bulk-Get API Endpoints URL", gsub("ENTITY_IDS", paste(ids_set, collapse = "%2C"),
+          lookup_url_info <- c("Bulk-Get API Endpoints URL", gsub("entity_id", paste(ids_set, collapse = "%2C"),
                                                                   api_urls[3]))
           untested_ids_list[[e]][[f]] <- list(ids_set, api_urls, lookup_url_info, "UNTESTED")
           if (ceiling(length(ids)/50) > 1) {
