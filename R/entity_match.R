@@ -1,6 +1,3 @@
-
-
-
 entity_match(entity_id, entity_list, benchling_api_key) {
   entity_types <- unique(names(entity_id))
   entity_types1 <- entity_types[which(entity_types != 

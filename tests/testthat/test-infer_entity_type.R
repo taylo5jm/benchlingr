@@ -8,16 +8,17 @@ test_that("Verify that infer_entity_type.R stops when given an invalid input for
                "'entity_id' input is invalid. Must be a character vector with a length greater than 0.")
   expect_error(infer_entity_type(NA), 
                "'entity_id' input is invalid. Must be a character vector with a length greater than 0.")
-  expect_error(infer_entity_type(c(NA)), 
-               "'entity_id' input is invalid. Cannot contain values that are NA.")
-  expect_error(infer_entity_type(c("seq_uCf2mnvD", "bfi_3er4Fjus", NA)), 
-               "'entity_id' input is invalid. Cannot contain values that are NA.")
-  expect_error(infer_entity_type(c("seq_uCf2mnvD", " ", NA)), 
-               "'entity_id' input is invalid. Cannot contain values that are NA.")
-  expect_error(infer_entity_type(c("seq_uCf2mnvD", "", "box_3asdFjus")), 
-               "'entity_id' input is invalid. Cannot contain empty or blank strings.")
-  expect_error(infer_entity_type(c("seq_uCf2mnvD", " ", "con_3dpoEM0x")), 
-               "'entity_id' input is invalid. Cannot contain empty or blank strings.")
+  expect_error(infer_entity_)
+  expect_warning(infer_entity_type(c(NA)), 
+                 "'entity_id' contains NA values. Removing them.")
+  expect_warning(infer_entity_type(c("seq_uCf2mnvD", "bfi_3er4Fjus", NA)), 
+                 "'entity_id' contains NA values. Removing them.")
+  expect_warning(infer_entity_type(c("seq_uCf2mnvD", " ", NA)), 
+                 "'entity_id' contains NA values. Removing them.")
+  expect_warning(infer_entity_type(c("seq_uCf2mnvD", " ", NA)), 
+                 "'entity_id' contains blank elements.")
+  expect_warning(infer_entity_type(c("seq_uCf2mnvD", " ", "bn_asd_As.d")), 
+                 "'entity_id' contains blank elements.")
   })
 
 # test case 2

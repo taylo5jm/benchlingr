@@ -1,16 +1,15 @@
 # infer_entity_type.R
 
-#' Infer the entity types of elements contained in a vector or list
+#' Infer the entity types of elements contained in a vector
 #' 
-#' infer_entity_type.R takes either a character vector or list of character strings and 
-#' for each element tries to infer the schema type.
+#' infer_entity_type.R takes a character vector with one or more elements and for each element 
+#' tries to infer the schema type.
 #' 
-#' @param entity_id Either a character vector or list that contains the entities. 
-#' All entities in the list or character vector must be character strings.
+#' @param entity_id A character vector with 1 or more elements.
 #' @param entity_list A list of vectors where each vector designates the schema type and API URLs for 
 #' the entities we are interested in and the names are the first characters seen in the identifiers for
 #' each entity. 
-#' @return A named list, where the names are the identifiers or elements from entity_id
+#' @return A named character vector, where the names are the identifiers or elements from entity_id
 #' and the values are the schema types.
 #' @examples \dontrun{
 #' entity_id1 <- c("seq_Cuf0bmCm", "bfi_Q1PMlXkf", "ver_io98720u")
@@ -33,23 +32,24 @@ infer_entity_type <- function(entity_id, entity_list=NULL) {
   }
   
   if (any(is.na(entity_id))) { # Checks if entity_id contains any values that are NA.
-    stop("'entity_id' input is invalid. Cannot contain values that are NA.")
+    entity_id <- as.character(na.omit(entity_id)) # Removes NA values.
+    warning("'entity_id' contains NA values. Removing them.")
   }
-  
-  if (any(grepl("^\\s*$", entity_id))) { # Checks if entity_id contains any empty or blank strings.
-    stop("'entity_id' input is invalid. Cannot contain empty or blank strings.")
+  if (any(grepl("^\\s*$", entity_id))) { # Check if entity_id contains blank spaces.
+    warning("'entity_id' contains blank elements.")
   }
 
-  if (is.null(entity_list)) { # Checks if entity_list has not been defined
-    entity_list <- list_api_contents(contents="all") # Defines entity_list if left as NULL using list_api_contents.R
+  if (is.null(entity_list)) { # Checks if entity_list has not been defined.
+    entity_list <- .list_api_contents(contents="all") # Defines entity_list if left as NULL using list_api_contents.R.
   }
   
-  entity_prefix <- purrr::map_chr(entity_id, ~ gsub("^([[:alnum:]]+)_.+","\\1",.)) # Extracts the entity prefix
-  entity_sublist <- entity_list[entity_prefix] 
-  entity_sublist[sapply(entity_sublist, is.null)] <- NA # Assigns NA to all invalid identifiers in entity sublist
+  entity_prefix <- purrr::map_chr(entity_id, ~ gsub("^([[:alnum:]]+)_.+","\\1",.)) # Extracts the entity prefix.
   
-  entity_types <- purrr::map_chr(entity_sublist, ~ .[1]) # Extracts entity types from entity sublist
-  names(entity_types) <- entity_id # Assigns names using entity_id
+  entity_sublist <- entity_list[entity_prefix]  # Extracts the entities from entity_list associated with the elements in entity_id.
+  entity_sublist[sapply(entity_sublist, is.null)] <- NA # Assigns NA to all invalid identifiers in entity sublist.
+  
+  entity_types <- purrr::map_chr(entity_sublist, ~ .[1]) # Extracts entity types from entity sublist.
+  names(entity_types) <- entity_id # Assigns names using entity_id.
   
   return(entity_types)
 }

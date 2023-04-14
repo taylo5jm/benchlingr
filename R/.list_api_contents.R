@@ -1,8 +1,38 @@
-# list_api_contents.R
+# .list_api_contents.R
 
-#' Generate a list of vectors that defines the entities we want to focus on in the form of vectors
+#' Generate a named list where the names are the first characters in an identifier's name for a specific
+#' entity and each element is a vector with the first element in the vector being the entity schema, the 
+#' second vector is the list API contents, the third is the Single-Get API endpoint option and the fourth
+#' is the Bulk-Get API endpoints option
+#' 
+#' @param contents A character string to specify which type of information to return for the entities 
+#' listed: `"bulk-get endpoints"`, `"single-get endpoint"`,  `"list contents"`, `"entity schema"`,
+#' `"entity types"`, `"all"` (the default).
+#' @param entity_list A list of vectors where each vector designates the schema type and API options for 
+#' the entities we are interested in and the names are the first characters seen in the identifiers for
+#' each entity. If NULL (the default), the function will use a default list.
+#' 
+#' Alternatively, a custom or more specified list can be used based on the purpose and intent of the list
+#' and overall application of the function.
+#' 
+#' @return A named list where the names are the first characters in an identifier's name for a corresponding
+#' entity and the elements are vectors that can show either the entity's schema, list API contents, 
+#' Single-Get API endpoint option, Bulk-Get API endpoints option or all of them respectively.
+#' @examples \dontrun{
+#' entity_list <- .list_api_contents()
+#' 
+#' entity_schemas <- .list_api_contents(contents = "entity schema")
+#' 
+#' entity_list_contents <- .list_api_contents(contents = "list contents")
+#' 
+#' entity_single_get_contents <- .list_api_contents(contents = "single-get endpoint")
+#' 
+#' entity_bulk_get_contents <- .list_api_contents(contents = "bulk-get endpoints")
+#' 
+#' }
+#' @export
 
-list_api_contents <- function(contents="all", entity_list=NULL) {
+.list_api_contents <- function(contents="all", entity_list=NULL) {
   if (is.null(entity_list)) {
     entity_list <- list("bat" = c("batch", 
                                   "https://hemoshear-dev.benchling.com/api/v2/batches?pageSize=50&sort=name&ids=ENTITY_IDS",
@@ -59,18 +89,27 @@ list_api_contents <- function(contents="all", entity_list=NULL) {
   }
   if (contents == "all") {
     return(entity_list)
+    
   } else if (contents == "bulk-get endpoints") {
-    new_entity_list <- purrr::map(entity_list, ~ .[c(1,4)])
+    new_entity_list <- purrr::map(entity_list, ~ .[4])
     names(new_entity_list) <- names(entity_list)
     return(new_entity_list)
+    
   } else if (contents == "single-get endpoint") {
-    new_entity_list <- purrr::map(entity_list, ~ .[c(1,3)])
+    new_entity_list <- purrr::map(entity_list, ~ .[3])
     names(new_entity_list) <- names(entity_list)
     return(new_entity_list)
+    
   } else if (contents == "list contents") {
-    new_entity_list <- purrr::map(entity_list, ~ .[c(1,2)])
+    new_entity_list <- purrr::map(entity_list, ~ .[2])
     names(new_entity_list) <- names(entity_list)
     return(new_entity_list)
+    
+  } else if (contents == "entity schema" | contents == "entity types") {
+    new_entity_list <- purrr::map(entity_list, ~ .[1])
+    names(new_entity_list) <- names(entity_list)
+    return(new_entity_list)
+    
   } else {
     stop("Invalid argument for contents.")
   }
