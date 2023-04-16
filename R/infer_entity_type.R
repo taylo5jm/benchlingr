@@ -34,9 +34,12 @@ infer_entity_type <- function(entity_id, entity_list=NULL) {
   if (any(is.na(entity_id))) { # Checks if entity_id contains any values that are NA.
     entity_id <- as.character(na.omit(entity_id)) # Removes NA values.
     warning("'entity_id' contains NA values. Removing them.")
+    # stop("'entity_id' input is invalid. Must not contain NA values.")
   }
+  
   if (any(grepl("^\\s*$", entity_id))) { # Check if entity_id contains blank spaces.
     warning("'entity_id' contains blank elements.")
+    # stop("'entity_id' input is invalid. Must not contain blank or empty strings.")
   }
 
   if (is.null(entity_list)) { # Checks if entity_list has not been defined.
