@@ -19,7 +19,7 @@ License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
 URL: https://github.com/hemoshear/benchlingr,
-    https://upgraded-succotash-8df2b926.pages.github.io/
+    https://benchling-r.info
 BugReports: https://github.com/hemoshear/benchlingr
 RoxygenNote: 7.2.3
 Suggests: 
