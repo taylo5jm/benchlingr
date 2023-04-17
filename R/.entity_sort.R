@@ -29,10 +29,19 @@
 #' @keywords internal
 
 .entity_sort <- function(entity_id) {
-  entity_id[which(is.na(entity_id))] <- "invalid_entity"
-  entity_id_types <- unique(entity_id)
-  entity_id_list <- purrr::map(entity_id_types, ~ names(entity_id[which(entity_id == .)]))
-  names(entity_id_list) <- entity_id_types
-  if 
+  if (all(is.na(entity_id))) { # Checks to see if input contains only NA values.
+    warning("Input contains only NA values.")
+  }
+  entity_id[which(is.na(entity_id))] <- "invalid_entity" # Replaces NA values with "invalid_entity" 
+                                                         # since it creates complications in sorting 
+                                                         # entity identifiers based on which value 
+                                                         # (entity schema) they are equal to
+  entity_id_types <- unique(entity_id) # Generates vector containing entity schemas without repetition
+  
+  entity_id_list <- purrr::map(entity_id_types, ~ names(entity_id[which(entity_id == .)])) # Generates named list of vectors each vector contains entity identifiers
+                                                                                           # grouped together based on the value they had in entity_id
+  names(entity_id_list) <- entity_id_types # Assigns names to each vector in list where the name is either an entity schema the 
+                                           # the entity identifiers are associated with or invalid_entity for entity identifiers
+                                           # that had NA as their value because they could not be matched with any other entity
   return(entity_id_list)
 }
