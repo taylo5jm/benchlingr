@@ -13,11 +13,11 @@
 #' and the values are the schema types.
 #' @examples \dontrun{
 #' entity_id1 <- c("seq_Cuf0bmCm", "bfi_Q1PMlXkf", "ver_io98720u")
-#' res1 <- infer_entity_type(entity_id1)
+#' res1 <- infer_entity_type(entity_id=entity_id1, entity_list=NULL)
 #' 
 #' entity_id2 <- c("bfi_Ur5DfvGJ", "seq_Gju61mCm", "bfi_Q13AlXkf", "bfi_Ks908uWV",
 #' "ent_Ec76qX9f", "ent_sPrxBNOh", "box_K9950IQ8", "dis_89mkooip", "bxo_923aklum")
-#' res2 <- infer_entity_type(entity_id2)
+#' res2 <- infer_entity_type(entity_id=entity_id2, entity_list=NULL)
 #' }
 #' @export
 #' @keywords internal
