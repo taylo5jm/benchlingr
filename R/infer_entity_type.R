@@ -43,7 +43,7 @@ infer_entity_type <- function(entity_id, entity_list=NULL) {
   }
 
   if (is.null(entity_list)) { # Checks if entity_list has not been defined.
-    entity_list <- .list_api_contents(contents="all") # Defines entity_list if left as NULL using list_api_contents.R.
+    entity_list <- .list_api_contents(contents="all", entity_list=NULL) # Defines entity_list if left as NULL using list_api_contents.R.
   }
   
   entity_prefix <- purrr::map_chr(entity_id, ~ gsub("^([[:alnum:]]+)_.+","\\1",.)) # Extracts the entity prefix.

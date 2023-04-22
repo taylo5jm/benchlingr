@@ -111,6 +111,8 @@
     return(new_entity_list)
     
   } else {
-    stop("Invalid argument for contents.")
+    stop("Invalid argument for contents. Input for contents should either be defined as 'all', 
+         'bulk-get endpoints', 'single-get endpoint', 'list contents', 'entity schema', 
+         'entity types' or left as NULL.")
   }
 }
