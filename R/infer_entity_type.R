@@ -20,7 +20,6 @@
 #' res2 <- infer_entity_type(entity_id=entity_id2, entity_list=NULL)
 #' }
 #' @export
-#' @keywords internal
 
 infer_entity_type <- function(entity_id, entity_list=NULL) {
   if (!is.character(entity_id) | length(entity_id) == 0) { # Checks if entity_id is a character vector with a length greater than 0.
