@@ -3,14 +3,14 @@
 #' Format each element using its entity identifier's name to generate proper Single-Get API endpoint URLs for 
 #' that identifier
 #' 
-#' .craft_api_queries.R takes a named character vector with one or more elements where the names are the names 
-#' of entity identifiers and the elements are each identifier's respective Single-Get API endpoint URL formats 
-#' and rewrites the element using the name of the identifier to generate proper Single-Get API endpoint URLs.
+#' .craft_api_queries.R takes a named character vector with one or more elements where the names are entity 
+#' identifiers and the elements are each identifier's respective Single-Get API endpoint URL formats and 
+#' rewrites the element using the name of the identifier to generate proper Single-Get API endpoint URLs.
 #' 
-#' @param entity_single_get_endpoints A named character vector where the names are the names of entity 
-#' identifiers and the elements are the Single-Get API endpoint URL formats for each identifier.
-#' @return A named character vector where the names are the names of entity identifiers and the elements are 
-#' the respective Single-Get API endpoint URLs for each identifier.
+#' @param entity_single_get_endpoints A named character vector where the names are entity identifiers and the 
+#' elements are the Single-Get API endpoint URL formats for each identifier.
+#' @return A named character vector where the names are entity identifiers and the elements are the 
+#' respective Single-Get API endpoint URLs for each identifier.
 #' @examples \dontrun{
 #' entity_single_get_endpoints <- c("seq_Cuf0bmCm"="https://hemoshear-dev.benchling.com/api/v2/dna-sequences/ENTITY_ID", 
 #' "bfi_Q1PMlXkf"="https://hemoshear-dev.benchling.com/api/v2/custom-entities/ENTITY_ID", 

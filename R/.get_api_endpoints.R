@@ -2,12 +2,13 @@
 
 #' Match each element to its corresponding Single-Get API endpoint URL format
 #' 
-#' .get_api_endpoints.R takes a named character vector with one or more elements where the names are the names 
-#' of entity identifiers and the elements are the entity types for those identifiers and matches each element 
+#' .get_api_endpoints.R takes a named character vector with one or more elements where the names are entity 
+#' identifiers and the elements are the entity types for those identifiers and matches each element 
 #' to their respective Single-Get API endpoint URL formats according to which entity the schema correlates 
 #' with.
 #' 
-#' @param entity_id A named character vector where the names are the names of entity identifiers and the elements 
+#' @include .list_api_contents.R
+#' @param entity_id A named character vector where the names are entity identifiers and the elements 
 #' are the entity types associated with those identifiers.
 #' @param entity_list A list of vectors where each vector designates the schema type and API options for 
 #' the entities we are interested in and the names are the first characters seen in the identifiers for
@@ -16,7 +17,7 @@
 #' Alternatively, a custom or more specified list can be used based on the purpose and intent of the list
 #' and overall application of the function.
 #' 
-#' @return A named character vector where the names are the names of entity identifiers and the elements are the
+#' @return A named character vector where the names are entity identifiers and the elements are the
 #' Single-Get API endpoint URL formats associated with them based on the respective entities each identifier 
 #' correlates to and matches with.
 #' @examples \dontrun{
