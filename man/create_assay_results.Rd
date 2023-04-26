@@ -38,7 +38,7 @@ Upload assay results to Benchling from a data frame
 \examples{
 \dontrun{
 schema_id <- "assaysch_yKoqVsej"
-conn <- warehouse_connect("hemoshear-dev")
+conn <- connect_warehouse("hemoshear-dev")
 api_key <- Sys.getenv("BENCHLING_DEV_API_KEY")
 tenant <- "hemoshear-dev"
 }

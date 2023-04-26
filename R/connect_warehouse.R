@@ -1,4 +1,4 @@
-# warehouse_connect.R
+# connect_warehouse.R
 
 #' Connect to a Benchling data warehouse
 #' 
@@ -12,18 +12,18 @@
 #' @param password Password for the Benchling tenant (character). The default
 #' argument is the 'BENCHLING_WAREHOUSE_PASSWORD' environment variable in the 
 #' `.Renviron` file.
-#' @export warehouse_connect
+#' @export connect_warehouse
 #' @return A 'database_connection***' object that can be used by the `DBI` package
 #' to make queries against the Postgres database for the specified tenant.
 #' @examples \dontrun{
-#' conn <- warehouse_connect("hemoshear-dev", 
+#' conn <- connect_warehouse("hemoshear-dev", 
 #'     username = Sys.getenv("BENCHLING_WAREHOUSE_USERNAME"),
 #'     password = Sys.getenv("BENCHLING_WAREHOUSE_PASSWORD"))
 #' # It is good practice to close the connection after finishing your queries. 
 #' DBI::dbDisconnect(conn)
 #' }
 
-warehouse_connect <- function(tenant, 
+connect_warehouse <- function(tenant, 
   username=Sys.getenv("BENCHLING_WAREHOUSE_USERNAME"),
   password=Sys.getenv("BENCHLING_WAREHOUSE_PASSWORD")) {
   if (DBI::dbCanConnect(RPostgres::Postgres(), dbname="warehouse",

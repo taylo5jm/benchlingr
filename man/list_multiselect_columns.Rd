@@ -8,9 +8,13 @@ warehouse}
 list_multiselect_columns(conn, df)
 }
 \arguments{
-\item{conn}{Database connection opened with `warehouse_connect`.}
+\item{conn}{Database connection opened with `connect_warehouse`.}
 
-\item{df}{Data frame retrieved from the data warehouse.}
+\item{df}{Data frame retrieved from the Benchling data warehouse with one or 
+more multi-select columns. The data frame must also have a column called `schema`, 
+which indicates the schema name of the warehouse table. 
+One can use `DBI::dbReadTable` or `DBI::dbGetQuery` to retrieve tables 
+from the data warehouse.}
 }
 \value{
 Character vector where the names are the names of the multi-select
@@ -23,7 +27,7 @@ warehouse
 }
 \examples{
 \dontrun{
-conn <- warehouse_connect("hemoshear-dev", 
+conn <- connect_warehouse("hemoshear-dev", 
     username = Sys.getenv("BENCHLING_DEV_WAREHOUSE_USERNAME"),
     password = Sys.getenv("BENCHLING_DEV_WAREHOUSE_PASSWORD"))
 res <- DBI::dbGetQuery(conn, "SELECT * FROM simple_plate_analyte_mapping$raw")

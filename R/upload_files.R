@@ -8,13 +8,13 @@
 #' @param blob_link_cols If a data frame is provided, the names of
 #' the blob link columns must be specified. 
 #' @keywords internal
-upload_files <- function(file, client, blob_link_cols=NULL) {
-  UseMethod("upload_files")
+.upload_files <- function(file, client, blob_link_cols=NULL) {
+  UseMethod(".upload_files")
 }
 
 
 #' @keywords internal
-upload_files.character <- function(file, client, blob_link_cols=NULL) {
+.upload_files.character <- function(file, client, blob_link_cols=NULL) {
   pathlib <- reticulate::import("pathlib")
   res <- vector("list", length=length(file))
   for (f in 1:length(file)) {
@@ -25,7 +25,7 @@ upload_files.character <- function(file, client, blob_link_cols=NULL) {
 
 
 #' @keywords internal
-upload_files.list <- function(file, client, blob_link_cols=NULL) {
+.upload_files.list <- function(file, client, blob_link_cols=NULL) {
   pathlib <- reticulate::import("pathlib")
   res <- vector("list", length=length(file))
   
@@ -47,17 +47,17 @@ upload_files.list <- function(file, client, blob_link_cols=NULL) {
 #' to be uploaded
 #' @keywords internal
 #' @examples \dontrun{
-#' client <- benchlingr::benchling_api_auth(
+#' client <- benchlingr::connect_sdk(
 #' tenant="https://hemoshear-dev.benchling.com",
 #' api_key = Sys.getenv("BENCHLING_DEV_API_KEY"))
 #' df <- data.frame(file = "upload_files.R")
 #' upload_files.data.frame(file=df, client=client, blob_link_cols="file")
 #' }
 
-upload_files.data.frame <- function(file, client, blob_link_cols=NULL) {
+.upload_files.data.frame <- function(file, client, blob_link_cols=NULL) {
   
   for (blob_link_col in blob_link_cols) {
-    blobs <- upload_files(
+    blobs <- .upload_files(
       file=file[[blob_link_col]],
       client=client)
     n_elements <- purrr::map_int(blobs, ~ length(.))

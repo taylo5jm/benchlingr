@@ -1,12 +1,12 @@
-# read_entry_table.R
+# get_entry_table.R
 
 #' Read unstructured table in a notebook entry
 #' 
 #' @importFrom magrittr %>%
 #' @param entry Notebook entry in JSON format.
-#' @param day Integer for the day in the notebook entry. See `find_entry_tables`.
+#' @param day Integer for the day in the notebook entry. See `list_entry_tables`.
 #' @param table_position Integer for the position of the table in the notebook entry list. 
-#' See `find_entry_tables`.
+#' See `list_entry_tables`.
 #' @param return_table_name bool Determines how the name of the table in the notebook 
 #' entry is included in the output.
 #' If `TRUE` is selected, the table name will be added as a new column
@@ -15,22 +15,22 @@
 #' entry.
 #' @keywords internal
 #' @examples \dontrun{
-#' client <- benchlingr::benchling_api_auth(
+#' client <- benchlingr::connect_sdk(
 #'     tenant="https://hemoshear-dev.benchling.com",
 #'     api_key = Sys.getenv("BENCHLING_DEV_API_KEY"))
 #' entry <- client$entries$get_entry_by_id("etr_T3WZTyAe")
 #' 
-#' table_indices <- benchlingr:::find_entry_tables(entry)
+#' table_indices <- benchlingr:::list_entry_tables(entry)
 #' print(table_indices)
-#' a_table <- read_entry_table(entry, day=1, table_position=2)
+#' a_table <- get_entry_table(entry, day=1, table_position=2)
 #' }
 
-read_entry_table <- function(entry, day=NULL, table_position=NULL, 
+get_entry_table <- function(entry, day=NULL, table_position=NULL, 
                              return_table_name=TRUE) {
   
   if (!is.numeric(day) & !is.numeric(table_position)) {
     stop("'day' and 'table_position' should be integers that represent the day and location of the unstructured table in the notebook entry. 
-         Use 'find_entry_tables(entry)' to locate the unstructured tables in the notebook entry.")
+         Use 'list_entry_tables(entry)' to locate the unstructured tables in the notebook entry.")
   }
   
   a_table <- entry$days[[day]]$notes[[table_position]]

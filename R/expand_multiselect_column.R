@@ -6,13 +6,17 @@
 #' @include util.R 
 #' @importFrom rlang .data
 #' @importFrom magrittr %>%
-#' @param conn Database connection opened with `warehouse_connect`.
-#' @param df Data frame retrieved from the data warehouse.
+#' @param conn Database connection opened with `connect_warehouse`.
+#' @param df Data frame retrieved from the Benchling data warehouse with one or 
+#' more multi-select columns. The data frame must also have a column called `schema`, 
+#' which indicates the schema name of the warehouse table. 
+#' One can use `DBI::dbReadTable` or `DBI::dbGetQuery` to retrieve tables 
+#' from the data warehouse.
 #' @return Character vector where the names are the names of the multi-select
 #' columns in the data frame and the values are the positions of the multi-select
 #' columns in the data frame. 
 #' @examples \dontrun{
-#' conn <- warehouse_connect("hemoshear-dev", 
+#' conn <- connect_warehouse("hemoshear-dev", 
 #'     username = Sys.getenv("BENCHLING_DEV_WAREHOUSE_USERNAME"),
 #'     password = Sys.getenv("BENCHLING_DEV_WAREHOUSE_PASSWORD"))
 #' res <- DBI::dbGetQuery(conn, "SELECT * FROM simple_plate_analyte_mapping$raw")
@@ -44,10 +48,14 @@ list_multiselect_columns <- function(conn, df) {
 #' columns in the data frame. 
 #' 
 #' @importFrom rlang .data
-#' @param conn Database connection opened by `warehouse_connect`. This is used
+#' @param conn Database connection opened by `connect_warehouse`. This is used
 #' to ensure that the specified `column` is actually a multi-select field
 #' defined in the schema. 
-#' @param df Input data frame retrieved from the data warehouse.
+#' @param df Data frame retrieved from the Benchling data warehouse with one or 
+#' more multi-select columns. The data frame must also have a column called `schema`, 
+#' which indicates the schema name of the warehouse table. 
+#' One can use `DBI::dbReadTable` or `DBI::dbGetQuery` to retrieve tables 
+#' from the data warehouse.
 #' @param column Name of the JSON column that should be expanded.
 #' @param shape The `shape` argument determines if the values in the JSON column
 #' should be unpacked to create new rows (`long`) or new columns (`wide`).
@@ -62,7 +70,7 @@ list_multiselect_columns <- function(conn, df) {
 #' @return Data frame with the values in `column` unpacked. 
 #' @export
 #' @examples \dontrun{
-#' conn <- warehouse_connect("hemoshear-dev", 
+#' conn <- connect_warehouse("hemoshear-dev", 
 #'     username = Sys.getenv("BENCHLING_DEV_WAREHOUSE_USERNAME"),
 #'     password = Sys.getenv("BENCHLING_DEV_WAREHOUSE_PASSWORD"))
 #' d <- DBI::dbGetQuery(conn, "SELECT plate,analytes FROM simple_plate_analyte_mapping$raw 

@@ -6,7 +6,9 @@
 ![Windows R package check, build, and test](https://github.com/hemoshear/benchlingr/actions/workflows/check-full-windows.yml/badge.svg)
 
 
-Benchling is a laboratory information management system with a developer platform that is comprised of a Postgres database, an application programming interface (API), an "Events" system that is built on top of the AWS EventBridge service, as well as a Python software development kit (SDK).`benchlingr` is an unofficial R package that streamlines common extract, transform, and load (ETL) operations by providing functions to extract and join tables in the Benchling data warehouse, download file attachments, extract unstructured tables from notebook entries, and upload assay results to the Benchling platform. 
+[Benchling](https://www.benchling.com/) is a laboratory information management system (LIMS) with a [developer platform](https://www.benchling.com/developer-platform) that is comprised of a Postgres database, an application programming interface (API), an "Events" system that is built on top of the AWS EventBridge service, as well as a Python software development kit (SDK).
+
+`benchlingr` is an unofficial R package that streamlines common data science and engineering operations by providing functions to extract and join tables in the Benchling data warehouse, download file attachments, extract tables from notebook entries, and upload assay results to the Benchling platform. 
 
 ### Installation
 
@@ -18,8 +20,11 @@ remotes::install_github("hemoshear/benchlingr")
 
 ### Documentation
 
-Read the [documentation on GitHub](https://upgraded-succotash-8df2b926.pages.github.io/)
+The full documentation is at: [https://benchling-r.info](https://benchling-r.info)
 
+### Getting help
+
+Please use GitHub issues for questions, feature requests, and bug reports. If you are submitting a bug report, please include the output of `sessioninfo::session_info()`, as well as your code to help us understand the problem. 
 
 ### Benchling credentials
 
@@ -29,7 +34,7 @@ The `benchlingr` package uses the RESTFUL API and Postgres database components o
 
 #### API
 
-In order to access the Benchling API service on one's Benchling tenant, [one must obtain an API key through the Benchling interface.](https://help.benchling.com/en/articles/2353570-access-the-benchling-developer-platform-enterprise). After obtaining an API key, it is recommended that you define a variable in `.Renviron` called `BENCHLING_API_KEY` to make this key accessible to the `benchlingr` package, since functions in the package will look for `BENCHLING_API_KEY` by default.
+In order to access the Benchling API service on one's Benchling tenant, [one must obtain an API key through the Benchling interface.](https://help.benchling.com/hc/en-us/articles/9714802977805-Access-the-Benchling-Developer-Platform). After obtaining an API key, it is recommended that you define a variable in `.Renviron` called `BENCHLING_API_KEY` to make this key accessible to the `benchlingr` package, since functions in the package will look for `BENCHLING_API_KEY` by default.
 
 ```
 # ~/.Renviron

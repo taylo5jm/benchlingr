@@ -7,13 +7,29 @@
 get_dropdown_options(conn, schema_id)
 }
 \arguments{
-\item{conn}{Database connection opened with `warehouse_connect`.}
+\item{conn}{Database connection opened with `connect_warehouse`.}
 
-\item{schema_id}{Schema ID for the dropdown.}
+\item{schema_id}{Schema ID for the dropdown. This value is stored in the `id`
+column of the `dropdown` table in the Benchling data warehouse. It will always
+start with `sfs_`. You can find dropdown menus in the Benchling interface
+by clicking the "Registries" grid, then "Registry setting" under the cog icon,
+then "Dropdowns".}
 }
 \value{
 character vector of dropdown menu options
 }
 \description{
 Get the options in a dropdown menu
+}
+\examples{
+\dontrun{
+# Connect to the Benchling data warehouse
+conn <- connect_warehouse("hemoshear-dev", 
+    username = Sys.getenv("BENCHLING_DEV_WAREHOUSE_USERNAME"),
+    password = Sys.getenv("BENCHLING_DEV_WAREHOUSE_PASSWORD"))
+# To see all dropdown menus, you can read the entire `dropdown` table. 
+# This won't pull the dropdown options that correspond to each dropdown,
+# so it probably won't be that large. 
+DBI::dbReadTable(conn, "dropdown")
+}
 }

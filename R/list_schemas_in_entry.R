@@ -3,17 +3,18 @@
 #' a notebook entry
 #' 
 #' @importFrom magrittr %>%
-#' @param client Benchling API client created by `benchling_api_auth`.
-#' @param conn Benchling data warehouse connection created with `warehouse_connect`.
-#' @param entry Notebook entry retrieved with `client$entries$get_entry_by_id`.
+#' @param client Benchling API client created by `connect_sdk`.
+#' @param conn Benchling data warehouse connection created with `connect_warehouse`.
+#' @param entry Notebook entry retrieved with the `entries$get_entry_by_id` method
+#' of the Benchling Python SDK facade object created by `benchlingr::connect_sdk`.
 #' @return A data frame that includes the names and identifiers of the results
 #' and registration schemas contained within a notebook entry. 
 #' @export
 #' @examples \dontrun{
-#' conn <- warehouse_connect("hemoshear-dev", 
+#' conn <- connect_warehouse("hemoshear-dev", 
 #'                          username = Sys.getenv("BENCHLING_DEV_WAREHOUSE_USERNAME"),
 #'                          password = Sys.getenv("BENCHLING_DEV_WAREHOUSE_PASSWORD"))
-#' client <- benchling_api_auth(tenant="https://hemoshear-dev.benchling.com",
+#' client <- connect_sdk(tenant="https://hemoshear-dev.benchling.com",
 #'                             api_key=Sys.getenv("BENCHLING_DEV_API_KEY"))
 #' nb_entry <- client$entries$get_entry_by_id("etr_MWQ7M7Pz")
 #' list_schemas_in_entry(client, conn, nb_entry)

@@ -8,11 +8,12 @@ a notebook entry}
 list_schemas_in_entry(client, conn, entry)
 }
 \arguments{
-\item{client}{Benchling API client created by `benchling_api_auth`.}
+\item{client}{Benchling API client created by `connect_sdk`.}
 
-\item{conn}{Benchling data warehouse connection created with `warehouse_connect`.}
+\item{conn}{Benchling data warehouse connection created with `connect_warehouse`.}
 
-\item{entry}{Notebook entry retrieved with `client$entries$get_entry_by_id`.}
+\item{entry}{Notebook entry retrieved with the `entries$get_entry_by_id` method
+of the Benchling Python SDK facade object created by `benchlingr::connect_sdk`.}
 }
 \value{
 A data frame that includes the names and identifiers of the results
@@ -24,10 +25,10 @@ a notebook entry
 }
 \examples{
 \dontrun{
-conn <- warehouse_connect("hemoshear-dev", 
+conn <- connect_warehouse("hemoshear-dev", 
                          username = Sys.getenv("BENCHLING_DEV_WAREHOUSE_USERNAME"),
                          password = Sys.getenv("BENCHLING_DEV_WAREHOUSE_PASSWORD"))
-client <- benchling_api_auth(tenant="https://hemoshear-dev.benchling.com",
+client <- connect_sdk(tenant="https://hemoshear-dev.benchling.com",
                             api_key=Sys.getenv("BENCHLING_DEV_API_KEY"))
 nb_entry <- client$entries$get_entry_by_id("etr_MWQ7M7Pz")
 list_schemas_in_entry(client, conn, nb_entry)

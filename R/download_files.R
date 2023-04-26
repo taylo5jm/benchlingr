@@ -4,7 +4,7 @@
 #' 
 #' Download "blobs" attached to Benchling entities or results.
 #' 
-#' @param client Benchling client object created by `benchling_api_auth()`.
+#' @param client Benchling client object created by `connect_sdk()`.
 #' @param file_map List where names are blob (file) identifiers
 #' and values are file names.
 #' @param outdir Directory in which to save output files. 
@@ -12,7 +12,7 @@
 #' `benchling-reticulate`.
 #' @export
 #' @examples \dontrun{
-#' conn <- warehouse_connect("hemoshear-dev", 
+#' conn <- connect_warehouse("hemoshear-dev", 
 #'     username = Sys.getenv("BENCHLING_DEV_WAREHOUSE_USERNAME"),
 #'     password = Sys.getenv("BENCHLING_DEV_WAREHOUSE_PASSWORD"))
 #' res <- DBI::dbGetQuery(conn, "SELECT * FROM 
@@ -48,14 +48,57 @@ download_blobs <- function(client, file_map, outdir,
     download_files(client, file_map)
 }
 
+#' @keywords internal
+.download_blobs_in_warehouse_table <- function(client, df, column, outdir, outdir_column) {
+  reticulate::source_python(
+    system.file("python", "download_files.py", package = "benchlingr"))
+  file_col <- purrr::map(as.character(df[[column]]),
+                         ~ RJSONIO::fromJSON(.))
+  # If user wants to save results in child directories named by result ID,
+  # then carry that information with the rest of the file metadata.
+  for (i in 1:length(file_col)) {
+    # Single value
+    if (is.character(file_col[[i]])) {
+      if (!is.null(outdir_column)) {
+        file_col[[i]]['outdir'] <- df[[outdir_column]][i]
+      } else {
+        file_col[[i]]['outdir'] <- outdir
+      }
+    } else { # multi-select
+      for (j in 1:length(file_col[[i]])) {
+        if (!is.null(outdir_column)) {
+          file_col[[i]][[j]]['outdir'] <- df[[outdir_column]][i]
+        } else {
+          file_col[[i]][[j]]['outdir'] <- outdir
+        }
+      }
+    }
+  }
+  unlisted_file_col <- unlist(file_col, recursive = FALSE)
+  
+  # multi-select
+  if (is.list(unlisted_file_col)) {
+    file_col <- unlisted_file_col
+  }
+  
+  file_map <- purrr::map_chr(
+    file_col, ~ file.path(.['outdir'], .['name']))
+  
+  names(file_map) <- purrr::map_chr(file_col, ~ .['id'])
+  file_map <- as.list(file_map)
+  download_files(client, file_map)
+}
+
 #' Download blobs contained within a warehouse table. 
 #' 
 #' @include util.R
 #' @importFrom magrittr %>%
 #' @param client A Benchling API client object. 
 #' @param conn PqConnection object.
-#' @param df Data frame retrieved from the Benchling data warehouse.
-#' Must have the `schema` column included.
+#' @param df Data frame with one or more blob link (file attachment) columns. 
+#' The data frame must also have a column called `schema`, which indicates the schema
+#' name of the warehouse table. One can use `DBI::dbReadTable` or `DBI::dbGetQuery`
+#' to retrieve tables from the data warehouse.
 #' @param columns Character vector of column names in the table to download 
 #' blobs from. 
 #' @param outdir Directory where the files should be saved on the local machine.
@@ -68,8 +111,8 @@ download_blobs <- function(client, file_map, outdir,
 #' @export
 #' @examples \dontrun{
 #' library(magrittr)
-#' client <- benchling_api_auth("https://hemoshear.benchling.com")
-#' conn <- warehouse_connect("hemoshear-dev", 
+#' client <- connect_sdk("https://hemoshear.benchling.com")
+#' conn <- connect_warehouse("hemoshear-dev", 
 #'     username = Sys.getenv("BENCHLING_DEV_WAREHOUSE_USERNAME"),
 #'     password = Sys.getenv("BENCHLING_DEV_WAREHOUSE_PASSWORD"))
 #' res <- DBI::dbGetQuery(conn, "SELECT * FROM 
@@ -132,47 +175,7 @@ download_blobs_in_warehouse_table <- function(client,conn,  df, columns=NULL,
     }
   }
 
-  .download_blobs <- function(client, df, column, outdir, outdir_column) {
-    reticulate::source_python(
-      system.file("python", "download_files.py", package = "benchlingr"))
-    file_col <- purrr::map(as.character(df[[column]]),
-                           ~ RJSONIO::fromJSON(.))
-    # If user wants to save results in child directories named by result ID,
-    # then carry that information with the rest of the file metadata.
-    for (i in 1:length(file_col)) {
-      # Single value
-      if (is.character(file_col[[i]])) {
-        if (!is.null(outdir_column)) {
-          file_col[[i]]['outdir'] <- df[[outdir_column]][i]
-        } else {
-          file_col[[i]]['outdir'] <- outdir
-        }
-      } else { # multi-select
-        for (j in 1:length(file_col[[i]])) {
-          if (!is.null(outdir_column)) {
-            file_col[[i]][[j]]['outdir'] <- df[[outdir_column]][i]
-          } else {
-            file_col[[i]][[j]]['outdir'] <- outdir
-            }
-          }
-      }
-    }
-    unlisted_file_col <- unlist(file_col, recursive = FALSE)
-  
-    # multi-select
-    if (is.list(unlisted_file_col)) {
-      file_col <- unlisted_file_col
-    }
-    
-    file_map <- purrr::map_chr(
-        file_col, ~ file.path(.['outdir'], .['name']))
-
-    names(file_map) <- purrr::map_chr(file_col, ~ .['id'])
-    file_map <- as.list(file_map)
-    download_files(client, file_map)
-  }
-
-  purrr::walk(columns, ~ .download_blobs(client, df, ., outdir,
-                                         outdir_column))
+  purrr::walk(columns, ~ .download_blobs_in_warehouse_table(
+    client, df, ., outdir, outdir_column))
   return(df)
 }

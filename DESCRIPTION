@@ -1,13 +1,14 @@
 Package: benchlingr
 Type: Package
 Title: Access the 'Benchling' RESTFUL API and data warehouse
-Version: 0.3.0
-Author: c(
+Version: 0.3.1
+Authors@R: c(
     person("Justin", "Taylor", email = "justin.taylor.data.science@hemoshear.com", 
     role = "cre", comment = c(ORCID = "0000-0003-4590-0777")),
     person("Davut", "Uçar", email = "ucar@hemoshear.com", role = "aut"),
     person("Steve", "Hoang", email = "hoang@hemoshear.com", role = "aut",
-    comment = c(ORCID = "0000-0002-4413-6036")))
+    comment = c(ORCID = "0000-0002-4413-6036")),
+    person("Aakshay", "Kumar", email="kumar@hemoshear.com", role = "aut"))
 Maintainer: Justin Taylor <taylor@hemoshear.com>
 Description: Unofficial interface for accessing the 'Benchling' developer platform,
     including the RESTFUL API and data warehouse. This package allows R users to 
@@ -18,12 +19,13 @@ License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
 URL: https://github.com/hemoshear/benchlingr,
-    https://upgraded-succotash-8df2b926.pages.github.io/
+    https://benchling-r.info
 BugReports: https://github.com/hemoshear/benchlingr
 RoxygenNote: 7.2.3
 Suggests: 
     knitr,
     RSQLite,
+    tibble,
     rmarkdown,
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
@@ -54,32 +56,29 @@ Collate:
     'bulk_get_entity.R'
     'as_name.R'
     'assay_results_utils.R'
-    'error.R'
-    'benchling_api_auth.R'
-    'check_inputs.R'
     'config_sdk_env.R'
+    'error.R'
+    'connect_sdk.R'
+    'connect_warehouse.R'
+    'util.R'
     'dropdown.R'
     'vec2sql_tuple.R'
     'field_validation.R'
     'upload_files.R'
     'schema_utils.R'
     'create_assay_results.R'
-    'util.R'
+    'disconnect_warehouse.R'
     'download_files.R'
     'entity_match.R'
     'entity_sort.R'
     'expand_multiselect_column.R'
-    'find_entry_tables.R'
-    'get_entity.R'
     'list_entity_columns.R'
     'get_entity_table.R'
-    'list_api_contents.R'
+    'get_entry_table.R'
+    'list_entry_tables.R'
+    'get_entry_tables.R'
+    'get_plate_diagrams.R'
     'list_schemas_in_entry.R'
     'map_entity_field_names_to_warehouse_tables.R'
     'onLoad.R'
-    'read_entry_table.R'
-    'read_entry_tables.R'
-    'read_plate_diagrams.R'
     'replace_entity_id_with_name.R'
-    'warehouse_connect.R'
-    'warehouse_disconnect.R'

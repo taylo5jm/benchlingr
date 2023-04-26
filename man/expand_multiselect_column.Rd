@@ -14,11 +14,15 @@ expand_multiselect_column(
 )
 }
 \arguments{
-\item{conn}{Database connection opened by `warehouse_connect`. This is used
+\item{conn}{Database connection opened by `connect_warehouse`. This is used
 to ensure that the specified `column` is actually a multi-select field
 defined in the schema.}
 
-\item{df}{Input data frame retrieved from the data warehouse.}
+\item{df}{Data frame retrieved from the Benchling data warehouse with one or 
+more multi-select columns. The data frame must also have a column called `schema`, 
+which indicates the schema name of the warehouse table. 
+One can use `DBI::dbReadTable` or `DBI::dbGetQuery` to retrieve tables 
+from the data warehouse.}
 
 \item{column}{Name of the JSON column that should be expanded.}
 
@@ -45,7 +49,7 @@ columns in the data frame.
 }
 \examples{
 \dontrun{
-conn <- warehouse_connect("hemoshear-dev", 
+conn <- connect_warehouse("hemoshear-dev", 
     username = Sys.getenv("BENCHLING_DEV_WAREHOUSE_USERNAME"),
     password = Sys.getenv("BENCHLING_DEV_WAREHOUSE_PASSWORD"))
 d <- DBI::dbGetQuery(conn, "SELECT plate,analytes FROM simple_plate_analyte_mapping$raw 

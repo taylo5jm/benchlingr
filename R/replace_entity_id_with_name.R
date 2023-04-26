@@ -9,13 +9,17 @@
 #' might be "My cell line". 
 #' 
 #' @include get_entity_table.R
-#' @param conn Database connection opened by `warehouse_connect`.
-#' @param df Data frame with entity columns.
+#' @param conn Database connection opened by `connect_warehouse`.
+#' @param df Data frame retrieved from the Benchling data warehouse with one or 
+#' more entity link columns. The data frame must also have a column called `schema`, 
+#' which indicates the schema name of the warehouse table. 
+#' One can use `DBI::dbReadTable` or `DBI::dbGetQuery` to retrieve tables 
+#' from the data warehouse.
 #' @return data.frame with the Benchling entity identifiers replaced by the 
 #' names of the entities. 
 #' @export
 #' @examples \dontrun{
-#' conn <- warehouse_connect("hemoshear-dev", 
+#' conn <- connect_warehouse("hemoshear-dev", 
 #'     username = Sys.getenv("BENCHLING_DEV_WAREHOUSE_USERNAME"),
 #'     password = Sys.getenv("BENCHLING_DEV_WAREHOUSE_PASSWORD"))
 #' 
@@ -41,20 +45,19 @@ replace_entity_id_with_name <- function(conn, df) {
   # These are the multi-select columns that the user should
   # unpack before using this function.
   to_unpack <- colnames(df)[intersect(pq_jsonb_cols,entity_cols)]
-  # i <- 1
-  # j <- 1
+
   for (i in to_unpack) {
-    for (j in 1:nrow(res[[i]])) {
-      df[i] <- gsub(res[[i]][['id']][j],
-                    res[[i]][['name$']][j],
-                    df[[i]])
+    if (all(is.na(res[[i]]))) {
+      df[i] <- NA
+    } else {
+      for (j in 1:nrow(res[[i]])) {
+        df[i] <- gsub(res[[i]][["id"]][j], 
+                      res[[i]][["name$"]][j], 
+                      df[[i]])
+      }
     }
   }
   
-  #if (length(to_unpack) > 0) {
-  #  warning(glue::glue("{paste0(to_unpack, collapse=',')} must be unpacked
-  #                     with `expand_multiselect_column` before the ID can be replaced."))
-  #}
   # Closure to replace the ID with the name. 
   .replace_id <- function(df, column, mapping) {
     this_mapping <- mapping$`name$`
