@@ -22,7 +22,7 @@
 
 get_entity <-  function(entity_id, api_key=Sys.getenv("BENCHLING_API_KEY")) {
   inferred_entity_ids <- infer_entity_type(entity_id=entity_id, entity_list=NULL) # Infers the entity schemas for each element
-  entity_single_get_endpoints  <- .get_api_endpoints(entity_id=inferred_entity_ids, entity_list=entity_list) # Extracts the Single-Get API endpoint URL format for each entity identifier according to its respective schema element
+  entity_single_get_endpoints  <- .get_api_endpoints(entity_id=inferred_entity_ids, entity_list=NULL) # Extracts the Single-Get API endpoint URL format for each entity identifier according to its respective schema element
   api_queries <- .craft_api_queries(entity_single_get_endpoints=entity_single_get_endpoints) # Rewrites the Single-Get API endpoint URL formats into proper URL strings for each identifier
   response_list <- .submit_queries(api_queries=api_queries, api_key=api_key) # Uses the URL strings to call the entity identifier's Single-Get API endpoint in Benchling and extracts the contents of the response
   return(response_list)
