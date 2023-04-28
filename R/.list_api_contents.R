@@ -30,8 +30,7 @@
 #' entity_bulk_get_contents <- .list_api_contents(contents = "bulk-get endpoints")
 #' 
 #' }
-#' @export
-
+#' @keywords internal
 .list_api_contents <- function(contents="all", entity_list=NULL) {
   if (is.null(entity_list)) {
     entity_list <- list("bat" = c("batch", 

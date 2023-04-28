@@ -29,7 +29,6 @@
 #' "ent_sPrxBNOh"="user", "box_K9950IQ8"="box")
 #' res2 <- .get_api_endpoints(entity_id=entity_id2, entity_list=NULL)
 #' }
-#' @export
 #' @keywords internal
 
 .get_api_endpoints <- function(entity_id, entity_list=NULL) {

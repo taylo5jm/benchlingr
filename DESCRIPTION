@@ -52,6 +52,8 @@ Imports:
     snakecase,
     tidyr
 Collate: 
+    'abstract_create.R'
+    '.list_api_contents.R'
     'infer_entity_type.R'
     'bulk_get_entity.R'
     'as_name.R'
@@ -67,11 +69,14 @@ Collate:
     'upload_files.R'
     'schema_utils.R'
     'create_assay_results.R'
+    'create_entities.R'
     'disconnect_warehouse.R'
     'download_files.R'
-    'entity_match.R'
-    'entity_sort.R'
     'expand_multiselect_column.R'
+    '.submit_queries.R'
+    '.craft_api_queries.R'
+    '.get_api_endpoints.R'
+    'get_entity.R'
     'list_entity_columns.R'
     'get_entity_table.R'
     'get_entry_table.R'

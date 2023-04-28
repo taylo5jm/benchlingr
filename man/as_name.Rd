@@ -5,7 +5,11 @@
 \title{Extract the 'name' attribute for all entities through the responses made to their bulk-get API
 endpoints or single API endpoint if bulk-get API endpoints register as NA for that entity.}
 \usage{
-as_name(entity_id, return_df = FALSE)
+as_name(
+  entity_id,
+  benchling_api_key = Sys.getenv("BENCHLING_API_KEY"),
+  return_df = FALSE
+)
 }
 \arguments{
 \item{entity_id}{Either a character vector or list that contains the entities. All entities 
@@ -15,7 +19,7 @@ in the list or character vector must be character strings.}
 where the first column is named 'id' and represents the names of the identifiers or elements from 
 entity_id and the second column is named 'name' and represents that element's corresponding 'name' 
 attribute extracted from the request made to its set of bulk-get API endpoints or single API 
-endpoint. If FALSE, the function will return a named list where the names are the elements from 
+endpoint. If FALSE, the function will return a named vector where the names are the elements from 
 entity_id and the values are each element's corresponding 'name' attribute.}
 }
 \value{
@@ -23,7 +27,7 @@ entity_id and the values are each element's corresponding 'name' attribute.}
 named 'id' and represents the names of the identifiers or elements from entity_id and the
 second column is named 'name' and represents that element's corresponding 'name' attribute.
 
-* If return_df is FALSE, 'as_name.R' returns a named list where the names are the identifiers 
+* If return_df is FALSE, 'as_name.R' returns a named vector where the names are the identifiers 
 or elements from entity_id and the values are each element's corresponding 'name' attribute.
 }
 \description{
@@ -34,10 +38,10 @@ the 'name' attribute.
 }
 \examples{
 \dontrun{
-entity_id <- c("seq_Cuf0bmCm", "box_oiU2Xkf")
-entities <- as.name(entity_id, return_df=FALSE)
+entity_id1 <- c("seq_Cuf0bmCm", "bfi_9fKcrORv")
+entities1 <- as_name(entity_id=entity_id1, benchling_api_key = Sys.getenv("BENCHLING_API_KEY"), return_df=FALSE)
 
-entity_id <- c("seq_Cuf0omCm", "bfi_Q1PMlXkf", "etr_n123p", "loc_43OIpas")
-entities <- as_name(entity_id, return_df=TRUE)
+entity_id2 <- c("seq_Cuf0bmCm", "seq_Cuf0umCm", "bfi_9fKcrORv", "etr_n123p")
+entities2 <- as_name(entity_id=entity_id2, benchling_api_key = Sys.getenv("BENCHLING_API_KEY"), return_df=TRUE)
 }
 }

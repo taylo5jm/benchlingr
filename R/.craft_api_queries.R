@@ -18,7 +18,6 @@
 #' "bfi_Ks908uWV"="https://hemoshear-dev.benchling.com/api/v2/custom-entities/ENTITY_ID")
 #' res <- .craft_api_queries(entity_single_get_endpoints=entity_single_get_endpoints)
 #' }
-#' @export
 #' @keywords internal
 
 .craft_api_queries <- function(entity_single_get_endpoints) {
