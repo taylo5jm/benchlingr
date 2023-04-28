@@ -52,8 +52,6 @@ Imports:
     snakecase,
     tidyr
 Collate: 
-    'infer_entity_type.R'
-    'bulk_get_entity.R'
     'as_name.R'
     'assay_results_utils.R'
     'config_sdk_env.R'
@@ -69,9 +67,11 @@ Collate:
     'create_assay_results.R'
     'disconnect_warehouse.R'
     'download_files.R'
-    'entity_match.R'
-    'entity_sort.R'
     'expand_multiselect_column.R'
+    '.list_api_contents.R'
+    'infer_entity_type.R'
+    'get_entity.R'
+    'get_entity_name_from_id.R'
     'list_entity_columns.R'
     'get_entity_table.R'
     'get_entry_table.R'
