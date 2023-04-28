@@ -7,7 +7,7 @@
 #' to their respective Single-Get API endpoint URL formats according to which entity the schema correlates 
 #' with.
 #' 
-#' @include .list_api_contents.R
+#' @include list_api_contents.R
 #' @param entity_id A named character vector where the names are entity identifiers and the elements 
 #' are the entity types associated with those identifiers.
 #' @param entity_list A list of vectors where each vector designates the schema type and API options for 

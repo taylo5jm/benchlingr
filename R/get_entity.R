@@ -6,9 +6,9 @@
 #' endpoints in Benchling and extracts the response contents and stores it in a list.
 #' 
 #' @include infer_entity_type.R
-#' @include .get_api_endpoints.R
-#' @include .craft_api_queries.R
-#' @include .submit_queries.R
+#' @include get_api_endpoints.R
+#' @include craft_api_queries.R
+#' @include submit_queries.R
 #' @param entity_id A character vector with 1 or more elements.
 #' @param api_key Benchling API key. 
 #' @return A named list where the names are entity identifiers and each element is a list that contains

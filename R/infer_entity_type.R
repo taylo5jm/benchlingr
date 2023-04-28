@@ -5,7 +5,7 @@
 #' infer_entity_type.R takes a character vector with one or more elements and for each element 
 #' tries to infer the schema type.
 #' 
-#' @include .list_api_contents.R
+#' @include list_api_contents.R
 #' @param entity_id A character vector with 1 or more elements.
 #' @param entity_list A list of vectors where each vector designates the schema type and API URLs for 
 #' the entities we are interested in and the names are the first characters seen in the identifiers for
