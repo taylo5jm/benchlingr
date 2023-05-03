@@ -52,7 +52,6 @@ Imports:
     snakecase,
     tidyr
 Collate: 
-    'as_name.R'
     'assay_results_utils.R'
     'config_sdk_env.R'
     'error.R'
