@@ -33,8 +33,10 @@ list_multiselect_columns <- function(conn, df) {
   res <- DBI::dbGetQuery(conn, 
     glue::glue("SELECT * FROM schema_field WHERE schema_id = {shQuote(schema_id)}")) %>%
     dplyr::filter(!is.na(.data$target_schema_id), .data$is_multi)
-  vec <- purrr::map_int(res$name, ~ which(colnames(df) == .))
+  vec <- purrr::map_int(res$name, ~ which(colnames(df) == .) %>%
+                          ifelse(length(.), ., NA))
   names(vec) <- res$name
+  vec <- purrr::keep(vec, ~!is.na(.))
   vec
 }
 
