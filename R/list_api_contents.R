@@ -1,4 +1,4 @@
-# .list_api_contents.R
+# list_api_contents.R
 
 #' Generate a named list where the names are the first characters in an identifier's name for a specific
 #' entity and each element is a vector with the first element in the vector being the entity schema, the 
@@ -22,15 +22,10 @@
 #' entity_list <- .list_api_contents()
 #' 
 #' entity_schemas <- .list_api_contents(contents = "entity schema")
-#' 
 #' entity_list_contents <- .list_api_contents(contents = "list contents")
-#' 
 #' entity_single_get_contents <- .list_api_contents(contents = "single-get endpoint")
-#' 
 #' entity_bulk_get_contents <- .list_api_contents(contents = "bulk-get endpoints")
-#' 
 #' }
-#' @export
 
 .list_api_contents <- function(contents="all", entity_list=NULL) {
   if (is.null(entity_list)) {

@@ -7,7 +7,6 @@
 #' to their respective Single-Get API endpoint URL formats according to which entity the schema correlates 
 #' with.
 #' 
-#' @include .list_api_contents.R
 #' @param entity_id A named character vector where the names are entity identifiers and the elements 
 #' are the entity types associated with those identifiers.
 #' @param entity_list A list of vectors where each vector designates the schema type and API options for 
@@ -29,12 +28,11 @@
 #' "ent_sPrxBNOh"="user", "box_K9950IQ8"="box")
 #' res2 <- .get_api_endpoints(entity_id=entity_id2, entity_list=NULL)
 #' }
-#' @export
 #' @keywords internal
 
 .get_api_endpoints <- function(entity_id, entity_list=NULL) {
   if (is.null(entity_list)) { # Checks if entity_list has not been defined.
-    entity_list <- .list_api_contents(contents="all") # Defines entity_list if left as NULL using list_api_contents.R.
+    entity_list <- .list_api_contents(contents="all") # Defines entity_list if left as NULL using .list_api_contents.R.
   }
   
   entity_elements <- purrr::map(entity_list, ~ .[c(2,3,4)]) # Extracts API contents for each entity.
@@ -65,7 +63,6 @@
 #' "bfi_Ks908uWV"="https://hemoshear-dev.benchling.com/api/v2/custom-entities/ENTITY_ID")
 #' res <- .craft_api_queries(entity_single_get_endpoints=entity_single_get_endpoints)
 #' }
-#' @export
 #' @keywords internal
 
 .craft_api_queries <- function(entity_single_get_endpoints) {
@@ -99,7 +96,6 @@
 #' "bfi_Ks908uWV"="https://hemoshear-dev.benchling.com/api/v2/custom-entities/bfi_Ks908uWV")
 #' res <- .submit_queries(api_queries=api_queries, api_key=Sys.getenv("BENCHLING_API_KEY"))
 #' }
-#' @export
 #' @keywords internal
 
 .submit_queries <- function(api_queries, api_key=Sys.getenv("BENCHLING_API_KEY")) {
@@ -122,10 +118,6 @@
 #' get_entity.R takes a character vector with one or more elements and for each element calls its Single-Get API 
 #' endpoints in Benchling and extracts the response contents and stores it in a list.
 #' 
-#' @include infer_entity_type.R
-#' @include .get_api_endpoints.R
-#' @include .craft_api_queries.R
-#' @include .submit_queries.R
 #' @param entity_id A character vector with 1 or more elements.
 #' @param api_key Benchling API key. 
 #' @return A named list where the names are entity identifiers and each element is a list that contains

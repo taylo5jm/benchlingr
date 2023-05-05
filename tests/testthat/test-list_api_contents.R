@@ -1,7 +1,7 @@
-# test-.list_api_contents.R
+# test-list_api_contents.R
 
 # test case 1
-test_that("Check that .list_api_contents.R generates an error when given an invalid argument for contents", {
+test_that("Check that .list_api_contents generates an error when given an invalid argument for contents", {
   expect_error(.list_api_contents(contents = "Invalid"), 
                "Invalid argument for contents.")
   expect_error(.list_api_contents(contents = "endpoint"), 
@@ -9,7 +9,7 @@ test_that("Check that .list_api_contents.R generates an error when given an inva
 })
 
 # test case 2
-test_that("Check that .list_api_contents.R generates an appropriate list of entities when given a valid input for contents", {
+test_that("Check that .list_api_contents generates an appropriate list of entities when given a valid input for contents", {
   expect_equal(class(.list_api_contents(contents = "all")),
               "list")
   expect_equal(class(.list_api_contents(contents = "entity schema")),
