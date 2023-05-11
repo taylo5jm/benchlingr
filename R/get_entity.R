@@ -57,7 +57,8 @@
 #' @return A named character vector where the names are entity identifiers and the elements are the 
 #' respective Single-Get API endpoint URLs for each identifier.
 #' @examples \dontrun{
-#' entity_single_get_endpoints <- c("seq_Cuf0bmCm"="https://hemoshear-dev.benchling.com/api/v2/dna-sequences/ENTITY_ID", 
+#' entity_single_get_endpoints <- c(
+#' "seq_Cuf0bmCm"="https://hemoshear-dev.benchling.com/api/v2/dna-sequences/ENTITY_ID", 
 #' "bfi_Q1PMlXkf"="https://hemoshear-dev.benchling.com/api/v2/custom-entities/ENTITY_ID", 
 #' "box_7YutniM0"="https://hemoshear-dev.benchling.com/api/v2/boxes/ENTITY_ID",
 #' "bfi_Ks908uWV"="https://hemoshear-dev.benchling.com/api/v2/custom-entities/ENTITY_ID")
@@ -90,7 +91,8 @@
 #' @return A named list where the names are entity identifiers and each element is a list that contains the 
 #' response contents from the call made to that identifier's Single-Get API endpoint in Benchling.
 #' @examples \dontrun{
-#' api_queries <- c("seq_Cuf0bmCm"="https://hemoshear-dev.benchling.com/api/v2/dna-sequences/seq_Cuf0bmCm", 
+#' api_queries <- c(
+#' "seq_Cuf0bmCm"="https://hemoshear-dev.benchling.com/api/v2/dna-sequences/seq_Cuf0bmCm", 
 #' "bfi_Q1PMlXkf"="https://hemoshear-dev.benchling.com/api/v2/custom-entities/bfi_Q1PMlXkf", 
 #' "box_7YutniM0"="https://hemoshear-dev.benchling.com/api/v2/boxes/box_7YutniM0",
 #' "bfi_Ks908uWV"="https://hemoshear-dev.benchling.com/api/v2/custom-entities/bfi_Ks908uWV")

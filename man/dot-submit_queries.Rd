@@ -23,7 +23,8 @@ to call that identifier's Single-Get API endpoint in Benchling and extract the r
 }
 \examples{
 \dontrun{
-api_queries <- c("seq_Cuf0bmCm"="https://hemoshear-dev.benchling.com/api/v2/dna-sequences/seq_Cuf0bmCm", 
+api_queries <- c(
+"seq_Cuf0bmCm"="https://hemoshear-dev.benchling.com/api/v2/dna-sequences/seq_Cuf0bmCm", 
 "bfi_Q1PMlXkf"="https://hemoshear-dev.benchling.com/api/v2/custom-entities/bfi_Q1PMlXkf", 
 "box_7YutniM0"="https://hemoshear-dev.benchling.com/api/v2/boxes/box_7YutniM0",
 "bfi_Ks908uWV"="https://hemoshear-dev.benchling.com/api/v2/custom-entities/bfi_Ks908uWV")

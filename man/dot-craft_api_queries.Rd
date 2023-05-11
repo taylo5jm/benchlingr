@@ -22,7 +22,8 @@ rewrites the element using the name of the identifier to generate proper Single-
 }
 \examples{
 \dontrun{
-entity_single_get_endpoints <- c("seq_Cuf0bmCm"="https://hemoshear-dev.benchling.com/api/v2/dna-sequences/ENTITY_ID", 
+entity_single_get_endpoints <- c(
+"seq_Cuf0bmCm"="https://hemoshear-dev.benchling.com/api/v2/dna-sequences/ENTITY_ID", 
 "bfi_Q1PMlXkf"="https://hemoshear-dev.benchling.com/api/v2/custom-entities/ENTITY_ID", 
 "box_7YutniM0"="https://hemoshear-dev.benchling.com/api/v2/boxes/ENTITY_ID",
 "bfi_Ks908uWV"="https://hemoshear-dev.benchling.com/api/v2/custom-entities/ENTITY_ID")

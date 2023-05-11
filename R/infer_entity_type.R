@@ -25,13 +25,9 @@ infer_entity_type <- function(entity_id, entity_list=NULL) {
   if (!is.character(entity_id) | length(entity_id) == 0) { # Checks if entity_id is a character vector with a length greater than 0.
     stop("'entity_id' input is invalid. Must be a character vector with a length greater than 0.")
   } 
-  
-  if (any(purrr::map(entity_id, ~ length(.) != 1) == TRUE)) { # Checks if entity_id contains only single elements.
-    stop("'entity_id' input is invalid. Must be a character vector with single elements.")
-  }
-  
+
   if (any(is.na(entity_id))) { # Checks if entity_id contains any values that are NA.
-    entity_id <- as.character(na.omit(entity_id)) # Removes NA values.
+    entity_id <- as.character(stats::na.omit(entity_id)) # Removes NA values.
     warning("'entity_id' contains NA values. Removing them.")
     # stop("'entity_id' input is invalid. Must not contain NA values.")
   }
