@@ -32,3 +32,4 @@ entity_responses <- get_entity(entity_id = c("con_m1dmbdV8", "bfi_Ur5DfvGJ", "se
 res <- .bundle_api_results(entity_responses=entity_responses1)
 }
 }
+\keyword{internal}

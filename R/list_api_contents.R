@@ -26,6 +26,7 @@
 #' entity_single_get_contents <- .list_api_contents(contents = "single-get endpoint")
 #' entity_bulk_get_contents <- .list_api_contents(contents = "bulk-get endpoints")
 #' }
+#' @keywords internal
 
 .list_api_contents <- function(contents="all", entity_list=NULL) {
   if (is.null(entity_list)) {

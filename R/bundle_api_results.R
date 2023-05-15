@@ -9,6 +9,7 @@
 #' entity schemas each entity identifier corresponds to and the tables feature the Single-Get API 
 #' endpoint response contents data for each entity identifier associated with a specific schema.
 #' 
+#' @include infer_entity_type.R
 #' @param entity_responses A named list where the names are entity identifiers and each element is a 
 #' list that contains the response contents from the call made to that identifier's Single-Get API 
 #' endpoint in Benchling.
@@ -21,6 +22,7 @@
 #' "bfi_smi97554l"), api_key=Sys.getenv("BENCHLING_API_KEY"))
 #' res <- .bundle_api_results(entity_responses=entity_responses1)
 #' }
+#' @keywords internal
 
 .bundle_api_results <- function(entity_responses) {
   inferred_entity_types <- infer_entity_type(entity_id=names(entity_responses),entity_list=NULL) # Infers the entity schemas for the entity identifiers whose responses are displayed

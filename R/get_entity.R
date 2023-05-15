@@ -120,6 +120,7 @@
 #' get_entity.R takes a character vector with one or more elements and for each element calls its Single-Get API 
 #' endpoints in Benchling and extracts the response contents and stores it in a list.
 #' 
+#' @include infer_entity_type.R
 #' @param entity_id A character vector with 1 or more elements.
 #' @param api_key Benchling API key. 
 #' @return A named list where the names are entity identifiers and each element is a list that contains

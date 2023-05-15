@@ -42,3 +42,4 @@ entity_single_get_contents <- .list_api_contents(contents = "single-get endpoint
 entity_bulk_get_contents <- .list_api_contents(contents = "bulk-get endpoints")
 }
 }
+\keyword{internal}
