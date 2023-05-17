@@ -29,7 +29,7 @@ endpoint response contents data for each entity identifier associated with a spe
 entity_responses <- get_entity(entity_id = c("con_m1dmbdV8", "bfi_Ur5DfvGJ", "seq_Gju61mCm", 
 "bfi_Q13AlXkf", "bfi_Ks908uWV", "ent_Ec76qX9f","ent_sPrxBNOh", "box_K9950IQ8", "box_923aklum", 
 "bfi_smi97554l"), api_key=Sys.getenv("BENCHLING_API_KEY"))
-res <- .bundle_api_results(entity_responses=entity_responses1)
+res <- .bundle_api_results(entity_responses=entity_responses)
 }
 }
 \keyword{internal}
