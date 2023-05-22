@@ -13,16 +13,19 @@ list that contains the response contents from the call made to that identifier's
 endpoint in Benchling.}
 }
 \value{
-A named list where the names are entity schemas and each element is a tibble-formatted
-data table displaying the Single-Get API endpoint response contents data extracted Benchling for 
-each entity identifier corresponding to a specific entity schema.
+A named list where the names are entity types and each element is another named list
+where the names are entity schema names and each element is a tibble-formatted data table 
+displaying the Single-Get API endpoint response contents data extracted Benchling for 
+each entity identifier corresponding to a specific entity schema name and entity type.
 }
 \description{
 .bundle_api_results.R takes a named list where the names are entity identifiers and each element
 is a list containing that identifier's Single-Get API endpoint response contents from Benchling 
-and sorts the data into a named list of tibble-formatted data tables where the names are the collective
-entity schemas each entity identifier corresponds to and the tables feature the Single-Get API 
-endpoint response contents data for each entity identifier associated with a specific schema.
+and sorts the data into a named list where the names are the collective entity types for all of 
+the entity identifiers in the input and each element is also a named list where the names are 
+entity schema names and the elements are tibble-formatted data tables containing the Single-Get 
+API endpoint response contents data for each entity identifier associated with a specific schema 
+name and entity type.
 }
 \examples{
 \dontrun{
