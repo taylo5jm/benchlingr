@@ -24,8 +24,7 @@
 #' corresponding to a specific entity schema name and entity type.
 #' @examples \dontrun{
 #' entity_responses <- get_entity(entity_id = c("con_m1dmbdV8", "bfi_Ur5DfvGJ", 
-#' "seq_Gju61mCm", "bfi_Q13AlXkf", "bfi_Ks908uWV", "ent_Ec76qX9f", 
-#' "ent_sPrxBNOh", "box_K9950IQ8", "box_923aklum", "bfi_smi97554l"), 
+#' "seq_Cuf0bmCm", "bfi_Q13AlXkf", "ent_Ec76qX9f", "ent_sPrxBNOh"), 
 #' api_key=Sys.getenv("BENCHLING_API_KEY"))
 #' res <- .bundle_api_results(entity_responses=entity_responses)
 #' }
@@ -37,11 +36,7 @@
   
   inferred_entity_types <- infer_entity_type(entity_id=entity_ids,entity_list=NULL) 
   # Infers the entity types for the entity identifiers. 
-  inferred_entity_types[which(purrr::map(names(inferred_entity_types), 
-                              ~ !is.null(entity_responses[[.]]$error)) == TRUE)] <- "error" 
-  # Re-labels the entity types for entity identifiers with an error in their 
-  # response as "error".
-  
+
   entity_id_schema_ids <- purrr::map(entity_responses, ~ .$schema$id) 
   # Extracts the entity schema ids in each entity identifier's response if listed.
   entity_id_schema_ids[which(purrr::map(entity_id_schema_ids, 
@@ -54,10 +49,6 @@
   entity_id_schema_names <- purrr::map(entity_responses, ~ .$schema$name) 
   # Extracts the entity schema names in each entity identifier's response 
   # if listed.
-  entity_id_schema_names[which(purrr::map(entity_responses, 
-                               ~ !is.null(.$error)) == TRUE)] <- "error" 
-  # Generates a value of error for each entity identifier's schema name that have 
-  # an error value in their response.
   entity_id_schema_names[which(purrr::map(entity_id_schema_names, 
                                ~ is.null(.)) == TRUE)] <- inferred_entity_types[which(purrr::map(
                                entity_id_schema_names, ~ is.null(.)) == TRUE)] 
@@ -104,8 +95,8 @@
   # Runs each entity identifier's response through the .api_response_sort() 
   # function in order to modify them.
   entity_responses <- purrr::map(entity_responses, 
-                      ~ .[names(.) != "id" & names(.) != "error_invalidId" &
-                          names(.) != "schema_id" & names(.) != "schema_name"])
+                      ~ .[names(.) != "id" & names(.) != "schema_id" & 
+                          names(.) != "schema_name"])
   entity_responses <- purrr::map(entity_ids, ~ c("id" = ., 
                                                  "entityType" = inferred_entity_types[[.]],
                                                  "schema_id" = entity_id_schema_ids[[.]],
@@ -116,6 +107,7 @@
   # entity_id_schema_ids and entity_id_schema_names after removing all prior 
   # instances of their entity id, schema id and schema name when referenced 
   # using "id," "error_invalidId," "schema_id" and "schema_name".
+  
   names(entity_responses) <- entity_ids 
   # Renames each entity identifier's response using their entity id.
   
@@ -132,8 +124,8 @@
   # Further organizes sorted_entity_responses by grouping all the entity 
   # identifiers listed under a certain entity type by their entity schema name.
   
-  res <- lapply(sorted_entity_responses, 
-                function(x) purrr::map(x, ~ tibble::as_tibble(as.data.frame(do.call(rbind, 
+  res <- lapply(sorted_entity_responses, function(x) 
+                purrr::map(x, ~ tibble::as_tibble(as.data.frame(do.call(rbind, 
                 entity_responses[which(names(entity_responses) %in% .)])))))
   # Matches each entity identifier listed for a specific schema name with their 
   # API response data and re-organizes it all into a single tibble-formatted 
