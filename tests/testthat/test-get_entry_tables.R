@@ -2,7 +2,7 @@
 library(testthat)
 library(benchlingr)
 client <- benchlingr::connect_sdk(tenant="https://hemoshear-dev.benchling.com",
-                                         api_key=Sys.getenv("BENCHLING_API_KEY"))
+                                         api_key=Sys.getenv("BENCHLING_DEV_API_KEY"))
 entry1 <- client$entries$get_entry_by_id("etr_T3WZTyAe")
 
 table1A <- data.frame(sample_id = c("1","2","3","4","5","6"), 
