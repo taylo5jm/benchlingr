@@ -126,7 +126,7 @@
 #' the response contents from the call made to that identifier's Single-Get API endpoint in Benchling.
 #' @examples \dontrun{
 #' entity_id <- c("bfi_Ur5DfvGJ", "seq_Gju61mCm", "bfi_Q13AlXkf", "bfi_Ks908uWV", "ent_Ec76qX9f", 
-#' "ent_sPrxBNOh", "box_K9950IQ8", "box_923aklum")
+#' "ent_sPrxBNOh", "box_K9950IQ8", "box_923aklum", "ver_asd89230", "ysq_983mnK4e")
 #' res <- get_entity(entity_id=entity_id, api_key=Sys.getenv("BENCHLING_API_KEY"))
 #' }
 #' @export
@@ -169,16 +169,29 @@ get_entity <-  function(entity_id, api_key=Sys.getenv("BENCHLING_API_KEY")) {
       length(invalid_entity_ids2) < length(response_list)) {
     # Checks for any entity identifiers that generated an error in their response
     # while making sure that every entity identifier is not invalid.
-    warning(glue::glue("The following entity identifier(s) are invalid and will be removed: {toString(invalid_entity_ids2)}."))
-    # Generates a warning for any entity identifiers found that has an error 
-    # in its response.
+    error_messages <- unlist(purrr::map(invalid_entity_ids2, ~ response_list[[.]]$error$message))
+    # Extracts all the error messages found in each entity identifier with an error
+    # response.
+    warning(paste0("Error in API response output for ", 
+                   paste0(invalid_entity_ids2), ". ", 
+                   paste0(error_messages), "\n"))
+    # Generates a warning for each entity identifier found with an error 
+    # in its response and also prints out the error message found in its 
+    # response.
     response_list <- response_list[! names(response_list) %in% invalid_entity_ids2]
     # Removes all entity identifiers that have an error in their response from
     # response_list.
   } else if (length(invalid_entity_ids2) == length(response_list)) {
     # Checks if all the entity identifiers have an error in their response.
-    stop("All entity identifiers are invalid and generate errors in their Single-Get API responses.")
-    # Stops the function.
+    error_messages <- unlist(purrr::map(invalid_entity_ids2, ~ response_list[[.]]$error$message))
+    # Extracts all the error messages found in each entity identifier's 
+    # response.
+    stop(paste0("Error in API response output for ", 
+                paste0(invalid_entity_ids2), ". ", 
+                paste0(error_messages), "\n"))
+    # Stops the function and generates a warning containing an error message 
+    # for each entity identifier.
   }
   return(response_list)
 }
+
