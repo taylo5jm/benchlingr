@@ -132,9 +132,53 @@
 #' @export
 
 get_entity <-  function(entity_id, api_key=Sys.getenv("BENCHLING_API_KEY")) {
-  inferred_entity_ids <- infer_entity_type(entity_id=entity_id, entity_list=NULL) # Infers the entity schemas for each element
-  entity_single_get_endpoints  <- .get_api_endpoints(entity_id=inferred_entity_ids, entity_list=NULL) # Extracts the Single-Get API endpoint URL format for each entity identifier according to its respective schema element
-  api_queries <- .craft_api_queries(entity_single_get_endpoints=entity_single_get_endpoints) # Rewrites the Single-Get API endpoint URL formats into proper URL strings for each identifier
-  response_list <- .submit_queries(api_queries=api_queries, api_key=api_key) # Uses the URL strings to call the entity identifier's Single-Get API endpoint in Benchling and extracts the contents of the response
+  inferred_entity_ids <- infer_entity_type(entity_id=entity_id, entity_list=NULL) 
+    # Infers the entity schemas for each element.
+  invalid_entity_ids1 <- names(inferred_entity_ids[which(is.na(inferred_entity_ids))]) 
+    # Finds all the invalid entity identifiers whose values are NA.
+  if (length(invalid_entity_ids1) > 0 & 
+      length(invalid_entity_ids1) < length(inferred_entity_ids)) { 
+    # Checks for any invalid entity identifiers while making sure that every
+    # entity identifier is not invalid.
+    warning(glue::glue("The following entity identifier(s) are invalid and will be removed: {toString(invalid_entity_ids1)}."))
+    # Generates a warning for any invalid entity identifiers found.
+    inferred_entity_ids <- inferred_entity_ids[! names(inferred_entity_ids) 
+                                               %in% invalid_entity_ids1]
+    # Removes the invalid entity identifiers from inferred_entity_ids.
+  } else if (length(invalid_entity_ids1) == length(inferred_entity_ids)) {
+    # Checks if all the entity identifiers are invalid.
+    stop("All entity identifiers are invalid.")
+    # Stops the function.
+  }
+  entity_single_get_endpoints  <- .get_api_endpoints(entity_id=inferred_entity_ids, 
+                                                     entity_list=NULL) 
+    # Extracts the Single-Get API endpoint URL format for each entity identifier 
+    # according to its respective schema element.
+  api_queries <- .craft_api_queries(entity_single_get_endpoints=
+                                    entity_single_get_endpoints) 
+    # Rewrites the Single-Get API endpoint URL formats into proper URL 
+    # strings for each identifier.
+  response_list <- .submit_queries(api_queries=api_queries, 
+                                   api_key=api_key) 
+    # Uses the URL strings to call the entity identifier's Single-Get 
+    # API endpoint in Benchling and extracts the contents of the response.
+  invalid_entity_ids2 <- names(response_list[which(purrr::map(response_list, 
+                                                   ~ !is.null(.$error)) == TRUE)])
+    # Finds all the entity identifiers that generated an error in their response.
+  if (length(invalid_entity_ids2) > 0 & 
+      length(invalid_entity_ids2) < length(response_list)) {
+    # Checks for any entity identifiers that generated an error in their response
+    # while making sure that every entity identifier is not invalid.
+    warning(glue::glue("The following entity identifier(s) are invalid and will be removed: {toString(invalid_entity_ids2)}."))
+    # Generates a warning for any entity identifiers found that has an error 
+    # in its response.
+    response_list <- response_list[! names(response_list) %in% invalid_entity_ids2]
+    # Removes all entity identifiers that have an error in their response from
+    # response_list.
+  } else if (length(invalid_entity_ids2) == length(response_list)) {
+    # Checks if all the entity identifiers have an error in their response.
+    stop("All entity identifiers are invalid and generate errors in their Single-Get API responses.")
+    # Stops the function.
+  }
   return(response_list)
 }
