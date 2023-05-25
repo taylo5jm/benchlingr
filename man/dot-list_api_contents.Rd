@@ -5,7 +5,7 @@
 \title{Generate a named list where the names are the first characters in an identifier's name for a specific
 entity and each element is a vector with the first element in the vector being the entity schema, the 
 second vector is the list API contents, the third is the Single-Get API endpoint option and the fourth
-is the Bulk-Get API endpoints option}
+is the Bulk-Get API endpoints option.}
 \usage{
 .list_api_contents(contents = "all", entity_list = NULL)
 }
@@ -30,7 +30,7 @@ Single-Get API endpoint option, Bulk-Get API endpoints option or all of them res
 Generate a named list where the names are the first characters in an identifier's name for a specific
 entity and each element is a vector with the first element in the vector being the entity schema, the 
 second vector is the list API contents, the third is the Single-Get API endpoint option and the fourth
-is the Bulk-Get API endpoints option
+is the Bulk-Get API endpoints option.
 }
 \examples{
 \dontrun{
@@ -42,3 +42,4 @@ entity_single_get_contents <- .list_api_contents(contents = "single-get endpoint
 entity_bulk_get_contents <- .list_api_contents(contents = "bulk-get endpoints")
 }
 }
+\keyword{internal}

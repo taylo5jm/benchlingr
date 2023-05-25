@@ -3,7 +3,7 @@
 #' Generate a named list where the names are the first characters in an identifier's name for a specific
 #' entity and each element is a vector with the first element in the vector being the entity schema, the 
 #' second vector is the list API contents, the third is the Single-Get API endpoint option and the fourth
-#' is the Bulk-Get API endpoints option
+#' is the Bulk-Get API endpoints option.
 #' 
 #' @param contents A character string to specify which type of information to return for the entities 
 #' listed: `"bulk-get endpoints"`, `"single-get endpoint"`,  `"list contents"`, `"entity schema"`,
@@ -26,6 +26,7 @@
 #' entity_single_get_contents <- .list_api_contents(contents = "single-get endpoint")
 #' entity_bulk_get_contents <- .list_api_contents(contents = "bulk-get endpoints")
 #' }
+#' @keywords internal
 
 .list_api_contents <- function(contents="all", entity_list=NULL) {
   if (is.null(entity_list)) {
