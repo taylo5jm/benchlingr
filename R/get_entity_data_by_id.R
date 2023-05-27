@@ -136,18 +136,27 @@ get_entity_data_by_id <-  function(entity_id, api_key=Sys.getenv("BENCHLING_API_
     # Infers the entity schemas for each element.
   invalid_entity_ids <- names(inferred_entity_ids[which(is.na(inferred_entity_ids))]) 
     # Finds all the invalid entity identifiers whose values are NA.
-  if (length(invalid_entity_ids) > 0 & 
+  if (length(invalid_entity_ids) == 1 &
       length(invalid_entity_ids) < length(inferred_entity_ids)) { 
-    # Checks for any invalid entity identifiers while making sure that not every
-    # entity identifier is invalid.
-    warning(glue::glue("The following entity identifier(s) are invalid and will be removed: {toString(invalid_entity_ids)}."))
+    # Checks if only a single entity identifier is invalid while making sure that
+    # not every entity identifier is invalid.
+    warning(glue::glue("The following entity identifier cannot be matched to an entity type and has therefore been removed: {toString(invalid_entity_ids)}."))
+    # Generates a warning for any invalid entity identifier found.
+    inferred_entity_ids <- inferred_entity_ids[! names(inferred_entity_ids) 
+                                               %in% invalid_entity_ids]
+    # Removes the invalid entity identifier from inferred_entity_ids.
+  } else if (length(invalid_entity_ids) > 1 & 
+             length(invalid_entity_ids) < length(inferred_entity_ids)) { 
+    # Checks if multiple entity identifiers are invalid while making sure that not 
+    # every entity identifier is invalid.
+    warning(glue::glue("The following entity identifiers cannot be matched to an entity type and have therefore been removed: {toString(invalid_entity_ids)}."))
     # Generates a warning for any invalid entity identifiers found.
     inferred_entity_ids <- inferred_entity_ids[! names(inferred_entity_ids) 
                                                %in% invalid_entity_ids]
     # Removes the invalid entity identifiers from inferred_entity_ids.
   } else if (length(invalid_entity_ids) == length(inferred_entity_ids)) {
     # Checks if all the entity identifiers are invalid.
-    stop("All entity identifiers are invalid.")
+    stop("None of the entity identifiers can be matched to an entity type and are therefore all invalid.")
     # Stops the function.
   }
   entity_single_get_endpoints  <- .get_api_endpoints(entity_id=inferred_entity_ids, 
