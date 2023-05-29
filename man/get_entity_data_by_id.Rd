@@ -16,8 +16,9 @@ A named list where the names are entity identifiers and each element is a list t
 the response contents from the call made to that identifier's Single-Get API endpoint in Benchling.
 }
 \description{
-get_entity.R takes a character vector with one or more elements and for each element calls its Single-Get API 
-endpoints in Benchling and extracts the response contents and stores it in a list.
+get_entity_data_by_id.R takes a character vector with one or more elements and for 
+each element calls its Single-Get API endpoints in Benchling and extracts the 
+response contents and stores it in a list.
 }
 \examples{
 \dontrun{

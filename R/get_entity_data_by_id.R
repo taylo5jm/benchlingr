@@ -117,8 +117,9 @@
 
 #' Calls each element's Single-Get API endpoints in Benchling and extracts the response.
 #' 
-#' get_entity.R takes a character vector with one or more elements and for each element calls its Single-Get API 
-#' endpoints in Benchling and extracts the response contents and stores it in a list.
+#' get_entity_data_by_id.R takes a character vector with one or more elements and for 
+#' each element calls its Single-Get API endpoints in Benchling and extracts the 
+#' response contents and stores it in a list.
 #' 
 #' @param entity_id A character vector with 1 or more elements.
 #' @param api_key Benchling API key. 
