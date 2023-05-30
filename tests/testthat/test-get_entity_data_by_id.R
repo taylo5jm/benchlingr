@@ -1,6 +1,6 @@
 # test-get_entity_data_by_id.R
 
-api_key = Sys.getenv("BENCHLING_API_KEY")
+api_key = Sys.getenv("BENCHLING_DEV_API_KEY")
 
 # test case 1
 test_that("Verify that get_entity_data_by_id.R generates warnings when encountering
