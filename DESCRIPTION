@@ -53,6 +53,9 @@ Imports:
     tidyr
 Collate: 
     'assay_results_utils.R'
+    'list_api_contents.R'
+    'infer_entity_type.R'
+    'bundle_api_results.R'
     'config_sdk_env.R'
     'error.R'
     'connect_sdk.R'
