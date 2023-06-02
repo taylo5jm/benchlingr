@@ -8,48 +8,45 @@
 #' API endpoint URL formats according to which entity the schema correlates 
 #' with.
 #' 
+#' @include list_api_contents.R
 #' @param entity_id A named character vector where the names are entity 
 #' identifiers and the elements are the entity types associated with those 
 #' identifiers.
-#' @param entity_list A list of vectors where each vector designates the schema 
-#' type and API options for the entities we are interested in and the names are 
-#' the first characters seen in the identifiers for each entity. If NULL 
-#' (the default), the function will use a default list.
-#' 
-#' Alternatively, a custom or more specified list can be used based on the 
-#' purpose and intent of the list and overall application of the function.
-#' 
+#' @param tenant A character string containing the name of the Benchling tenant 
+#' for which we want to use to extract information for at least one entity or 
+#' element. 
 #' @return A named character vector where the names are entity identifiers and 
 #' the elements are the Single-Get API endpoint URL formats associated with them 
 #' based on the respective entities each identifier correlates to and matches 
 #' with.
 #' @examples \dontrun{
-#' entity_id1 <- c("seq_Cuf0bmCm"="dna_sequence", "bfi_Q1PMlXkf"=
-#' "custom_entity", "box_7YutniM0"="box")
-#' res1 <- .get_api_endpoints(entity_id=entity_id1, entity_list=NULL)
+#' entity_id1 <- c("seq_Cuf0bmCm", "bfi_Q1PMlXkf", "box_7YutniM0")
+#' inferred_id1 <- infer_entity_type(entity_id=entity_id1, tenant=
+#' "hemoshear-dev")
+#' res1 <- .get_api_endpoints(entity_id=inferred_id1, tenant="hemoshear-dev")
 #' 
-#' entity_id2 <- c("bfi_Ur5DfvGJ"="custom_entity", "seq_Gju61mCm"="dna_sequence", 
-#' "bfi_Q13AlXkf"="custom_entity", "bfi_Ks908uWV"="custom_entity", 
-#' "ent_Ec76qX9f"="user", "ent_sPrxBNOh"="user", "box_K9950IQ8"="box")
-#' res2 <- .get_api_endpoints(entity_id=entity_id2, entity_list=NULL)
+#' entity_id2 <- c("bfi_Ur5DfvGJ", "seq_Gju61mCm", "bfi_Q13AlXkf", 
+#' "bfi_Ks908uWV", "ent_Ec76qX9f", "ent_sPrxBNOh", "box_K9950IQ8")
+#' inferred_id2 <- infer_entity_type(entity_id=entity_id2, tenant=
+#' "hemoshear-dev")
+#' res2 <- .get_api_endpoints(entity_id=inferred_id2, tenant="hemoshear-dev")
 #' }
 #' @keywords internal
 
-.get_api_endpoints <- function(entity_id, entity_list=NULL) {
-  if (is.null(entity_list)) { 
-    # Checks if entity_list has not been defined.
-    
-    entity_list <- .list_api_contents(contents="all") 
-    # Defines entity_list if left as NULL using .list_api_contents.R.
-  }
+.get_api_endpoints <- function(entity_id, tenant) {
+  entity_list <- .list_api_contents(tenant=tenant, contents="all") 
+  # Defines entity_list using .list_api_contents.R.
   
   entity_elements <- purrr::map(entity_list, ~ .[c(2,3,4)]) 
   # Extracts API contents for each entity.
   
-  names(entity_elements) <- purrr::map_chr(entity_list, ~ .[1]) 
+  names(entity_elements) <- purrr::map_chr(entity_list, ~ .[1])
+  # Names API contents after the entity names they are referenced under.
   
   entity_single_get_endpoints <- sapply(entity_id, function(x) 
-                                        entity_elements[[x]][2]) 
+    entity_elements[[x]][2]) 
+  # Extracts the Single-Get API endpoint contents associated with each entity
+  # identifier in 'entity_id' input from 'entity_elements.'
   
   return(entity_single_get_endpoints)
 }
@@ -71,67 +68,216 @@
 #' the elements are the respective Single-Get API endpoint URLs for each 
 #' identifier.
 #' @examples \dontrun{
-#' entity_single_get_endpoints <- c(
-#' "seq_Cuf0bmCm"=
-#' "https://hemoshear-dev.benchling.com/api/v2/dna-sequences/ENTITY_ID", 
-#' "bfi_Q1PMlXkf"=
-#' "https://hemoshear-dev.benchling.com/api/v2/custom-entities/ENTITY_ID", 
-#' "box_7YutniM0"=
-#' "https://hemoshear-dev.benchling.com/api/v2/boxes/ENTITY_ID",
-#' "bfi_Ks908uWV"=
-#' "https://hemoshear-dev.benchling.com/api/v2/custom-entities/ENTITY_ID")
+#' entity_id <- c("seq_Cuf0bmCm", "bfi_Q1PMlXkf", "box_7YutniM0", 
+#' "bfi_Ks908uWV")
+#' 
+#' inferred_id <- infer_entity_type(entity_id=entity_id, tenant="hemoshear-dev")
+#' 
+#' entity_single_get_endpoints <- .get_api_endpoints(entity_id=inferred_id,
+#' tenant="hemoshear-dev")
+#' 
 #' res <- .craft_api_queries(entity_single_get_endpoints=
-#'                           entity_single_get_endpoints)
+#' entity_single_get_endpoints)
 #' }
 #' @keywords internal
 
 .craft_api_queries <- function(entity_single_get_endpoints) {
   api_queries <- sapply(names(entity_single_get_endpoints),
-                        function(x) gsub("ENTITY_ID", x, 
-                                         entity_single_get_endpoints[x])) 
-  # Prepares single-get API endpoint 
-  # URL queries for each entity 
-  # identifier not assigned with a 
-  # value of NA.
-  names(api_queries) <- names(entity_single_get_endpoints) # Re-assigns entity identifiers as names
-  # to each corresponding URL query.
+    function(x) gsub("ENTITY_ID", x, entity_single_get_endpoints[x])) 
+  # Prepares single-get API endpoint URL queries for each entity identifier not 
+  # assigned with a value of NA.
+  
+  names(api_queries) <- names(entity_single_get_endpoints) 
+  # Re-assigns entity identifiers as names to each corresponding URL query.
+  
   return(api_queries)
 }
 
 # .submit_queries.R
 
-#' Uses each element to call the Single-Get API endpoint in Benchling for a specific entity identifier.
+#' Uses each element to call the Single-Get API endpoint in Benchling for a 
+#' specific entity identifier.
 #' 
-#' .submit_queries.R takes a named character vector with one or more elements where the names are entity 
-#' identifiers and the elements are each identifier's respective Single-Get API endpoint URL and uses them 
-#' to call that identifier's Single-Get API endpoint in Benchling and extract the response contents.
+#' .submit_queries.R takes a named character vector with one or more elements 
+#' where the names are entity identifiers and the elements are each identifier's 
+#' respective Single-Get API endpoint URL and uses them to call that 
+#' identifier's Single-Get API endpoint in Benchling and extract the response 
+#' contents.
 #' 
-#' @param api_queries A named character vector where the names are entity identifiers and the elements are 
-#' the Single-Get API endpoint URLs for each identifier.
+#' @param api_queries A named character vector where the names are entity 
+#' identifiers and the elements are the Single-Get API endpoint URLs for each 
+#' identifier.
 #' @param api_key Benchling API key. 
-#' @return A named list where the names are entity identifiers and each element is a list that contains the 
-#' response contents from the call made to that identifier's Single-Get API endpoint in Benchling.
+#' @return A named list where the names are entity identifiers and each element 
+#' is a list that contains the response contents from the call made to that 
+#' identifier's Single-Get API endpoint in Benchling.
 #' @examples \dontrun{
-#' api_queries <- c(
-#' "seq_Cuf0bmCm"="https://hemoshear-dev.benchling.com/api/v2/dna-sequences/seq_Cuf0bmCm", 
-#' "bfi_Q1PMlXkf"="https://hemoshear-dev.benchling.com/api/v2/custom-entities/bfi_Q1PMlXkf", 
-#' "box_7YutniM0"="https://hemoshear-dev.benchling.com/api/v2/boxes/box_7YutniM0",
-#' "bfi_Ks908uWV"="https://hemoshear-dev.benchling.com/api/v2/custom-entities/bfi_Ks908uWV")
-#' res <- .submit_queries(api_queries=api_queries, api_key=Sys.getenv("BENCHLING_API_KEY"))
+#' entity_id <- c("seq_Cuf0bmCm", "bfi_Q1PMlXkf", "box_7YutniM0", 
+#' "bfi_Ks908uWV", "box_Api455op", "box_t99a7IQ8", "con_m1dmbdV8", 
+#' "bfi_ztXInwdh", "bfi_Y7ORWDSz", "bfi_vrXl1zIm", "etr_lu8wTLfL", 
+#' "etr_9012RkiU")
+#' 
+#' inferred_id <- infer_entity_type(entity_id=entity_id, tenant="hemoshear-dev")
+#' 
+#' entity_single_get_endpoints <- .get_api_endpoints(entity_id=inferred_id,
+#' tenant="hemoshear-dev")
+#' 
+#' api_queries <- .craft_api_queries(entity_single_get_endpoints=
+#' entity_single_get_endpoints)
+#' 
+#' res <- .submit_queries(api_queries=api_queries, 
+#' api_key=Sys.getenv("BENCHLING_API_KEY"))
 #' }
 #' @keywords internal
 
-.submit_queries <- function(api_queries, api_key=Sys.getenv("BENCHLING_API_KEY")) {
-  if (api_key == "") { # Check if the benchling api key is valid or not
+.submit_queries <- function(api_queries, api_key=
+                            Sys.getenv("BENCHLING_API_KEY")) {
+  if (api_key == "") { 
+    # Checks if the benchling api key is valid or not.
     stop("Benchling API key is missing or empty.")
+    # Stops the function if the Benchling API Key is missing or empty.
   }
   
   response_list <- purrr::map(api_queries, ~ 
-                                httr::content(httr::GET(., httr::authenticate(api_key, '')))) # Sends each URL query in the input to benchling 
-  # and retrieves the response for each one. 
-  names(response_list) <- names(api_queries) # Re-assigns the names using the names of the entity identifiers.
+    httr::content(httr::GET(., httr::authenticate(api_key, '')))) 
+  # Sends each URL query in the input to benchling and retrieves the response 
+  # for each one. 
+  
+  names(response_list) <- names(api_queries) 
+  # Re-assigns the names using the names of the entity identifiers.
   
   return(response_list)
+}
+
+# .handle_api_response.R
+
+#' Check each element's API response and remove any elements that have errors in
+#' their responses.
+#' 
+#' .handle_api_response.R takes a named list where the names are entity 
+#' identifiers and the elements are each identifier's Single-Get API endpoint 
+#' response contents extracted from Benchling and analyzes it to see if any 
+#' entity identifiers contain errors in their Single-Get API endpoint responses 
+#' and removes them from the list.
+#' 
+#' @param entity_id_responses A named list where the names are entity 
+#' identifiers and the elements are each entity identifier's Single-Get API 
+#' endpoint response contents from Benchling.
+#' @return A named list where the names are valid entity identifiers that do not 
+#' possess errors in their Single-Get API endpoint response contents and the
+#' elements are said identifier's Single-Get API endpoint response contents.
+#' @examples \dontrun{
+#' entity_id <- c("seq_Cuf0bmCm", "bfi_Q1PMlXkf", "box_7YutniM0", 
+#' "bfi_Ks908uWV", "box_Api455op", "box_t99a7IQ8", "con_m1dmbdV8", 
+#' "bfi_ztXInwdh", "bfi_Y7ORWDSz", "bfi_vrXl1zIm", "etr_lu8wTLfL", 
+#' "etr_9012RkiU")
+#' 
+#' inferred_id <- infer_entity_type(entity_id=entity_id, tenant="hemoshear-dev")
+#' 
+#' entity_single_get_endpoints <- .get_api_endpoints(entity_id=inferred_id,
+#' tenant="hemoshear-dev")
+#' 
+#' entity_id_responses <- .craft_api_queries(entity_single_get_endpoints=
+#' entity_single_get_endpoints)
+#' 
+#' res <- .handle_api_responses(entity_id_responses=entity_id_responses)
+#' }
+#' @keywords internal
+
+.handle_api_responses <- function(entity_id_responses) { 
+  invalid_entity_ids <- names(entity_id_responses[which(purrr::map(
+    entity_id_responses, ~ !is.null(.$error)) == TRUE)])
+  # Finds all the entity identifiers that generated an error in their response.
+  
+  if (length(invalid_entity_ids) > 0 & 
+      length(invalid_entity_ids) < length(entity_id_responses)) {
+    # Checks for any entity identifiers that generated an error in their 
+    # response while making sure that every entity identifier is not invalid.
+    error_messages <- unlist(purrr::map(invalid_entity_ids, 
+      ~ as.character(entity_id_responses[[.]]$error$message)))
+    # Extracts all the error messages found in each entity identifier with an 
+    # error response.
+    names(error_messages) <- invalid_entity_ids
+    # Names each error message after the entity identifier associated with it.
+    error_messages <- split(names(error_messages), error_messages)
+    # Groups and re-organizes the error messages so that entity identifiers with 
+    # the same error message would be placed together in a list with the name 
+    # for that list being the error message.
+    single_id_error_messages <- error_messages[which(purrr::map(error_messages, 
+      ~ length(.) == 1) == TRUE)]
+    # Extracts all error messages that are unique to only a single entity 
+    # identifier.
+    single_id_error_messages <- unlist(purrr::map(
+      names(single_id_error_messages), ~ paste0("Errors were found in the API ",
+      "response output for ", toString(single_id_error_messages[[.]]), " with ",
+      "the following error message: ", as.character(.), " Therefore, the ",
+      "entity identifier along with its respective API response output was ",
+      "removed.")))
+    # Rewrites the error messages associated with a single entity identifier 
+    # into custom messages so that they can also be utilized as warnings.
+    multiple_id_error_messages <- error_messages[which(purrr::map(
+      error_messages, ~ length(.) > 1) == TRUE)]
+    # Extracts all error messages that are shared by more than one entity 
+    # identifier.
+    multiple_id_error_messages <- unlist(purrr::map(
+      names(multiple_id_error_messages), ~ paste0("Errors were found in the ",
+      "API response outputs for ", toString(multiple_id_error_messages[[.]]), 
+      " with the following error message: ", as.character(.), " Therefore, ",
+      "the entity identifiers along with their respective API response ",
+      "outputs were removed.")))
+    # Rewrites the error messages associated with multiple entity identifiers 
+    # into custom messages so that they can also be utilized as warnings.
+    error_messages <- c(single_id_error_messages, multiple_id_error_messages)
+    # Rewrites error_messages to store the custom messages. 
+    warning(paste0(error_messages, "\n"))
+    # Generates warnings using the customized error messages.
+    entity_id_responses <- entity_id_responses[! names(entity_id_responses) 
+      %in% invalid_entity_ids]
+    # Removes the entity identifiers with errors in their API responses from 
+    # entity_id_responses.
+    
+  } else if (length(invalid_entity_ids) == length(entity_id_responses)) {
+    # Checks if all the entity identifiers have an error in their response.
+    error_messages <- unlist(purrr::map(invalid_entity_ids, 
+      ~ entity_id_responses[[.]]$error$message))
+    # Extracts all the error messages found in each entity identifier's 
+    # response.
+    names(error_messages) <- invalid_entity_ids
+    # Names each error message after the entity identifier associated with it.
+    error_messages <- split(names(error_messages), error_messages)
+    # Groups and re-organizes the error messages so that entity identifiers with 
+    # the same error message would be placed together in a list with the name 
+    # for that list being the error message.
+    single_id_error_messages <- error_messages[which(purrr::map(error_messages, 
+      ~ length(.) == 1) == TRUE)]
+    # Extracts all error messages that are unique to only a single entity 
+    # identifier.
+    single_id_error_messages <- unlist(purrr::map(
+      names(single_id_error_messages), ~ paste0("Errors were found in the API ",
+      "response output for ", toString(single_id_error_messages[[.]]), " with ",
+      "the following error message: ", as.character(.))))
+    # Rewrites the error messages associated with a single entity identifier 
+    # into custom messages so that they can also be utilized as warnings.
+    multiple_id_error_messages <- error_messages[which(purrr::map(
+      error_messages, ~ length(.) > 1) == TRUE)]
+    # Extracts all error messages that are shared by more than one entity 
+    # identifier.
+    multiple_id_error_messages <- unlist(purrr::map(
+      names(multiple_id_error_messages), ~ paste0("Errors were found in the ",
+      "API response outputs for ", toString(multiple_id_error_messages[[.]]),
+      " with the following error message: ", as.character(.))))
+    # Rewrites the error messages associated with multiple entity identifiers 
+    # into custom messages so that they can also be utilized as warnings.
+    error_messages <- c(single_id_error_messages, multiple_id_error_messages)
+    # Rewrites error_messages to store the custom messages. 
+    stop(cat("Errors were found in all API response outputs.\n",
+             paste0(error_messages,'\n')))
+    # Stops the function and prints out a statement containing all the 
+    # customized error messages generated for each error found.
+  }
+  return(entity_id_responses)
+  # Returns entity_id_responses either unchanged or with all the entity 
+  # identifiers containing errors in their responses removed.
 }
 
 # .bundle_api_results.R
@@ -141,42 +287,61 @@
 #' 
 #' .bundle_api_results.R takes a named list where the names are entity 
 #' identifiers and each element is a list containing that identifier's 
-#' Single-Get API endpoint response contents from Benchling and sorts the 
-#' data into a named list where the names are the collective entity types 
-#' for all of the entity identifiers in the input and each element is also a 
-#' named list where the names are entity schema names and the elements are 
-#' tibble-formatted data tables containing the Single-Get API endpoint response 
-#' contents data for each entity identifier associated with a specific schema 
-#' name and entity type.
+#' Single-Get API endpoint response contents from Benchling and sorts the data 
+#' into a named list where the names are the collective entity types for all of 
+#' the entity identifiers in the input and each element is also a named list 
+#' where the names are entity schema names and the elements are tibble-formatted 
+#' data tables containing the Single-Get API endpoint response contents data for 
+#' each entity identifier associated with a specific schema name and entity 
+#' type.
 #' 
 #' @include infer_entity_type.R
 #' @param entity_responses A named list where the names are entity identifiers 
 #' and each element is a list that contains the response contents from the call 
 #' made to that identifier's Single-Get API endpoint in Benchling.
+#' @param tenant A character string containing the name of the Benchling tenant 
+#' for which we want to use to extract information for at least one entity or 
+#' element.
 #' @return A named list where the names are entity types and each element is 
 #' another named list where the names are entity schema names and each element 
 #' is a tibble-formatted data table displaying the Single-Get API endpoint 
 #' response contents data extracted Benchling for each entity identifier 
 #' corresponding to a specific entity schema name and entity type.
 #' @examples \dontrun{
-#' entity_responses <- get_entity(entity_id = c("con_m1dmbdV8", "bfi_Ur5DfvGJ", 
-#' "seq_Cuf0bmCm", "bfi_Q13AlXkf", "ent_Ec76qX9f", "ent_sPrxBNOh"), 
-#' api_key=Sys.getenv("BENCHLING_API_KEY"))
-#' res <- .bundle_api_results(entity_responses=entity_responses)
+#' entity_id <- c("seq_Cuf0bmCm", "sfs_VUhew7oD", "box_7YutniM0",
+#' "bfi_Ks908uWV", "box_Api455op", "box_t99a7IQ8", "con_m1dmbdV8",
+#' "bfi_ztXInwdh", "bfi_Y7ORWDSz", "bfi_vrXl1zIm", "etr_lu8wTLfL",
+#' "etr_9012RkiU")
+#' 
+#' inferred_id <- infer_entity_type(entity_id=entity_id, tenant="hemoshear-dev")
+#' 
+#' entity_single_get_endpoints <- .get_api_endpoints(entity_id=inferred_id,
+#' tenant="hemoshear-dev")
+#' 
+#' entity_id_responses <- .craft_api_queries(entity_single_get_endpoints=
+#' entity_single_get_endpoints)
+#' 
+#' entity_responses <- .submit_queries(api_queries=api_queries,
+#' api_key=Sys.getenv("BENCHLING_DEV_API_KEY"))
+#'
+#' res <- .bundle_api_results(entity_responses=entity_responses tenant=
+#' "hemoshear-dev")
 #' }
 #' @keywords internal
 
-.bundle_api_results <- function(entity_responses) {
+.bundle_api_results <- function(entity_responses, tenant) {
   entity_ids <- names(entity_responses) 
   # Extracts a vector containing the entity identifiers in the input.
   
-  inferred_entity_types <- infer_entity_type(entity_id=entity_ids,entity_list=NULL) 
+  inferred_entity_types <- infer_entity_type(entity_id=entity_ids,
+    tenant=tenant) 
   # Infers the entity types for the entity identifiers. 
   
   entity_id_schema_ids <- purrr::map(entity_responses, ~ .$schema$id) 
-  # Extracts the entity schema ids in each entity identifier's response if listed.
+  # Extracts the entity schema ids in each entity identifier's response if 
+  # listed.
   entity_id_schema_ids[which(purrr::map(entity_id_schema_ids, 
-                                        ~ is.null(.)) == TRUE)] <- "none" 
+    ~ is.null(.)) == TRUE)] <- "none" 
   # Generates a value of "none" for each entity identifier's schema id that have 
   # a value of NULL.
   entity_id_schema_ids <- unlist(entity_id_schema_ids) 
@@ -186,26 +351,36 @@
   # Extracts the entity schema names in each entity identifier's response 
   # if listed.
   entity_id_schema_names[which(purrr::map(entity_id_schema_names, 
-                                          ~ is.null(.)) == TRUE)] <- inferred_entity_types[which(purrr::map(
-                                            entity_id_schema_names, ~ is.null(.)) == TRUE)] 
-  # Assigns to each entity identifier that do not have an error value in 
-  # their response but still feature a value of NULL for their schema name 
-  # their respective entity type as a substitute value for their schema name.
+    ~ is.null(.)) == TRUE)] <- inferred_entity_types[which(purrr::map(
+      entity_id_schema_names, ~ is.null(.)) == TRUE)] 
+  # Assigns to each entity identifier that do not have an error value in their 
+  # response but still feature a value of NULL for their schema name their 
+  # respective entity type as a substitute value for their schema name.
   entity_id_schema_names <- unlist(entity_id_schema_names) 
   # Converts entity_id_schema_names into a vector.
   
   .api_response_sort <- function(entity_id_response) { 
     # Creates a function that modifies each entity identifier's API response.
+    if (length(names(entity_id_response)) == 1) {
+      if (names(entity_id_response) == "entry") {
+        entity_id_response <- entity_id_response$entry[which(
+          names(entity_id_response$entry) != "days")]
+        # Removes the "days" element from an entity identifier's entry attribute 
+        # due to how repetitive the information is and how it cannot be 
+        # organized in a unique way when integrating the information into a data 
+        # frame or a table.
+      }
+    }
     entity_id_response <- unlist(entity_id_response) 
     # Unlists each entity identifier's response. 
     entity_id_response <- entity_id_response[! (substr(names(entity_id_response), 
                                                        1, 7) == "fields." & 
-                                                  substr(names(entity_id_response), 
-                                                         nchar(names(entity_id_response))-5, 
-                                                         nchar(names(entity_id_response))) != ".value" & 
-                                                  substr(names(entity_id_response), 
-                                                         nchar(names(entity_id_response))-4,
-                                                         nchar(names(entity_id_response))) != ".type")]
+                                                substr(names(entity_id_response), 
+                                                       nchar(names(entity_id_response))-5, 
+                                                       nchar(names(entity_id_response))) != ".value" & 
+                                                substr(names(entity_id_response), 
+                                                       nchar(names(entity_id_response))-4,
+                                                       nchar(names(entity_id_response))) != ".type")]
     # Extracts only the type and value elements from each entity identifier's 
     # field attribute.
     names(entity_id_response) <- gsub("fields.", "", names(entity_id_response)) 
@@ -218,26 +393,21 @@
     names(entity_id_response) <- gsub("\\.", "_", names(entity_id_response)) 
     # Replaces all instances of "." in the names of each entity identifier's 
     # response attributes with "_".
-    entity_id_response[entity_id_response == '' | 
-                         entity_id_response == ' ' | 
-                         entity_id_response == "" | 
-                         entity_id_response == " "] <- NA 
+    entity_id_response[which(grepl("^\\s*$", entity_id_response))] <- NA
+    # Replaces all blank values in each entity identifier's response with a 
+    # value of NA.
     return(entity_id_response)
-    # Replaces all '', ' ', "" and " " values in each entity 
-    # identifier's response with a value of NA.
   }
   
   entity_responses <- purrr::map(entity_responses, ~ .api_response_sort(.)) 
   # Runs each entity identifier's response through the .api_response_sort() 
   # function in order to modify them.
   entity_responses <- purrr::map(entity_responses, 
-                                 ~ .[names(.) != "id" & names(.) != "schema_id" & 
-                                       names(.) != "schema_name"])
-  entity_responses <- purrr::map(entity_ids, ~ c("id" = ., 
-                                                 "entityType" = inferred_entity_types[[.]],
-                                                 "schema_id" = entity_id_schema_ids[[.]],
-                                                 "schema_name" = entity_id_schema_names[[.]],
-                                                 entity_responses[[.]]))
+    ~ .[names(.) != "id" & names(.) != "schema_id" & names(.) != "schema_name"])
+  entity_responses <- purrr::map(entity_ids, 
+    ~ c("id" = ., "entityType" = inferred_entity_types[[.]], 
+        "schema_id" = entity_id_schema_ids[[.]], 
+        "schema_name" = entity_id_schema_names[[.]], entity_responses[[.]]))
   # Adds to the beginning of each entity identifier's API response their 
   # entity id, entity type and schema id and schema name as defined by 
   # entity_id_schema_ids and entity_id_schema_names after removing all prior 
@@ -247,22 +417,26 @@
   names(entity_responses) <- entity_ids 
   # Renames each entity identifier's response using their entity id.
   
+  entity_response_attributes <- purrr::map(entity_responses, ~ names(.))
+  # Extracts the response attributes for each entity identifier's response.
+  
   sorted_entity_types <- split(names(inferred_entity_types), 
-                               inferred_entity_types) 
+    inferred_entity_types) 
   # Sorts the entity identifiers according to which entity type they belong to.
   sorted_entity_responses <- purrr::map(sorted_entity_types, 
-                                        ~ entity_id_schema_names[which(names(entity_id_schema_names) 
-                                                                       %in% .)]) 
+    ~ entity_id_schema_names[which(names(entity_id_schema_names) %in% .)]) 
   # Matches each entity identifier listed underneath an entity type with their 
   # respective entity schema name.
   sorted_entity_responses <- purrr::map(sorted_entity_responses, 
-                                        ~ split(names(.), .))
+    ~ split(names(.), .))
   # Further organizes sorted_entity_responses by grouping all the entity 
   # identifiers listed under a certain entity type by their entity schema name.
   
+  sorted_entity_response_attributes
+  
   res <- lapply(sorted_entity_responses, function(x) 
     purrr::map(x, ~ tibble::as_tibble(as.data.frame(do.call(rbind, 
-                                                            entity_responses[which(names(entity_responses) %in% .)])))))
+                    entity_responses[which(names(entity_responses) %in% .)])))))
   # Matches each entity identifier listed for a specific schema name with their 
   # API response data and re-organizes it all into a single tibble-formatted 
   # data table where each row shows the API response data for a specific entity 
@@ -273,7 +447,8 @@
 
 # get_entity_by_id.R
 
-#' Calls each element's Single-Get API endpoints in Benchling and extracts the response.
+#' Calls each element's Single-Get API endpoints in Benchling and extracts the 
+#' response.
 #' 
 #' get_entity_by_id.R takes a character vector with one or more elements and for 
 #' each element calls its Single-Get API endpoints in Benchling and extracts the 
@@ -282,6 +457,7 @@
 #' @include infer_entity_type.R
 #' @param entity_id A character vector with 1 or more elements.
 #' @param api_key Benchling API key. 
+#' @param bundle A boolean that determines 
 #' @return A named list where the names are entity identifiers and each element is a list that contains
 #' the response contents from the call made to that identifier's Single-Get API endpoint in Benchling.
 #' @examples \dontrun{
@@ -291,7 +467,9 @@
 #' }
 #' @export
 
-get_entity_by_id <-  function(entity_id, api_key=Sys.getenv("BENCHLING_API_KEY")) {
+get_entity_by_id <-  function(entity_id, 
+                              api_key=Sys.getenv("BENCHLING_API_KEY"),
+                              bundle=TRUE) {
   inferred_entity_ids <- infer_entity_type(entity_id=entity_id, entity_list=NULL) 
     # Infers the entity schemas for each element.
   invalid_entity_ids <- names(inferred_entity_ids[which(is.na(inferred_entity_ids))]) 
