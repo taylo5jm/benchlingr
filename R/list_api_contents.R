@@ -38,17 +38,18 @@
   if (!is.character(tenant) | length(tenant) != 1) {
     # Checks if tenant is not a character string with a length of 1.
     stop(paste0("'tenant' must be a character string with a length of 1 when ",
-                "'entity_list' is defined as NULL or left blank."))
-    # Stops the function if tenant is not a character string with a length of 1.
+      "'entity_list' is defined as NULL or left blank."))
+      # Stops the function if tenant is not a character string with a length of 
+      # 1.
   }
 
   if (grepl("^\\s*$", tenant)) {
     # Checks if tenant is an empty character string.
     stop(paste0("'tenant' cannot be a blank space when 'entity_list' is ",
-                "defined as NULL or left blank. 'tenant' must be a character ",
-                "string with a length of 1."))
-    # Stops the function if tenant is an empty character string.
-  }
+      "defined as NULL or left blank. 'tenant' must be a character string ",
+      "with a length of 1."))
+      # Stops the function if tenant is an empty character string.
+    }
   
   entity_list <- list("bat" = c("batch", 
                                 paste0("https://", as.character(tenant),
@@ -172,76 +173,77 @@
                                  paste0("https://", as.character(tenant),
                                         ".benchling.com/api/v2/dna-sequences:",
                                          "bulk-get?dnaSequenceIds=ENTITY_IDS")))
-  # Generates a named list called entity_list that contains information for each 
-  # entity possible where the names are the first characters seen in an entity 
-  # identifier's name for a specific entity type and the elements are the entity 
-  # types and the URL formats for each corresponding entity type's 
-  # list contents, single-get endpoint contents and bulk-get endpoints contents 
-  # in the form of character strings with each format dependent on the tenant 
-  # being accessed.
+    # Generates a named list called entity_list that contains information for 
+    # each entity possible where the names are the first characters seen in an 
+    # entity identifier's name for a specific entity type and the elements are 
+    # the entity types and the URL formats for each corresponding entity type's 
+    # list contents, single-get endpoint contents and bulk-get endpoints 
+    # contents in the form of character strings with each format dependent on 
+    # the tenant being accessed.
   
   if (contents == "all") {
     # Checks if contents is left as default or defined as "all."
     return(entity_list)
-    # Returns all the elements for each specified entity type in entity_list.
+      # Returns all the elements for each specified entity type in entity_list.
     
   } else if (contents == "bulk-get endpoints") {
     # Checks if contents is defined as "bulk-get endpoints."
     new_entity_list <- purrr::map(entity_list, ~ .[4])
-    # Extracts only the bulk-get endpoints contents element for each specified
-    # entity type in entity_list and stores it in a new list called 
-    # new_entity_list.
+      # Extracts only the bulk-get endpoints contents element for each specified
+      # entity type in entity_list and stores it in a new list called 
+      # new_entity_list.
     names(new_entity_list) <- names(entity_list)
-    # Names each entity type's corresponding bulk-get endpoints contents element 
-    # after the name assigned to the entity type in entity_list.
+      # Names each entity type's corresponding bulk-get endpoints contents 
+      # element after the name assigned to the entity type in entity_list.
     return(new_entity_list)
-    # Returns only the bulk-get endpoints contents element for each entity type 
-    # in entity_list.
+      # Returns only the bulk-get endpoints contents element for each entity 
+      # type in entity_list.
     
   } else if (contents == "single-get endpoint") {
     # Checks if contents is defined as "single-get endpoint."
     new_entity_list <- purrr::map(entity_list, ~ .[3])
-    # Extracts only the single-get endpoint contents element for each specified
-    # entity type in entity_list and stores it in a new list called
-    # new_entity_list.
+      # Extracts only the single-get endpoint contents element for each 
+      # specified entity type in entity_list and stores it in a new list called
+      # new_entity_list.
     names(new_entity_list) <- names(entity_list)
-    # Names each entity type's corresponding single-get endpoint contents 
-    # element after the name assigned to the entity type in entity_list.
+      # Names each entity type's corresponding single-get endpoint contents 
+      # element after the name assigned to the entity type in entity_list.
     return(new_entity_list)
-    # Returns only the single-get endpoint contents element for each entity type 
-    # in entity_list.
-    
+      # Returns only the single-get endpoint contents element for each entity 
+      # type in entity_list.
+  
   } else if (contents == "list contents") {
     # Checks if contents is defined as "list contents."
     new_entity_list <- purrr::map(entity_list, ~ .[2])
-    # Extracts only the list contents element for each specified entity type in 
-    # entity_list and stores it in a new list called new_entity_list.
+      # Extracts only the list contents element for each specified entity type 
+      # in entity_list and stores it in a new list called new_entity_list.
     names(new_entity_list) <- names(entity_list)
-    # Names each entity type's corresponding list contents element after the 
-    # name assigned to the entity type in entity_list.
+      # Names each entity type's corresponding list contents element after the 
+      # name assigned to the entity type in entity_list.
     return(new_entity_list)
-    # Returns only the list contents element for each entity type in 
-    # entity_list.
+      # Returns only the list contents element for each entity type in 
+      # entity_list.
     
   } else if (contents == "entity schema" | contents == "entity type") {
     # Checks if contents is defined as either "entity schema" or "entity type."
     new_entity_list <- purrr::map(entity_list, ~ .[1])
-    # Extracts for each entity type the element containing the name for their
-    # type in entity_list and stores it in a new list called new_entity_list.
+      # Extracts for each entity type the element containing the name for their
+      # type in entity_list and stores it in a new list called new_entity_list.
     names(new_entity_list) <- names(entity_list)
-    # Names each entity type after the name associated with it and its 
-    # corresponding list contents element, single-get endpoint contents element
-    # and bulk-get endpoints contents element in entity_list.
+      # Names each entity type after the name associated with it and its 
+      # corresponding list contents element, single-get endpoint contents 
+      # element and bulk-get endpoints contents element in entity_list.
     return(new_entity_list)
-    # Returns only the entity types from entity_list.
+      # Returns only the entity types from entity_list.
     
   } else {
     stop(paste0("Invalid argument for contents. Input for contents should ",
-                "either be defined as 'all', 'bulk-get endpoints', ", 
-                "'single-get endpoint', 'list contents', 'entity schema', ",
-                "'entity type' or left as NULL."))
-    # Stops the function when contents is not defined as either "all", 
-    # "bulk-get endpoints", "single-get endpoint", "list contents", "entity 
-    # schema", "entity type" or NULL.
+      "either be defined as 'all', 'bulk-get endpoints', 'single-get ",
+      "endpoint', 'list contents', 'entity schema', 'entity type' or left as ",
+      "NULL."))
+      # Stops the function when contents is not defined as either "all", 
+      # "bulk-get endpoints", "single-get endpoint", "list contents", "entity 
+      # schema", "entity type" or NULL.
   }
 }
+
