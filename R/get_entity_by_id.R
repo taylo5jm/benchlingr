@@ -328,7 +328,7 @@
 #' entity_responses <- .submit_queries(api_queries=api_queries,
 #' api_key=Sys.getenv("BENCHLING_DEV_API_KEY"))
 #'
-#' res <- .bundle_api_results(entity_responses=entity_responses tenant=
+#' res <- .bundle_api_results(entity_responses=entity_responses, tenant=
 #' "hemoshear-dev")
 #' }
 #' @keywords internal

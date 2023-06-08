@@ -1,12 +1,14 @@
 # test-list_api_contents.R
 
+tenant = "hemoshear-dev"
+
 # test case 1
 test_that("Check that .list_api_contents generates an error when given an 
           invalid argument for contents", {
-  expect_error(.list_api_contents(tenant = "hemoshear-dev", 
+  expect_error(.list_api_contents(tenant = tenant, 
                                   contents = "Invalid"), 
                "Invalid argument for contents.")
-  expect_error(.list_api_contents(tenant = "hemoshear-dev",
+  expect_error(.list_api_contents(tenant = tenant,
                                   contents = "endpoint"), 
                "Invalid argument for contents.")
 })
@@ -14,19 +16,19 @@ test_that("Check that .list_api_contents generates an error when given an
 # test case 2
 test_that("Check that .list_api_contents generates an appropriate list of 
           entities when given a valid input for contents", {
-  expect_equal(class(.list_api_contents(tenant = "hemoshear-dev", 
+  expect_equal(class(.list_api_contents(tenant = tenant, 
                                         contents = "all")),
               "list")
-  expect_equal(class(.list_api_contents(tenant = "hemoshear-dev", 
+  expect_equal(class(.list_api_contents(tenant = tenant, 
                                         contents = "entity schema")),
               "list")
-  expect_equal(class(.list_api_contents(tenant = "hemoshear-dev", 
+  expect_equal(class(.list_api_contents(tenant = tenant, 
                                         contents = "list contents")),
               "list")
-  expect_equal(class(.list_api_contents(tenant = "hemoshear-dev",
+  expect_equal(class(.list_api_contents(tenant = tenant,
                                         contents = "single-get endpoint")),
               "list")
-  expect_equal(class(.list_api_contents(tenant = "hemoshear-dev",
+  expect_equal(class(.list_api_contents(tenant = tenant,
                                         contents = "bulk-get endpoints")),
               "list")
 })
