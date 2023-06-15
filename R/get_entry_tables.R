@@ -80,19 +80,14 @@
           res[[k]] <- get_entry_table(entry, day=i, 
                                        table_position=table_indices[[i]][j],
                                        return_table_name=return_table_name)
+          # If return_table_name is TRUE, then make the table names the names of the list
+          # itself and remove them from the original data frames. 
+          if (return_table_name) {
+            names(res)[[k]] <- unique(res[[k]]$return_table_name)
+            res[[k]]$return_table_name <- NULL
+          } 
           k <- k + 1
         }
-        
-        # If return_table_name is TRUE, then make the table names the names of the list
-        # itself and remove them from the original data frames. 
-        if (return_table_name) {
-          names(res) <- purrr::map(res, ~ unique(.$return_table_name)) %>%
-            unlist
-          for (i in 1:length(res)) {
-            res[[i]]$return_table_name <- NULL
-          }
-        }
-        
       } else {
         if (verbose) {
           cat(glue::glue("No tables were found for day {`i`}\n"))
