@@ -4,30 +4,31 @@
 \alias{infer_entity_type}
 \title{Infer the entity types of elements contained in a vector}
 \usage{
-infer_entity_type(entity_id, entity_list = NULL)
+infer_entity_type(entity_id, tenant)
 }
 \arguments{
 \item{entity_id}{A character vector with 1 or more elements.}
 
-\item{entity_list}{A list of vectors where each vector designates the schema type and API URLs for 
-the entities we are interested in and the names are the first characters seen in the identifiers for
-each entity.}
+\item{tenant}{A character string containing the name of the Benchling tenant 
+for which we want to use to extract information for at least one entity or 
+element.}
 }
 \value{
-A named character vector, where the names are the identifiers or elements from entity_id
-and the values are the schema types.
+A named character vector, where the names are the identifiers or 
+elements from entity_id and the values are the schema types.
 }
 \description{
-infer_entity_type.R takes a character vector with one or more elements and for each element 
-tries to infer the schema type.
+infer_entity_type.R takes a character vector with one or more elements and 
+for each element tries to infer the schema type.
 }
 \examples{
 \dontrun{
 entity_id1 <- c("seq_Cuf0bmCm", "bfi_Q1PMlXkf", "ver_io98720u")
-res1 <- infer_entity_type(entity_id=entity_id1, entity_list=NULL)
+res1 <- infer_entity_type(entity_id=entity_id1, tenant="hemoshear-dev")
 
-entity_id2 <- c("bfi_Ur5DfvGJ", "seq_Gju61mCm", "bfi_Q13AlXkf", "bfi_Ks908uWV",
-"ent_Ec76qX9f", "ent_sPrxBNOh", "box_K9950IQ8", "dis_89mkooip", "bxo_923aklum")
-res2 <- infer_entity_type(entity_id=entity_id2, entity_list=NULL)
+entity_id2 <- c("bfi_Ur5DfvGJ", "seq_Gju61mCm", "bfi_Q13AlXkf", 
+"bfi_Ks908uWV", "ent_Ec76qX9f", "ent_sPrxBNOh", "box_K9950IQ8", 
+"dis_89mkooip", "bxo_923aklum")
+res2 <- infer_entity_type(entity_id=entity_id2, tenant="hemoshear-dev")
 }
 }
